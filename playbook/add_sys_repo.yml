@@ -1,5 +1,5 @@
 ---
 - hosts: '{{ newmachines | default("all") }}'
   roles:
-    - role: create_env
+    - role: add_sys_repo
 
