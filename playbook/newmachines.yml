@@ -1,0 +1,5 @@
+---
+- hosts: '{{ newmachines | default("all") }}'
+  roles:
+    - role: create_env
+
