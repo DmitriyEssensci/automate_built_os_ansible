@@ -2,9 +2,6 @@
 
 Repo for project on automate building OS
 
-###Header###
-Хуедер блядь
-
-
-
+***Создание роли***
+ansible-galaxy init role_name
 
