@@ -19,3 +19,6 @@ production
 
 ***Группы хостов***  
 newmachines -> new_machines:children
+
+***Запуск раскатки check_system***  
+ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/check_system.yml

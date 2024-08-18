@@ -1,6 +1,7 @@
-[newmachines]
-eb6aa61ee48b ansible_host=172.17.0.2 ansible_ssh_pass="{{ car_password }}"
-c6f1256a757b ansible_host=172.17.0.3 ansible_ssh_pass="{{ car_password }}"
+[newmachine]
+eb6aa61ee48b ansible_host=172.17.0.2 ansible_ssh_user=root ansible_ssh_pass=password
+c6f1256a757b ansible_host=172.17.0.3 ansible_ssh_user=root ansible_ssh_pass=password
 
-[new_machines:children]
-newmachines
+[new_machine:children]
+newmachine
+

@@ -1,0 +1,43 @@
+---
+# tasks file for check_system
+
+- name: Gather system information and check internet connectivity
+  hosts: all
+  gather_facts: yes
+
+- name: Gethering and display block
+  block:  
+    - name: Display hostname
+      debug: 
+        msg: "Hostname: {{ ansible_hostname }}"
+
+    - name: Display operation system name
+      debug: 
+        msg: "OS Name: {{ ansible_distribution }}" 
+
+    - name: Display operating system version
+      debug:
+        msg: "OS Version: {{ ansible_distribution_version }}"
+
+    - name: Display tital RAM size
+      debug: 
+      msg: "Total RAM: {{ ansible_memtotal_mb }} MB"
+
+    - name: List all users on the system
+      command: getent passwd
+      register: user_list
+
+    - name: Display users in system
+      debug:
+        msg: "Users: {{ user_list.stdout_lines | map('split', ':') | map('first') | list }}"
+
+    - name: Check internet connectivity
+      command:  "ping -c 1 google.com"
+      register: internet_check
+      ignore_errors: yes
+
+    - name: Display internet connectivity status
+      debug: 
+        msg: "Internet Connectivity: {{ 'Available' if internet_check.rc == 0 else 'Not Available' }}"
+
+  become: true
