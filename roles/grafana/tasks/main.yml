@@ -49,8 +49,7 @@
     msg: "{{ grafana_version }}"
 
 - name: Check grafana service start
-  ansible.builtin.command: 
-    cmd: service --status-all | grep + | grep grafana
+  shell: service --status-all | grep + | grep grafana
   register: grafana_status
 
 - name: Debug check grafana service start
