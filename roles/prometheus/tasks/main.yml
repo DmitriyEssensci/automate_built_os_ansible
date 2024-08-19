@@ -116,7 +116,7 @@
 
     - name: 1.6.7 Copy prometheus.service
       template:
-        src: templates/"{{ item }}"
+        src: "templates/{{ item }}"
         dest: /"{{ item }}"
         mode: '0744'
       with_items:
