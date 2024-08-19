@@ -104,7 +104,7 @@
 
     - name: 1.6.5 Copy prometheus.service
       template:
-        src: "templates/{{ prometheus_template_dest }}/{{ prometheus_service_name }}"
+        src: "templates/{{ prometheus_template_dest }}/{{ prometheus_service_name }}".j2
         dest: /etc/systemd/system
         mode: '0744'
 

@@ -7,4 +7,3 @@ installapps_apps_list:
   - tmux
   - vim
   - file
-  - ifconfig
