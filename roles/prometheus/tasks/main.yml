@@ -35,6 +35,17 @@
   with_items: "{{ prometheus_download_url }}"
   become: true
 
+- name: Проверить существование файла Prometheus
+  ansible.builtin.stat:
+    path: /tmp/prometheus-2.43.0.linux-amd64.tar.gz
+  register: prometheus_file
+
+- name: Удалить файл Prometheus, если он существует
+  ansible.builtin.file:
+    path: /tmp/prometheus-2.43.0.linux-amd64.tar.gz
+    state: absent
+  when: prometheus_file.stat.exists
+
 - name: 1.4 Extract the binare prometheus files 
   ansible.builtin.unarchive:
     src: "{{ item }}"
