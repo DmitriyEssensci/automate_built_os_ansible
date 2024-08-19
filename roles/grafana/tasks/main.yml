@@ -46,4 +46,4 @@
 
 - name: Debug check grafana version
   debug:
-    msg: grafana_version
+    msg: "{{ grafana_version }}"
