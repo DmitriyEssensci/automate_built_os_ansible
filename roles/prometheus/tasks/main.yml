@@ -107,6 +107,6 @@
 
     - name: 1.6.8 Restart prometheus service
       ansible.builtin.command:
-        cmd: "service {{ prometheus_service_name }} restart"
+        cmd: "service prometheus restart"
   become: true
 
