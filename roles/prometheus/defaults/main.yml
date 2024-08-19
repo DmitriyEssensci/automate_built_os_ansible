@@ -10,3 +10,5 @@ prometheus_conf_file:
   - consoles 
   - console_libraries 
   - prometheus.yml
+prometheus_service_name: prometheus.service
+prometheus_template_dest: /etc/systemd/system

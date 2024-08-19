@@ -51,11 +51,12 @@
         removes: "/usr/local/bin/{{ item }}"
       with_items: "{{ prometheus_bin_file }}"
 
-    - name: 1.5.2 Change ownership of "/usr/local/bin/{{ item }}"
+    - name: 1.5.2 Change ownership of /usr/local/bin/
       ansible.builtin.file:
         path: "/usr/local/bin/{{ item }}"
         owner: prometheus
         group: prometheus
+        state: file
       with_items: "{{ prometheus_bin_file }}"
   become: true
 
@@ -87,4 +88,18 @@
         owner: prometheus
         group: prometheus
         recurse: yes
+
+    - name: 1.6.5 Copy prometheus.service
+      template:
+        src: "templates/{{ prometheus_template_dest }}"
+        dest: "{{ prometheus_template_dest }}"
+        mode: '0744'
+
+    - name: 1.6.6 Enable service prometheus, and state UP
+      ansible.builtin.systemd:
+        name: "{{ prometheus_service_name }}"
+        state: started
+        enabled: true
+        daemon_reload: yes
   become: true
+
