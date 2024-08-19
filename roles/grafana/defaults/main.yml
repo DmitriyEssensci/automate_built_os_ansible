@@ -1,4 +1,9 @@
 ---
 # defaults file for grafana
+grafana_ensure_keyrings: /etc/apt/keyrings
 grafana_download_pgp: https://apt.grafana.com/gpg.key
-grafana_repo: deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main
+grafana_repo: "deb [signed-by={{ grafana_ensure_keyrings }}/grafana.gpg] https://apt.grafana.com stable main"
+grafana_convert_gpg: "gpg --dearmor -o {{ grafana_ensure_keyrings }}/grafana.gpg /tmp/grafana.gpg.key"
+grafana_dest_gpg: /tmp/grafana.gpg.key
+grafana_check_version: grafana-server -v | grep Version
+grafana_service_status: service --status-all | grep + | grep grafana

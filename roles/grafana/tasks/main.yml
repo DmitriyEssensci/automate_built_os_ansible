@@ -1,63 +1,63 @@
 ---
 # tasks file for grafana
-- name: Ensure /etc/apt/keyrings directory exists
+- name: 1.0 Ensure /etc/apt/keyrings directory exists
   file:
-    path: /etc/apt/keyrings
+    path: "{{ grafana_ensure_keyrings }}"
     state: directory
     mode: '0755'
   become: true
 
-- name: Download and dearmor Grafana GPG key
+- name: 1.1 Download and dearmor Grafana GPG key
   ansible.builtin.get_url:
     url: "{{ grafana_download_pgp }}"
-    dest: /tmp/grafana.gpg.key
+    dest: "{{ grafana_dest_gpg }}"
     mode: '0644'
   become: true
 
-- name: Convert Grafana GPG key to binary format
+- name: 1.2 Convert Grafana GPG key to binary format
   ansible.builtin.command:
-    cmd: gpg --dearmor -o /etc/apt/keyrings/grafana.gpg /tmp/grafana.gpg.key
+    cmd: "{{ grafana_convert_gpg }}"
   args:
-    creates: /etc/apt/keyrings/grafana.gpg
+    creates: "{{ grafana_ensure_keyrings }}/grafana.gpg"
   become: true
 
-- name: Add Grafana APT repository
+- name: 1.3 Add Grafana APT repository
   ansible.builtin.apt_repository:
     repo: "{{ grafana_repo }}"
     state: present
     filename: grafana
   become: true
 
-- name: Update APT cache
+- name: 1.4 Update APT cache
   ansible.builtin.apt:
     update_cache: yes
   become: true
 
-- name: Install Grafana
+- name: 1.5 Install Grafana
   ansible.builtin.apt:
     name: grafana
     state: present
   become: true
 
-- name: Ensure grafana-server is started
+- name: 1.6 Ensure grafana-server is started
   ansible.builtin.service:
     name: grafana-server
     state: started
   become: true
 
-- name: Check grafana version
+- name: 1.7 Check grafana version
   ansible.builtin.command: 
-    cmd: grafana-server -v | grep Version
+    cmd: "{{ grafana_check_version }}"
   register: grafana_version
 
-- name: Debug check grafana version
+- name: 1.8 Debug check grafana version
   debug:
     msg: "{{ grafana_version }}"
 
-- name: Check grafana service start
-  shell: service --status-all | grep + | grep grafana
+- name: 1.9 Check grafana service start
+  shell: "{{ grafana_service_status }}"
   register: grafana_status
 
-- name: Debug check grafana service start
+- name: 1.10 Debug check grafana service start
   debug:
     msg: "{{ grafana_status }}"
