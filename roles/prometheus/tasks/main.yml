@@ -102,13 +102,28 @@
         group: "{{ prometheus_group }}"
         recurse: yes
 
-    - name: 1.6.5 Copy prometheus.service
-      template:
-        src: "templates/{{ prometheus_template_dest }}/{{ prometheus_service_name }}.j2"
-        dest: /etc/systemd/system
-        mode: '0744'
+    - name: 1.6.5 Проверить существование папки /etc/init.d/prometheus
+      ansible.builtin.stat:
+        path: /etc/init.d/prometheus
+      register: prometheus_dir
 
-    - name: 1.6.8 Restart prometheus service
+    - name: Создать папку /etc/init.d/prometheus, если она не существует
+      ansible.builtin.file:
+        path: /etc/init.d/prometheus
+        state: directory
+        mode: '0755'
+      when: not prometheus_dir.stat.exists
+
+    - name: 1.6.6 Copy prometheus.service
+      template:
+        src: "templates/{{ prometheus_template_dest }}/{{ prometheus_service_name }}"
+        dest: "{{ item }}"
+        mode: '0744'
+      with_item:
+        - "{{ prometheus_template_dest }}"
+        - /etc/init.d/prometheus
+
+    - name: 1.6.7 Restart prometheus service
       ansible.builtin.command:
         cmd: "service prometheus restart"
       ignore_errors: true
