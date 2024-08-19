@@ -5,3 +5,4 @@ installapps_apps_list:
   - software-properties-common # даёт add-apt-repository
   - wget
   - tmux
+  - vim

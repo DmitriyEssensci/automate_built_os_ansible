@@ -19,6 +19,10 @@ A description of the settable variables for this role should go here, including 
 
 ***prometheus_archive***  
 
+***prometheus_bin_file***  
+
+***prometheus_conf_file***  
+
 
 Dependencies
 ------------

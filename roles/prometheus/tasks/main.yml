@@ -1,13 +1,13 @@
 ---
 # tasks file for prometheus
-- name: Create Prometheus user and group
+- name: 1.0 Create Prometheus user and group
   block:
-    - name: Create Prometheus group
+    - name: 1.0.1 Create Prometheus group
       ansible.builtin.group:
         name: prometheus
         system: yes
 
-    - name: Create Prometheus user
+    - name: 1.0.2 Create Prometheus user
       ansible.builtin.user:
         name: prometheus
         system: yes
@@ -15,19 +15,19 @@
         group: prometheus
   become: yes
 
-- name: Create /etc/prometheus directory
+- name: 1.1 Create /etc/prometheus directory
   ansible.builtin.file:
     path: /etc/prometheus
     state: directory
     mode: '0755'
 
-- name: Create /var/lib/prometheus directory
+- name: 1.2 Create /var/lib/prometheus directory
   ansible.builtin.file:
     path: /var/lib/prometheus
     state: directory
     mode: '0755'
 
-- name: Download prometheus
+- name: 1.3 Download prometheus
   ansible.builtin.get_url:
     url: "{{ item }}"
     dest: /tmp/
@@ -35,10 +35,56 @@
   with_items: "{{ prometheus_download_url }}"
   become: true
 
-- name: Extract the binare prometheus files 
+- name: 1.4 Extract the binare prometheus files 
   ansible.builtin.unarchive:
     src: "{{ item }}"
     dest: /opt/
     remote_src: yes
   with_items: "{{ prometheus_archive }}"
+  become: true
+
+- name: 1.5 Move binary & Set Owner
+  block: 
+    - name: 1.5.1 Move promtool binary to /usr/local/bin
+      ansible.builtin.command:
+        cmd: "mv /opt/prometheus-{{ prometheus_version }}.linux-amd64/{{ item }} /usr/local/bin"
+        removes: "/usr/local/bin/{{ item }}"
+      with_items: "{{ prometheus_bin_file }}"
+
+    - name: 1.5.2 Change ownership of /usr/local/bin/promtool
+      ansible.builtin.file:
+        path: /usr/local/bin/{{ item }}
+        owner: prometheus
+        group: prometheus
+      with_items: "{{ prometheus_bin_file }}"
+  become: true
+
+- name: 1.6 Move the Configuration Files & Set Owner
+  block: 
+    - name: 1.6.1 Move prometheus binary to /usr/local/bin
+      ansible.builtin.command:
+        cmd: mv /opt/prometheus-2.43.0.linux-amd64/{{ item }}  /etc/prometheus
+        removes: /usr/local/bin/{{ item }}
+      with_items: "{{ prometheus_bin_file }}"
+
+    - name: 1.6.2 Change ownership of /etc/prometheus
+      ansible.builtin.file:
+        path: /etc/prometheus
+        owner: prometheus
+        group: prometheus
+
+    - name: 1.6.3 Change ownership of Prometheus configuration files
+      ansible.builtin.file:
+        path: "/etc/prometheus/{{ item }}"
+        owner: prometheus
+        group: prometheus
+        recurse: "{{ item in ['consoles', 'console_libraries'] }}"
+      with_items: "{{ prometheus_conf_file[:-1] }}"  # Exclude the last item
+
+    - name: 1.6.4 Change ownership of /var/lib/prometheus
+      ansible.builtin.file:
+        path: /var/lib/prometheus
+        owner: prometheus
+        group: prometheus
+        recurse: yes
   become: true
