@@ -40,7 +40,8 @@
   become: true
 
 - name: Check grafana version
-  cmd: grafana-server -v
+  ansible.builtin.command: 
+    cmd: grafana-server -v
   register: grafana_version
 
 - name: Debug check grafana version
