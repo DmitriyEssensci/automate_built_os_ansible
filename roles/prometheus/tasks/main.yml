@@ -53,7 +53,7 @@
 
     - name: 1.5.2 Change ownership of /usr/local/bin/promtool
       ansible.builtin.file:
-        path: /usr/local/bin/{{ item }}
+        path: "/usr/local/bin/{{ item }}"
         owner: prometheus
         group: prometheus
       with_items: "{{ prometheus_bin_file }}"
@@ -63,8 +63,8 @@
   block: 
     - name: 1.6.1 Move prometheus binary to /usr/local/bin
       ansible.builtin.command:
-        cmd: mv /opt/prometheus-2.43.0.linux-amd64/{{ item }}  /etc/prometheus
-        removes: /usr/local/bin/{{ item }}
+        cmd: "mv /opt/prometheus-2.43.0.linux-amd64/{{ item }}  /etc/prometheus"
+        removes: "/usr/local/bin/{{ item }}"
       with_items: "{{ prometheus_bin_file }}"
 
     - name: 1.6.2 Change ownership of /etc/prometheus
