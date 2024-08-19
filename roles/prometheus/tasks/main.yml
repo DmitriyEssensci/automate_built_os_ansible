@@ -1,2 +1,44 @@
 ---
 # tasks file for prometheus
+- name: Create Prometheus user and group
+  block:
+    - name: Create Prometheus group
+      ansible.builtin.group:
+        name: prometheus
+        system: yes
+
+    - name: Create Prometheus user
+      ansible.builtin.user:
+        name: prometheus
+        system: yes
+        shell: /sbin/nologin
+        group: prometheus
+  become: yes
+
+- name: Create /etc/prometheus directory
+  ansible.builtin.file:
+    path: /etc/prometheus
+    state: directory
+    mode: '0755'
+
+- name: Create /var/lib/prometheus directory
+  ansible.builtin.file:
+    path: /var/lib/prometheus
+    state: directory
+    mode: '0755'
+
+- name: Download prometheus
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: "/tmp/{{ item }}"
+  ignore_errors: yes
+  with_items: "{{ prometheus_download_url }}"
+  become: true
+
+- name: Extract the binare prometheus files 
+  ansible.builtin.unarchive:
+    src: "{{ item }}"
+    dest: /opt/
+    remote_src: yes
+  with_items: "{{ prometheus_archive }}"
+  become: true
