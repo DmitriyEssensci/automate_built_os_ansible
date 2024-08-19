@@ -6,3 +6,4 @@ installapps_apps_list:
   - wget
   - tmux
   - vim
+  - file
