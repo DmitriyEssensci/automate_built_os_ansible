@@ -116,12 +116,12 @@
 
     - name: 1.6.7 Copy prometheus.service
       template:
-        src: "templates{{ prometheus_template_dest }}/{{ prometheus_service_name }}.j2"
-        dest: "{{ item }}"
+        src: "{{ item }}"
+        dest: /"{{ item }}"
         mode: '0744'
       with_items:
-        - /etc/systemd/system
-        - /etc/init.d/prometheus
+        - "{{ prometheus_template_service_systemd }}"
+        - "{{ prometheus_template_service_initd }}"
 
     - name: 1.6.8 Restart prometheus service
       ansible.builtin.command:
