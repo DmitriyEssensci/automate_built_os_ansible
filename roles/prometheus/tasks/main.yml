@@ -75,7 +75,7 @@
         group: "{{ prometheus_group }}"
         mode: '0755'
         remote_src: yes
-      with_items: "{{ prometheus_bin_file }}"
+      with_items: "{{ prometheus_conf_file }}"
       ignore_errors: true
 
     - name: 1.6.2 Change ownership of /etc/prometheus
