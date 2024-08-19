@@ -1,6 +1,6 @@
 ---
 # handlers file for prometheus
-- name: Удалить файл Prometheus
+- name: Remove temp file prometheus
   block:
     - name: Проверить существование файла Prometheus
       ansible.builtin.stat:
