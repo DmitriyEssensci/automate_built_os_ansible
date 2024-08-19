@@ -116,16 +116,16 @@
 
     - name: 1.6.7 Copy prometheus.service
       template:
-        src: /templates/"{{ item }}"
+        src: templates/"{{ item }}"
         dest: /"{{ item }}"
         mode: '0744'
       with_items:
         - "{{ prometheus_template_service_systemd }}"
         - "{{ prometheus_template_service_initd }}"
 
-    - name: 1.6.8 Restart prometheus service
-      ansible.builtin.command:
-        cmd: "service prometheus restart"
-      ignore_errors: true
+    # - name: 1.6.8 Restart prometheus service
+    #   ansible.builtin.command:
+    #     cmd: "service prometheus restart"
+    #   ignore_errors: true
   become: true
 
