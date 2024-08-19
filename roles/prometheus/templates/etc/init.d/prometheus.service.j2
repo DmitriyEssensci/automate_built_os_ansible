@@ -1,17 +1,26 @@
-[Unit]
-Description=Prometheus
-Wants=network-online.target
-After=network-online.target
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          prometheus
+# Required-Start:    $remote_fs $network
+# Required-Stop:     $remote_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start and stop Prometheus
+# Description:       Enable service provided by Prometheus.
+### END INIT INFO
 
-[Service]
-User=prometheus
-Group=prometheus
-Type=simple
-ExecStart=/usr/local/bin/prometheus \
-    --config.file /etc/prometheus/prometheus.yml \
-    --storage.tsdb.path /var/lib/prometheus/ \
-    --web.console.templates=/etc/prometheus/consoles \
-    --web.console.libraries=/etc/prometheus/console_libraries
+# Define the path to the Prometheus executable
+PROMETHEUS_BIN="/usr/local/bin/prometheus"
 
-[Install]
-WantedBy=multi-user.target
+# Define the configuration and data directories
+CONFIG_FILE="/etc/prometheus/prometheus.yml"
+STORAGE_PATH="/var/lib/prometheus/"
+CONSOLE_TEMPLATES="/etc/prometheus/consoles"
+CONSOLE_LIBRARIES="/etc/prometheus/console_libraries"
+
+# Define the user and group to run Prometheus as
+USER="prometheus"
+GROUP="prometheus"
+
+# Define the PID file location
+PIDFILE="/var/run/prometheus/prometheus.pid"
