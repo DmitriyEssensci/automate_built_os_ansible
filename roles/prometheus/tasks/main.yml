@@ -51,7 +51,7 @@
         removes: "/usr/local/bin/{{ item }}"
       with_items: "{{ prometheus_bin_file }}"
 
-    - name: 1.5.2 Change ownership of /usr/local/bin/promtool
+    - name: 1.5.2 Change ownership of "/usr/local/bin/{{ item }}"
       ansible.builtin.file:
         path: "/usr/local/bin/{{ item }}"
         owner: prometheus
