@@ -39,6 +39,12 @@
     state: present
   become: true
 
+- name: Ensure grafana-server is started
+  ansible.builtin.service:
+    name: grafana-server
+    state: started
+  become: true
+
 - name: Check grafana version
   ansible.builtin.command: 
     cmd: grafana-server -v | grep Version
