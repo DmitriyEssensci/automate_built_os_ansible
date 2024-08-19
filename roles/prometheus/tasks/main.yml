@@ -30,7 +30,7 @@
 - name: Download prometheus
   ansible.builtin.get_url:
     url: "{{ item }}"
-    dest: "/tmp/{{ item }}"
+    dest: /tmp/
   ignore_errors: yes
   with_items: "{{ prometheus_download_url }}"
   become: true
