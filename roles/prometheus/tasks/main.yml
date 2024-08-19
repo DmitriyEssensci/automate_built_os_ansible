@@ -105,11 +105,8 @@
         dest: /etc/systemd/system
         mode: '0744'
 
-    - name: 1.6.6 Enable service prometheus, and state UP
-      ansible.builtin.systemd:
-        name: "{{ prometheus_service_name }}"
-        state: started
-        enabled: true
-        daemon_reload: yes
+    - name: 1.6.8 Restart prometheus service
+      ansible.builtin.command:
+        cmd: "service {{ prometheus_service_name }} restart"
   become: true
 
