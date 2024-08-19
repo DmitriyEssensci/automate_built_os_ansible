@@ -101,8 +101,8 @@
 
     - name: 1.6.5 Copy prometheus.service
       template:
-        src: "templates/{{ prometheus_template_dest }}"
-        dest: "{{ prometheus_template_dest }}"
+        src: "templates/{{ prometheus_template_dest }}/{{ prometheus_service_name }}"
+        dest: /etc/systemd/system
         mode: '0744'
 
     - name: 1.6.6 Enable service prometheus, and state UP
