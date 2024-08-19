@@ -1,0 +1,4 @@
+---
+- hosts: '{{ newmachine | default("all") }}'
+  roles:
+    - role: install_apps
