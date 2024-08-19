@@ -12,6 +12,6 @@ prometheus_conf_file:
   - prometheus.yml
 prometheus_service_name: prometheus.service
 prometheus_template_service_systemd: "etc/systemd/system/{{ prometheus_service_name }}"
-prometheus_template_service_initd: "etc/init.d/prometheus/{{ prometheus_service_name }}"
+prometheus_template_service_initd: "etc/init.d/{{ prometheus_service_name }}"
 prometheus_user: prometheus
 prometheus_group: prometheus

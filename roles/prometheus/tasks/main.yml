@@ -109,19 +109,7 @@
         owner: "{{ prometheus_user }}"
         group: "{{ prometheus_group }}"
         recurse: yes
-
-    - name: 1.6.5 Проверить существование папки /etc/init.d/prometheus
-      ansible.builtin.stat:
-        path: /etc/init.d/prometheus
-      register: prometheus_dir
-
-    - name: 1.6.6 Создать папку /etc/init.d/prometheus, если она не существует
-      ansible.builtin.file:
-        path: /etc/init.d/prometheus
-        state: directory
-        mode: '0755'
-      when: not prometheus_dir.stat.exists
-
+        
     - name: 1.6.7 Copy prometheus.service
       template:
         src: "templates/{{ item }}.j2"
