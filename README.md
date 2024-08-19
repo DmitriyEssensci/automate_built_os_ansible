@@ -20,5 +20,8 @@ production
 ***Группы хостов***  
 newmachines -> new_machines:children
 
-***Запуск раскатки check_system***  
-ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/check_system.yml
+***Последовательность запусков ролей***  
+1. check_system - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/check_system.yml
+2. install_apps - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/install_apps.yml
+3. prometheus - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/prometheus.yml
+4. grafana - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/grafana.yml
