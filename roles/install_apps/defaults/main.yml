@@ -1,0 +1,7 @@
+---
+# defaults file for install_apps
+installapps_apps_list:
+  - apt-transport-https # позволяет apt работать с https репо
+  - software-properties-common # даёт add-apt-repository
+  - wget
+  - tmux

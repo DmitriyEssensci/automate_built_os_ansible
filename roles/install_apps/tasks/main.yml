@@ -1,0 +1,9 @@
+---
+# tasks file for install_apps
+- name: Install apps
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items: "{{ installapps_apps_list }}"
+  become: true

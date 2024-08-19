@@ -1,0 +1,40 @@
+---
+# tasks file for grafana
+- name: Ensure /etc/apt/keyrings directory exists
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Download and dearmor Grafana GPG key
+  ansible.builtin.get_url:
+    url: "{{ grafana_download_pgp }}"
+    dest: /tmp/grafana.gpg.key
+    mode: '0644'
+  become: true
+
+- name: Convert Grafana GPG key to binary format
+  ansible.builtin.command:
+    cmd: gpg --dearmor -o /etc/apt/keyrings/grafana.gpg /tmp/grafana.gpg.key
+  args:
+    creates: /etc/apt/keyrings/grafana.gpg
+  become: true
+
+- name: Add Grafana APT repository
+  ansible.builtin.apt_repository:
+    repo: "{{ grafana_repo }}"
+    state: present
+    filename: grafana
+  become: true
+
+- name: Update APT cache
+  ansible.builtin.apt:
+    update_cache: yes
+  become: true
+
+- name: Install Grafana
+  ansible.builtin.apt:
+    name: grafana
+    state: present
+  become: true

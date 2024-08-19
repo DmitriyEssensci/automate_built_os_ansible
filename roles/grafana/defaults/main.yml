@@ -1,0 +1,4 @@
+---
+# defaults file for grafana
+grafana_download_pgp: https://apt.grafana.com/gpg.key
+grafana_repo: deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main
