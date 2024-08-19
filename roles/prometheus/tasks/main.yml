@@ -42,7 +42,7 @@
     remote_src: yes
   with_items: "{{ prometheus_archive }}"
   become: true
-  
+
 - name: Check exit temp file
   ansible.builtin.stat:
     path: /tmp/prometheus-2.43.0.linux-amd64.tar.gz
@@ -124,8 +124,8 @@
 
     - name: 1.6.7 Copy prometheus.service
       template:
-        src: "templates/{{ item }}"
-        dest: /"{{ item }}"
+        src: "templates/{{ item }}.j2"
+        dest: "/{{ item }}"
         mode: '0744'
       with_items:
         - "{{ prometheus_template_service_systemd }}"
