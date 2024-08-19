@@ -1,14 +1,2 @@
 ---
 # handlers file for prometheus
-- name: Remove temp file prometheus
-  block:
-    - name: Check exit temp file
-      ansible.builtin.stat:
-        path: /tmp/prometheus-2.43.0.linux-amd64.tar.gz
-      register: prometheus_file
-
-    - name: Remove temp file
-      ansible.builtin.file:
-        path: /tmp/prometheus-2.43.0.linux-amd64.tar.gz
-        state: absent
-      when: prometheus_file.stat.exists

@@ -42,9 +42,17 @@
     remote_src: yes
   with_items: "{{ prometheus_archive }}"
   become: true
-  notify: 
-    - Check exit temp file
-    - Remove temp file
+  
+- name: Check exit temp file
+  ansible.builtin.stat:
+    path: /tmp/prometheus-2.43.0.linux-amd64.tar.gz
+  register: prometheus_file
+
+- name: Remove temp file
+  ansible.builtin.file:
+    path: /tmp/prometheus-2.43.0.linux-amd64.tar.gz
+    state: absent
+  when: prometheus_file.stat.exists
 
 - name: 1.5 Move binary & Set Owner
   block: 
