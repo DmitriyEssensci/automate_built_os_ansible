@@ -27,6 +27,15 @@ A description of the settable variables for this role should go here, including 
 
 ***grafana_service_status***  
 
+***grafana_config_file***  
+
+***grafana_dashboard_path***  
+
+***grafana_dashboard_main_dashboard_name*** 
+
+***grafana_dashboard_main_dashboard_dir***  
+
+***grafana_host_address***  
 
 Dependencies
 ------------
