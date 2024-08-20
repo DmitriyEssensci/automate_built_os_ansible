@@ -25,3 +25,11 @@ newmachines -> new_machines:children
 2. install_apps - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/install_apps.yml
 3. prometheus - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/prometheus.yml
 4. grafana - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/grafana.yml
+
+***Prometheus: ***  
+	http://hostname_ip:9090   
+***node_exporter: ***   
+	http://hostname_ip:9100/metrics   
+***grafana: ***   
+	admin - admin   
+	http://hostname_ip:3000   
