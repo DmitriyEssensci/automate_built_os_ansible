@@ -4,8 +4,8 @@ dmitriysa ansible_python_interpreter=/usr/bin/python3
 [newmachine]
 # eb6aa61ee48b ansible_host=172.17.0.2 ansible_ssh_user=root ansible_ssh_pass=password
 # c6f1256a757b ansible_host=172.17.0.3 ansible_ssh_user=root ansible_ssh_pass=password
-# dmitriysa ansible_host=192.168.80.129 ansible_ssh_user=root ansible_ssh_pass="0xV5]A2'h"
-DESKTOP-235ILIB ansible_host=192.168.141.129   ansible_ssh_user= ansible_ssh_pass= 
+dmitriysa ansible_host=192.168.80.129 ansible_ssh_user=root ansible_ssh_pass="0xV5]A2'h"
+#DESKTOP-235ILIB ansible_host=192.168.141.129   ansible_ssh_user= ansible_ssh_pass= 
 
 [new_machine:children]
 newmachine
