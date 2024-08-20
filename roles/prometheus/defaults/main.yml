@@ -1,5 +1,6 @@
 ---
 # defaults file for prometheus
+#prometheus
 prometheus_version: 2.43.0
 prometheus_download_url: https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz
 prometheus_archive: /tmp/prometheus-2.43.0.linux-amd64.tar.gz
@@ -9,9 +10,13 @@ prometheus_bin_file:
 prometheus_conf_file:
   - consoles 
   - console_libraries 
-  - prometheus.yml
 prometheus_service_name: prometheus.service
 prometheus_template_service_systemd: "etc/systemd/system/{{ prometheus_service_name }}"
+prometheus_template_prometheus_yml: etc/prometheus/prometheus.yml
 prometheus_template_service_initd: "etc/init.d/{{ prometheus_service_name }}"
+
 prometheus_user: prometheus
 prometheus_group: prometheus
+prometheus_python_interpreter: /usr/bin/python3
+
+#node_exporter
