@@ -118,10 +118,30 @@
       with_items:
         - "{{ prometheus_template_service_systemd }}"
         - "{{ prometheus_template_service_initd }}"
-
-    - name: 1.6.8 Restart prometheus service
-      ansible.builtin.command:
-        cmd: "systemctl restart prometheus"
-      ignore_errors: true
   become: true
 
+- name: 1.6.8 Reload systemd manager configuration
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: 1.6.9 Enable Prometheus service
+  ansible.builtin.systemd:
+    name: prometheus
+    enabled: yes
+
+- name: 1.6.10 Start Prometheus service
+  ansible.builtin.systemd:
+    name: prometheus
+    state: started
+
+- name: 1.6.11 Check prometheus status
+  command: systemctl status prometheus | grep active
+  register:  prometheus_status
+
+- name: 1.6.12 Debug check prometheus status
+  debug:
+    msg: "{{ prometheus_status }}"
+
+- name: 1.6.13 Open 9090 in firewall
+  ansible.builtin.command:
+    cmd: ufw allow 9090/tcp
