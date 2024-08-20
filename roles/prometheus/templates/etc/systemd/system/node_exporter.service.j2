@@ -6,7 +6,7 @@ After=network-online.target
 [Service]
 User=root
 EnvironmentFile=/etc/default/node_exporter
-ExecStart=/opt/node_exporter/node_exporter $OPTIONS
+ExecStart=/opt/node_exporter-1.8.2.linux-amd64/node_exporter $OPTIONS
 Restart=on-failure
 RestartSec=5
 
