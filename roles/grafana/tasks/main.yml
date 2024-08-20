@@ -41,7 +41,7 @@
 
 - name: 1.6 Create var/lib/grafana/dashboard directory
   ansible.builtin.file:
-    path: "{{ grafana_dashboard_directory }}"
+    path: "{{ grafana_dashboard_path }}"
     state: directory
     mode: '0755'
   become: true
@@ -64,22 +64,22 @@
   debug:
     msg: "{{ grafana_version }}"
 
-- name: 1.10 Check grafana service start
-  shell: "{{ grafana_service_status }}"
-  register: grafana_status
-
-- name: 1.11 Debug check grafana service start
-  debug:
-    msg: "{{ grafana_status }}"
-
-- name: 1.12 Reload systemd manager configuration
+- name: 1.10 Reload systemd manager configuration
   ansible.builtin.systemd:
     daemon_reload: yes
   become: true
 
-- name: 1.13 Enable and start Prometheus service
+- name: 1.11 Enable and start Prometheus service
   ansible.builtin.systemd:
     name: grafana-server
     state: started
     enabled: yes
   become: true
+
+- name: 1.12 Check grafana service start
+  shell: "{{ grafana_service_status }}"
+  register: grafana_status
+
+- name: 1.13 Debug check grafana service start
+  debug:
+    msg: "{{ grafana_status }}"
