@@ -28,15 +28,11 @@
     filename: grafana
   become: true
 
-- name: 1.4 Update APT cache
-  ansible.builtin.apt:
-    update_cache: yes
-  become: true
-
 - name: 1.5 Install Grafana
   ansible.builtin.apt:
     name: grafana
     state: present
+    update_cache: yes
   become: true
 
 - name: 1.6 Create var/lib/grafana/dashboard directory
@@ -55,13 +51,13 @@
         mode: '0744'
       with_items: "{{ grafana_config_file }}"
 
-    - name: 1.7.2 Copy grafana config file and move dashboard in dir
-      template:
-        src: "templates/{{ item }}"
-        dest: "/{{ item }}"
-        mode: '0744'
-      with_items: "{{ grafana_dashboard_main_dashboard_dir }}"
-  become: true
+  #   - name: 1.7.2 Copy grafana config file and move dashboard in dir
+  #     template:
+  #       src: "templates/{{ item }}"
+  #       dest: "/{{ item }}"
+  #       mode: '0744'
+  #     with_items: "{{ grafana_dashboard_main_dashboard_dir }}"
+  # become: true
 
 - name: 1.8 Check grafana version
   ansible.builtin.command: 
