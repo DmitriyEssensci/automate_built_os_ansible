@@ -1,0 +1,47 @@
+---
+# node_exporter file for prometheus
+- name: 2.0 Download node__exporter
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: /tmp/
+  ignore_errors: yes
+  with_items: "{{ prometheus_node_exporter_download_url }}"
+  become: true
+
+- name: 2.1 Extract the binare prometheus files 
+  ansible.builtin.unarchive:
+    src: "{{ item }}"
+    dest: /opt/
+    remote_src: yes
+  with_items: "{{ prometheus_node_exporter_archive }}"
+  become: true
+
+- name: 2.2 Check exist temp file
+  ansible.builtin.stat:
+    path: "{{ prometheus_node_exporter_archive }}"
+  register: prometheus_file
+
+- name: 2.3 Remove temp file
+  ansible.builtin.file:
+    path: "{{ prometheus_node_exporter_archive }}"
+    state: absent
+  when: prometheus_file.stat.exists
+
+- name: 2.4 Copy prometheus.service
+  template:
+    src: "templates/{{ item }}.j2"
+    dest: "/{{ item }}"
+    mode: '0744'
+  with_items: 
+    - "{{ prometheus_template_service_systemd_node }}"
+    - "{{ prometheus_template_default_options_node }}"
+
+- name: 2.5 Reload systemd manager configuration
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: 2.6 Enable and start Prometheus service
+  ansible.builtin.systemd:
+    name: prometheus
+    state: started
+    enabled: yes

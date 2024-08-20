@@ -43,14 +43,14 @@
   with_items: "{{ prometheus_archive }}"
   become: true
 
-- name: Check exit temp file
+- name: Check exist temp file
   ansible.builtin.stat:
-    path: /tmp/prometheus-2.43.0.linux-amd64.tar.gz
+    path: "{{ prometheus_archive }}"
   register: prometheus_file
 
 - name: Remove temp file
   ansible.builtin.file:
-    path: /tmp/prometheus-2.43.0.linux-amd64.tar.gz
+    path: "{{ prometheus_archive }}"
     state: absent
   when: prometheus_file.stat.exists
 
@@ -135,15 +135,11 @@
   ansible.builtin.systemd:
     daemon_reload: yes
 
-- name: 1.8 Enable Prometheus service
+- name: 1.9 Enable and start Prometheus service
   ansible.builtin.systemd:
-    name: prometheus
-    enabled: yes
-
-- name: 1.9 Start Prometheus service
-  ansible.builtin.systemd:
-    name: prometheus
+    name: node_exporter
     state: started
+    enabled: yes
 
 - name: 1.10 Open 9090 in firewall
   ansible.builtin.command:
