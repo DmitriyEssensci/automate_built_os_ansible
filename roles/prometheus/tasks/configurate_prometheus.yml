@@ -128,7 +128,7 @@
         path: "/etc/prometheus/{{ item }}"
         owner: "{{ prometheus_user }}"
         group: "{{ prometheus_group }}"
-      with_items: "{{ prometheus_template_prometheus_yml }}"
+      with_items: "{{ prometheus_service_conf_file }}"
   become: true
 
 - name: 1.7 Reload systemd manager configuration
