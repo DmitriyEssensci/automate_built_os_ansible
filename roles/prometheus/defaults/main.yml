@@ -30,4 +30,4 @@ prometheus_node_exporter_service_name: node_exporter.service
 
 prometheus_template_service_systemd_node: "etc/systemd/system/{{ prometheus_node_exporter_service_name }}"
 prometheus_template_service_initd_node: "etc/init.d/{{ prometheus_node_exporter_service_name }}" # Не применимо на ubuntu
-prometheus_template_default_options_node: etc/defaults/node_exporter
+prometheus_template_default_options_node: etc/default/node_exporter
