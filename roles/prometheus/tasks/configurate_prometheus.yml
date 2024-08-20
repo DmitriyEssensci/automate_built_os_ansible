@@ -137,7 +137,7 @@
 
 - name: 1.9 Enable and start Prometheus service
   ansible.builtin.systemd:
-    name: node_exporter
+    name: prometheus
     state: started
     enabled: yes
 

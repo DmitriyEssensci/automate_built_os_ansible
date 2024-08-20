@@ -10,9 +10,10 @@ prometheus_bin_file:
 prometheus_conf_file:
   - consoles 
   - console_libraries 
-  
+
 prometheus_service_conf_file: prometheus.yml
 prometheus_service_name: prometheus.service
+
 prometheus_template_service_systemd: "etc/systemd/system/{{ prometheus_service_name }}"
 prometheus_template_prometheus_yml: "etc/prometheus/{{ prometheus_service_conf_file }}"
 prometheus_template_service_initd: "etc/init.d/{{ prometheus_service_name }}" # Не применимо на ubuntu
@@ -24,7 +25,9 @@ prometheus_python_interpreter: /usr/bin/python3
 #node_exporter
 prometheus_node_exporter_download_url: https://github.com/prometheus/node_exporter/releases/download/v1.8.2/node_exporter-1.8.2.linux-amd64.tar.gz
 prometheus_node_exporter_archive: /tmp/node_exporter-1.8.2.linux-amd64.tar.gz
+
 prometheus_node_exporter_service_name: node_exporter.service
+
 prometheus_template_service_systemd_node: "etc/systemd/system/{{ prometheus_node_exporter_service_name }}"
 prometheus_template_service_initd_node: "etc/init.d/{{ prometheus_node_exporter_service_name }}" # Не применимо на ubuntu
 prometheus_template_default_options_node: etc/defaults/node_exporter
