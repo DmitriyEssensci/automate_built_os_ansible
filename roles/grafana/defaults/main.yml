@@ -7,3 +7,8 @@ grafana_convert_gpg: "gpg --dearmor -o {{ grafana_ensure_keyrings }}/grafana.gpg
 grafana_dest_gpg: /tmp/grafana.gpg.key
 grafana_check_version: grafana-server -v | grep Version
 grafana_service_status: service --status-all | grep + | grep grafana
+grafana_config_file: etc/grafana/grafana.ini
+grafana_dashboard_path: var/lib/grafana/dashboard
+grafana_dashboard_main_dashboard_name: node_exporter_full-dashboard.json
+grafana_dashboard_main_dashboard_dir: "{{ grafana_dashboard_path }}/{{ grafana_dashboard_main_dashboard_name }}"
+
