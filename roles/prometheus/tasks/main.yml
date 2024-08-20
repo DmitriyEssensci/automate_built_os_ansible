@@ -133,9 +133,12 @@
     name: prometheus
     state: started
 
-- name: 1.6.11 Check prometheus status
-  command: "systemctl status prometheus | grep active"
-  register:  prometheus_status
+- name: 1.6.11 Check Prometheus status
+  ansible.builtin.systemd:
+    name: prometheus
+    state: started
+  register: prometheus_status
+  failed_when: "'active' not in prometheus_status.status"
 
 - name: 1.6.12 Debug check prometheus status
   debug:
