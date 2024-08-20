@@ -26,6 +26,7 @@
     path: "{{ prometheus_node_exporter_archive }}"
     state: absent
   when: prometheus_file.stat.exists
+  become: true
 
 - name: 2.4 Copy prometheus.service
   template:
@@ -35,13 +36,16 @@
   with_items: 
     - "{{ prometheus_template_service_systemd_node }}"
     - "{{ prometheus_template_default_options_node }}"
+  become: true
 
 - name: 2.5 Reload systemd manager configuration
   ansible.builtin.systemd:
     daemon_reload: yes
+  become: true
 
 - name: 2.6 Enable and start Prometheus service
   ansible.builtin.systemd:
     name: prometheus
     state: started
     enabled: yes
+  become: true

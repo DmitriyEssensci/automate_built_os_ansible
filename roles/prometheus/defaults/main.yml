@@ -35,3 +35,4 @@ prometheus_template_default_options_node: etc/default/node_exporter
 prometheus_node_exporter_addres: 172.17.0.2
 
 prometheus_node_exporter_node_dir: /etc/prometheus/targets.d
+prometheus_node_exporter_node_yml: "{{ prometheus_node_exporter_node_dir }}/node.yml.j2"
