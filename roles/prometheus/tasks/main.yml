@@ -109,7 +109,7 @@
         owner: "{{ prometheus_user }}"
         group: "{{ prometheus_group }}"
         recurse: yes
-        
+
     - name: 1.6.7 Copy prometheus.service
       template:
         src: "templates/{{ item }}.j2"
@@ -119,9 +119,9 @@
         - "{{ prometheus_template_service_systemd }}"
         - "{{ prometheus_template_service_initd }}"
 
-    # - name: 1.6.8 Restart prometheus service
-    #   ansible.builtin.command:
-    #     cmd: "service prometheus restart"
-    #   ignore_errors: true
+    - name: 1.6.8 Restart prometheus service
+      ansible.builtin.command:
+        cmd: "systemctl restart prometheus"
+      ignore_errors: true
   become: true
 
