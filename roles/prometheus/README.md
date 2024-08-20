@@ -13,16 +13,28 @@ Role Variables
 
 A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
 
-***prometheus_version***  
-
-***prometheus_download_url***  
-
-***prometheus_archive***  
-
-***prometheus_bin_file***  
-
-***prometheus_conf_file***  
-
+prometheus_version
+prometheus_download_url
+prometheus_archive
+prometheus_bin_file
+prometheus_conf_file
+prometheus_service_conf_file
+prometheus_service_name
+prometheus_template_service_systemd
+prometheus_template_prometheus_yml
+prometheus_template_service_initd
+prometheus_user
+prometheus_group
+prometheus_python_interpreter
+prometheus_node_exporter_download_url
+prometheus_node_exporter_archive
+prometheus_node_exporter_service_name
+prometheus_template_service_systemd_node
+prometheus_template_service_initd_node
+prometheus_template_default_options_node
+prometheus_node_exporter_addres
+prometheus_node_exporter_node_dir
+prometheus_node_exporter_node_yml
 
 Dependencies
 ------------

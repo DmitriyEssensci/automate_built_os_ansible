@@ -5,7 +5,7 @@
     mode: '0755'
   become: true
 
-- name: 3.1 Copy prometheus.service
+- name: 3.1 Copy node.yml
   template:
     src: "templates/{{ item }}.j2"
     dest: "/{{ item }}"
