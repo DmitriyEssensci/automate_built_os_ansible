@@ -9,3 +9,8 @@
   include_tasks: configurate_node_exporter.yml
   vars:
     ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
+
+- name: Configure prometheus scraping
+  include_tasks: prometheus_scraping.yml
+  vars:
+    ansible_python_interpreter: "{{ prometheus_python_interpreter }}"

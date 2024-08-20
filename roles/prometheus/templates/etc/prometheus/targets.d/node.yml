@@ -1,0 +1,2 @@
+- targets:
+    - '{{ prometheus_node_exporter_addres }}:9100'

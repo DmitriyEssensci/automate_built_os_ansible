@@ -1,0 +1,6 @@
+- name: 1.1 Create /etc/prometheus directory
+  ansible.builtin.file:
+    path: "{{ prometheus_node_exporter_node_dir }}"
+    state: directory
+    mode: '0755'
+

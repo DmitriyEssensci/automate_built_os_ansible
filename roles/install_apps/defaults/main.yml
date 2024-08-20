@@ -11,3 +11,4 @@ installapps_apps_list:
   - netstat 
   - ip
   - network
+  - curl
