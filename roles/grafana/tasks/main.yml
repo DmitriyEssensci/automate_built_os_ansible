@@ -47,13 +47,21 @@
   become: true
 
 - name: 1.7 Copy grafana config file and move dashboard in dir
-  template:
-    src: "templates/{{ item }}.j2"
-    dest: "/{{ item }}"
-    mode: '0744'
-  with_items: 
-    - "{{ grafana_config_file }}"
-    - "{{ grafana_dashboard_main_dashboard_dir }}"
+  block: 
+    - name: 1.7.1 Copy grafana config file and move dashboard in dir
+      template:
+        src: "templates/{{ item }}.j2"
+        dest: "/{{ item }}"
+        mode: '0744'
+      with_items: "{{ grafana_config_file }}"
+
+    - name: 1.7.2 Copy grafana config file and move dashboard in dir
+      template:
+        src: "templates/{{ item }}"
+        dest: "/{{ item }}"
+        mode: '0744'
+      with_items: "{{ grafana_dashboard_main_dashboard_dir }}"
+  become: true
 
 - name: 1.8 Check grafana version
   ansible.builtin.command: 
@@ -64,22 +72,23 @@
   debug:
     msg: "{{ grafana_version }}"
 
-- name: 1.10 Reload systemd manager configuration
-  ansible.builtin.systemd:
-    daemon_reload: yes
+- name: 1.10 Enable grafana systemd and ensure what grafana started
+  block:
+    - name: 1.10.1 Reload systemd manager configuration
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: 1.10.2 Enable and start Prometheus service
+      ansible.builtin.systemd:
+        name: grafana-server
+        state: started
+        enabled: yes
+
+    - name: 1.10.3 Check grafana service start
+      shell: "{{ grafana_service_status }}"
+      register: grafana_status
+
+    - name: 1.10.4 Debug check grafana service start
+      debug:
+        msg: "{{ grafana_status }}"
   become: true
-
-- name: 1.11 Enable and start Prometheus service
-  ansible.builtin.systemd:
-    name: grafana-server
-    state: started
-    enabled: yes
-  become: true
-
-- name: 1.12 Check grafana service start
-  shell: "{{ grafana_service_status }}"
-  register: grafana_status
-
-- name: 1.13 Debug check grafana service start
-  debug:
-    msg: "{{ grafana_status }}"
