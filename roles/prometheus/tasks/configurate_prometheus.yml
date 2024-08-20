@@ -43,20 +43,20 @@
   with_items: "{{ prometheus_archive }}"
   become: true
 
-- name: Check exist temp file
+- name: 1.5 Check exist temp file
   ansible.builtin.stat:
     path: "{{ prometheus_archive }}"
   register: prometheus_file
 
-- name: Remove temp file
+- name: 1.6 Remove temp file
   ansible.builtin.file:
     path: "{{ prometheus_archive }}"
     state: absent
   when: prometheus_file.stat.exists
 
-- name: 1.5 Move binary & Set Owner
+- name: 1.7 Move binary & Set Owner
   block: 
-    - name: 1.5.1 Copy promtool binary to /usr/local/bin
+    - name: 1.7.1 Copy promtool binary to /usr/local/bin
       ansible.builtin.copy:
         src: "/opt/prometheus-{{ prometheus_version }}.linux-amd64/{{ item }}"
         dest: "/usr/local/bin/{{ item }}"
@@ -67,7 +67,7 @@
       with_items: "{{ prometheus_bin_file }}"
       ignore_errors: true
 
-    - name: 1.5.2 Change ownership of /usr/local/bin/
+    - name: 1.7.2 Change ownership of /usr/local/bin/
       ansible.builtin.file:
         path: "/usr/local/bin/{{ item }}"
         owner: "{{ prometheus_user }}"
@@ -76,9 +76,9 @@
       with_items: "{{ prometheus_bin_file }}"
   become: true
 
-- name: 1.6 Move the Configuration Files & Set Owner
+- name: 1.8 Move the Configuration Files & Set Owner
   block: 
-    - name: 1.6.1 Copy prometheus binary to /etc/prometheus
+    - name: 1.8.1 Copy prometheus binary to /etc/prometheus
       ansible.builtin.copy:
         src: "/opt/prometheus-2.43.0.linux-amd64/{{ item }}"
         dest: "/etc/prometheus/{{ item }}"
@@ -89,27 +89,27 @@
       with_items: "{{ prometheus_conf_file }}"
       ignore_errors: true
 
-    - name: 1.6.2 Change ownership of /etc/prometheus
+    - name: 1.8.2 Change ownership of /etc/prometheus
       ansible.builtin.file:
         path: /etc/prometheus
         owner: "{{ prometheus_user }}"
         group: "{{ prometheus_group }}"
 
-    - name: 1.6.3 Change ownership of Prometheus configuration files
+    - name: 1.8.3 Change ownership of Prometheus configuration files
       ansible.builtin.file:
         path: "/etc/prometheus/{{ item }}"
         owner: "{{ prometheus_user }}"
         group: "{{ prometheus_group }}"
       with_items: "{{ prometheus_conf_file }}"
 
-    - name: 1.6.4 Change ownership of /var/lib/prometheus
+    - name: 1.8.4 Change ownership of /var/lib/prometheus
       ansible.builtin.file:
         path: /var/lib/prometheus
         owner: "{{ prometheus_user }}"
         group: "{{ prometheus_group }}"
         recurse: yes
 
-    - name: 1.6.7 Copy prometheus.service
+    - name: 1.8.7 Copy prometheus.service
       template:
         src: "templates/{{ item }}.j2"
         dest: "/{{ item }}"
@@ -118,7 +118,7 @@
         - "{{ prometheus_template_service_systemd }}"
         - "{{ prometheus_template_prometheus_yml }}"
 
-    - name: 1.6.8 Change ownership of Prometheus /etc/prometheus/prometheus.yml
+    - name: 1.8.8 Change ownership of Prometheus /etc/prometheus/prometheus.yml
       ansible.builtin.file:
         path: "/etc/prometheus/{{ item }}"
         owner: "{{ prometheus_user }}"
@@ -126,19 +126,19 @@
       with_items: "{{ prometheus_service_conf_file }}"
   become: true
 
-- name: 1.7 Reload systemd manager configuration
+- name: 1.9 Reload systemd manager configuration
   ansible.builtin.systemd:
     daemon_reload: yes
   become: true
 
-- name: 1.9 Enable and start Prometheus service
+- name: 1.10 Enable and start Prometheus service
   ansible.builtin.systemd:
     name: prometheus
     state: started
     enabled: yes
   become: true
 
-- name: 1.10 Open 9090 in firewall
+- name: 1.11 Open 9090 in firewall
   ansible.builtin.command:
     cmd: ufw allow 9090/tcp
   become: true

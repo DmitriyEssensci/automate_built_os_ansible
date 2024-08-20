@@ -1,5 +1,5 @@
 ---
-# node_exporter file for prometheus
+# configurate_node_exporter file for prometheus
 - name: 2.0 Download node__exporter
   ansible.builtin.get_url:
     url: "{{ item }}"
