@@ -3,8 +3,8 @@
 - name: Install 1C Enterprise Application Server  
   # Переменные доступные плэйбуку
   block:
-    - name: Test connection
-      win_ping:
+    # - name: Test connection
+    #   win_ping:
 
     # Проверка наличия службы сервера 1С
     - name: Check if a server agent service is installed
