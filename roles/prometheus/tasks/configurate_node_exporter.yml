@@ -43,9 +43,9 @@
     daemon_reload: yes
   become: true
 
-- name: 2.6 Enable and start Prometheus service
+- name: 2.6 Enable and start node_exporter service
   ansible.builtin.systemd:
-    name: prometheus
+    name: node_exporter
     state: started
     enabled: yes
   become: true

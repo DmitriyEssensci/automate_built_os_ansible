@@ -130,7 +130,7 @@
   ansible.builtin.systemd:
     daemon_reload: yes
   become: true
-  when: inventory_hostname == 'dmitriysa'
+  when: inventory_hostname == '{{ prometheus_host_machine }}'
 
 - name: 1.10 Enable and start Prometheus service
   ansible.builtin.systemd:
@@ -138,7 +138,7 @@
     state: started
     enabled: yes
   become: true
-  when: inventory_hostname == 'dmitriysa'
+  when: inventory_hostname == '{{ prometheus_host_machine }}'
 
 - name: 1.11 Open 9090 in firewall
   ansible.builtin.command:
@@ -146,4 +146,4 @@
   become: true
   when: >
     ansible_os_family != "MosOS Arbat" and
-    inventory_hostname == 'dmitriysa'
+    inventory_hostname == '{{ prometheus_host_machine }}'

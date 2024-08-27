@@ -2,3 +2,5 @@
     {% for host in groups['newmachine'] %}
     - {{ hostvars[host]['ansible_default_ipv4']['address'] }}:9100
     {% endfor %}
+  labels:
+    instance: "{{ ansible_hostname }}"
