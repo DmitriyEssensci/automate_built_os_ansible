@@ -73,7 +73,7 @@
 
 - name: Debuig system info
   debug:
-    msg: |
-      "Timezone {{ stdout_timedatectl.stdout_lines }}"
-      "Accessible locale: {{ available_locales.stdout_lines }}"
-      "Default locales: {{ default_locales.stdout_lines }}"
+    msg: 
+      - "Timezone {{ stdout_timedatectl.stdout_lines }}"
+      - "Accessible locale: {{ available_locales.stdout_lines }}"
+      - "Default locales: {{ default_locales.stdout_lines }}"
