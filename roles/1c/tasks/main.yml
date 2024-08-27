@@ -89,8 +89,8 @@
       - "Default locales: {{ default_locales.stdout }}"
   when: debug_status  == true
 
-- name: Extract server64_8_3_23_2236.tar
+- name: Extract server64_8_3_23_2236.tar.gz
   ansible.builtin.unarchive:
-    src: /tmp/1c_install_v2/server64_8_3_23_2236.tar
-    dest: /tmp/1c_install_v2/
+    src: /tmp/1c_install_2v/server64_8_3_23_2236.tar.gz
+    dest: /tmp/1c_install_2v/
     remote_src: yes
