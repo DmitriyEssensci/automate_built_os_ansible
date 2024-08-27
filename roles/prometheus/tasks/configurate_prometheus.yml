@@ -13,7 +13,7 @@
         system: yes
         shell: /sbin/nologin
         group: prometheus
-  become: yes
+  become: true
 
 - name: 1.1 Create /etc/prometheus directory
   ansible.builtin.file:
@@ -130,6 +130,7 @@
   ansible.builtin.systemd:
     daemon_reload: yes
   become: true
+  when: inventory_hostname == 'dmitriysa'
 
 - name: 1.10 Enable and start Prometheus service
   ansible.builtin.systemd:
@@ -137,9 +138,12 @@
     state: started
     enabled: yes
   become: true
+  when: inventory_hostname == 'dmitriysa'
 
 - name: 1.11 Open 9090 in firewall
   ansible.builtin.command:
     cmd: ufw allow 9090/tcp
   become: true
-  when: ansible_os_family != "MosOS Arbat"
+  when: >
+    ansible_os_family != "MosOS Arbat" and
+    inventory_hostname == 'dmitriysa'
