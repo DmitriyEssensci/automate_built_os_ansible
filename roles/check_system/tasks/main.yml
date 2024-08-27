@@ -2,7 +2,7 @@
 # tasks file for check_system
 - name: Gather system information and check internet connectivity
   gather_facts: yes
-  become: true
+  become: yes
 
 - name: Gather system facts
   block:
@@ -53,4 +53,4 @@
         {% else %}
           Internet connectivity is unavailable.
         {% endif %}
-  become: true
+  become: yes
