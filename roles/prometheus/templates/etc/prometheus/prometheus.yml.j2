@@ -22,7 +22,7 @@ rule_files:
   # - "second_rules.yml"
 
 scrape_configs:
-  - job_name: 'node'
+  - job_name: 'node_cluster'
     file_sd_configs:
       - files:
           - "{{ prometheus_node_exporter_node_dir }}/node.yml"
