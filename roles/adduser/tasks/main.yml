@@ -2,7 +2,7 @@
 # tasks file for addusers
 - name: 1.0 Check family
   debug:
-    msg: "{{ ansible_os_family }}"
+    msg: "OS family: {{ ansible_os_family }}"
 
 - name: 1.2 Ensure what {{ addusers_group }} group exists
   ansible.builtin.group:

@@ -6,10 +6,10 @@
       - 'network'
   when: ansible_os_family != "MosOS Arbat"
 
-- name: 1.0 Gather system information and check internet connectivity
-  gather_facts: true
-  become: yes
-  when: ansible_os_family == "MosOS Arbat"
+# - name: 1.0 Gather system information and check internet connectivity
+#   gather_facts: true
+#   become: yes
+#   when: ansible_os_family == "MosOS Arbat"
 
 - name: 1.1 Gethering and display block
   block:  
