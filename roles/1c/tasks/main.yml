@@ -6,12 +6,12 @@
 #   become: true
 
 - name: Check timezone
-  shell: timedatectl show | grep Timezone
+  shell: timedatectl show --property=Timezone --value
   register: stdout_timedatectl
 
 - name: Set timezone
   shell: timedatectl set-timezone Europe/Moscow
-  when: "Europe/Moscow in {{ stdout_timedatectl }}"
+  when: stdout_timedatectl.stdout != "Europe/Moscow"
 
 - name: Установить нужные локали
   block:
