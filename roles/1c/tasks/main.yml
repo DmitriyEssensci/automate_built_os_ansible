@@ -54,3 +54,19 @@
         line: "LANG={{ default_locale }}"
         create: yes
       when: ansible_os_family == "RedHat"
+
+- name: Показать все доступные локали
+  shell: locale -a
+  register: available_locales
+
+- name: Показать локали по умолчанию
+  shell: locale
+  register: default_locales
+
+- name: Вывести список всех доступных локалей
+  debug:
+    var: available_locales.stdout_lines
+
+- name: Вывести локали по умолчанию
+  debug:
+    var: default_locales.stdout_lines
