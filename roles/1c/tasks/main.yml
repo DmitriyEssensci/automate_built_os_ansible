@@ -11,6 +11,7 @@
 
 - name: Set timezone
   shell: timedatectl set-timezone Europe/Moscow
+  become: true
   when: stdout_timedatectl.stdout != "Europe/Moscow"
 
 - name: Установить нужные локали
@@ -22,6 +23,7 @@
         line: "{{ item }}"
         state: present
       loop: "{{ locales }}"
+      become: true
       when: ansible_os_family == "Debian"
 
     - name: Добавить локали в /etc/locale.conf (для RedHat)
@@ -30,11 +32,13 @@
         line: "{{ item }}"
         state: present
       loop: "{{ locales }}"
+      become: true
       when: ansible_os_family == "RedHat"
 
     - name: Сгенерировать локали
       ansible.builtin.command: locale-gen "{{ item }}"
       loop: "{{ locales }}"
+      become: true
       when: ansible_os_family == "Debian"
 
 - name: Установить локаль по умолчанию
@@ -45,6 +49,7 @@
         regexp: "^LANG="
         line: "LANG={{ default_locale }}"
         create: yes
+      become: true
       when: ansible_os_family == "Debian"
 
     - name: Обновить переменную LANG в /etc/locale.conf (RedHat)
@@ -53,6 +58,7 @@
         regexp: "^LANG="
         line: "LANG={{ default_locale }}"
         create: yes
+      become: true
       when: ansible_os_family == "RedHat"
 
 - name: Показать все доступные локали
@@ -71,9 +77,20 @@
   debug:
     var: default_locales.stdout_lines
 
+# - name: Refresh package lists
+#   shell: sudo apt update && sudo apt dist-upgrade -y
+#   become: true
+
 - name: Debuig system info
   debug:
     msg: 
       - "Timezone {{ stdout_timedatectl.stdout }}"
       - "Accessible locale: {{ available_locales.stdout }}"
       - "Default locales: {{ default_locales.stdout }}"
+  when: "{{ debug_status }}" == true
+
+- name: Extract server64_8_3_22_1923.tar.gz
+  ansible.builtin.unarchive:
+    src: /tmp/1c_install_v2server64_8_3_22_1923.tar.gz
+    dest: /tmp/1c_install_v2/
+    remote_src: yes

@@ -12,3 +12,7 @@ installapps_apps_list:
   - ip
   - network
   - curl
+  - mc 
+  - htop 
+  - iotop
+  - iftop 

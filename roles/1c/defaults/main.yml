@@ -14,3 +14,4 @@ locales:
   - ru_RU.CP1251
   - ru_RU.UTF-8
 default_locale: ru_RU.UTF-8
+debug_status: false
