@@ -1,3 +1,2 @@
 ---
 # defaults file for check_system
-check_system__python_interpreter: /usr/bin/python3.6

@@ -1,8 +1,56 @@
-- name: 'Create {{ 1c_soft_path }}'
-  ansible.builtin.file:
-    path: "{{ 1c_soft_path }}"
-    state: directory
-    mode: '0755'
-  become: true
+# - name: 'Create {{ 1c_soft_path }}'
+#   ansible.builtin.file:
+#     path: "{{ 1c_soft_path }}"
+#     state: directory
+#     mode: '0755'
+#   become: true
 
-- name: 
+- name: Check timezone
+  shell: timedatectl show | grep Timezone
+  register: stdout_timedatectl
+
+- name: Set timezone
+  shell: timedatectl set-timezone Europe/Moscow
+  when: "Europe/Moscow in {{ stdout_timedatectl }}"
+
+- name: Установить нужные локали
+  block:
+    - name: Добавить необходимые локали в /etc/locale.gen (для Debian/Ubuntu)
+      ansible.builtin.lineinfile:
+        path: /etc/locale.gen
+        regexp: "^#?({{ item }})"
+        line: "{{ item }}"
+        state: present
+      loop: "{{ locales }}"
+      when: ansible_os_family == "Debian"
+
+    - name: Добавить локали в /etc/locale.conf (для RedHat)
+      ansible.builtin.lineinfile:
+        path: /etc/locale.conf
+        line: "{{ item }}"
+        state: present
+      loop: "{{ locales }}"
+      when: ansible_os_family == "RedHat"
+
+    - name: Сгенерировать локали
+      ansible.builtin.command: locale-gen "{{ item }}"
+      loop: "{{ locales }}"
+      when: ansible_os_family == "Debian"
+
+- name: Установить локаль по умолчанию
+  block:
+    - name: Обновить переменную LANG в /etc/default/locale (Debian/Ubuntu)
+      ansible.builtin.lineinfile:
+        path: /etc/default/locale
+        regexp: "^LANG="
+        line: "LANG={{ default_locale }}"
+        create: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Обновить переменную LANG в /etc/locale.conf (RedHat)
+      ansible.builtin.lineinfile:
+        path: /etc/locale.conf
+        regexp: "^LANG="
+        line: "LANG={{ default_locale }}"
+        create: yes
+      when: ansible_os_family == "RedHat"
