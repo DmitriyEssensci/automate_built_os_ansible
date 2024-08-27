@@ -63,9 +63,17 @@
   shell: locale
   register: default_locales
 
+- name: Вывести список всех доступных локалей
+  debug:
+    var: available_locales.stdout_lines
+
+- name: Вывести локали по умолчанию
+  debug:
+    var: default_locales.stdout_lines
+
 - name: Debuig system info
   debug:
     msg: |
       "Timezone {{ stdout_timedatectl }}"
-      "Accessible locale: {{ available_locales.stdout_lines }}"
-      "Default locales: {{ default_locales.stdout_lines }}"
+      "Accessible locale: {{ available_locales }}"
+      "Default locales: {{ default_locales }}"
