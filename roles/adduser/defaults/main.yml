@@ -1,0 +1,5 @@
+---
+# defaults file for addusers
+addusers_users:
+- ['ansibleuser', '$1$SomeSalt$ovL6d6ZySjCiMoswe9Vpx.']
+addusers_group: wheel

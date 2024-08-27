@@ -1,0 +1,10 @@
+---
+# tasks file for addusers
+- name: Add users to {{ addusers_group }} group
+  user:
+    name: "{{ item[0] }}"
+    password: "{{ item[1] }}"
+    state: present
+    groups: "{{ addusers_group }}"
+  with_items: "{{ addusers_users }}"
+  become: true
