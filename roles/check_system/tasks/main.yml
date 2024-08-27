@@ -1,53 +1,36 @@
 ---
 # tasks file for check_system
-- name: Gather system information and check internet connectivity
+- name: 1.0 Gather system information and check internet connectivity
   gather_facts: yes
   become: yes
 
-- name: 1.1 Display hostname
-  ansible.builtin.debug: 
-    msg: "Hostname: {{ ansible_hostname }}"
+- name: 1.1 Gethering and display block
+  block:  
+    - name: 1.1.1 Display hostname
+      debug: 
+        msg: "Hostname: {{ ansible_hostname }}"
 
-- name: 1.2 Display OS family
-  ansible.builtin.debug: 
-    msg: "OS Family: {{ ansible_os_family }}"
+    - name: 1.1.2 Display operation system name
+      debug: 
+        msg: "OS Name: {{ ansible_distribution }}" 
 
-- name: 1.3 Display operating system name
-  ansible.builtin.debug: 
-    msg: "OS Name: {{ ansible_distribution }}" 
+    - name: 1.1.3 Display operating system version
+      debug:
+        msg: "OS Version: {{ ansible_distribution_version }}"
 
-- name: 1.4 Display operating system version
-  ansible.builtin.debug:
-    msg: "OS Version: {{ ansible_distribution_version }}"
+    - name: 1.1.4 Display tital RAM size
+      debug: 
+        msg: "Total RAM: {{ ansible_memtotal_mb }} MB"
 
-- name: 1.5 Display total RAM size
-  ansible.builtin.debug: 
-    msg: "Total RAM: {{ ansible_memtotal_mb }} MB"
+    - name: 1.1.5 List all users on the system
+      command: getent passwd
+      register: user_list
 
-- name: 1.6 List all users on the system
-  ansible.builtin.command: getent passwd
-  register: user_list
+    - name: 1.1.6 Display users in system
+      debug:
+        msg: "Users: {{ user_list.stdout_lines | map('split', ':') | map('first') | list }}"
 
-- name: 1.7 Display users in system
-  ansible.builtin.debug:
-    msg: "{{ user_list.stdout_lines | map('split', ':') | map('first') | list }}"
-
-- name: 1.8 Display default IP address
-  ansible.builtin.debug:
-    msg: "Default IP Address: {{ ansible_default_ipv4.address if ansible_default_ipv4 is defined else 'No default IPv4 address' }}"
-
-- name: 2.0 Check internet connectivity
-  ansible.builtin.uri:
-    url: https://www.google.com
-    return_content: no
-  register: internet_check
-  ignore_errors: yes
-
-- name: 2.1 Display internet connectivity status
-  ansible.builtin.debug:
-    msg: >
-      {% if internet_check is defined and internet_check.status == 200 %}
-        Internet connectivity is available.
-      {% else %}
-        Internet connectivity is unavailable.
-      {% endif %}
+    - name: 1.1.7 Display IP address
+      debug:
+        msg: "Host: {{ inventory_hostname }}, IP: {{ ansible_default_ipv4.address if ansible_default_ipv4 is defined else 'No default IPv4 address' }}" 
+  become: true
