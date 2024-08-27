@@ -1,7 +1,6 @@
 ---
 # tasks file for check_system
 - name: Gather system information and check internet connectivity
-  hosts: opensuse_hosts
   gather_facts: yes
   become: true
 
@@ -54,3 +53,4 @@
         {% else %}
           Internet connectivity is unavailable.
         {% endif %}
+  become: true
