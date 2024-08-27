@@ -142,3 +142,4 @@
   ansible.builtin.command:
     cmd: ufw allow 9090/tcp
   become: true
+  when: ansible_os_family != "MosOS Arbat"
