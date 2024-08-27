@@ -2,15 +2,15 @@
 # main file for prometheus
 - name: 1.0 Configurate prometheus
   include_tasks: configurate_prometheus.yml
-  vars:
-    ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
+  # vars:
+  #   ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
 
 - name: 2.0 Configurate node_exporter
   include_tasks: configurate_node_exporter.yml
-  vars:
-    ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
+  # vars:
+  #   ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
 
 - name: 3.0 Configure prometheus scraping
   include_tasks: prometheus_scraping.yml
-  vars:
-    ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
+  # vars:
+  #   ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
