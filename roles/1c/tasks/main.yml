@@ -91,6 +91,6 @@
 
 - name: Extract server64_8_3_22_1923.tar.gz
   ansible.builtin.unarchive:
-    src: tmp/1c_install_v2server64_8_3_22_1923.tar.gz
+    src: tmp/1c_install_v2/server64_8_3_22_1923.tar.gz
     dest: tmp/1c_install_v2/
     remote_src: yes
