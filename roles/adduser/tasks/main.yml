@@ -1,18 +1,18 @@
 ---
 # tasks file for addusers
-# - name: Ensure what {{ addusers_group }} group exists
-#   ansible.builtin.group:
-#     name: "{{ addusers_group }}"
-#     state: present
-
-# - name: Add users to {{ addusers_group }} group
-#   user:
-#     name: "{{ addusers_users }}"
-#     password: "{{ addusers_users_pass }}"
-#     state: present
-#     groups: "{{ addusers_group }}"
-#   become: true
-
-- name: Check family
+- name: 1.0 Check family
   debug:
     msg: "{{ ansible_os_family }}"
+
+- name: 1.2 Ensure what {{ addusers_group }} group exists
+  ansible.builtin.group:
+    name: "{{ addusers_group }}"
+    state: present
+
+- name: 1.3 Add users to {{ addusers_group }} group
+  user:
+    name: "{{ addusers_users }}"
+    password: "{{ addusers_users_pass }}"
+    state: present
+    groups: "{{ addusers_group }}"
+  become: true
