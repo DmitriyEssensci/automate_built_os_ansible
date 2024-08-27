@@ -94,3 +94,17 @@
     src: /tmp/1c_install_2v/server64_8_3_23_2236.tar.gz
     dest: /tmp/1c_install_2v/
     remote_src: yes
+
+- name: Set executable permissions on setup-full-8.3.23.2236-x86_64.run
+  ansible.builtin.file:
+    path: /tmp/1c_install_2v/setup-full-8.3.23.2236-x86_64.run
+    mode: '0777'
+    state: file
+
+# - name: Install setup-full-8.3.23.2236-x86_64.run with language selection
+#   expect:
+#     command: sudo ./setup-full-8.3.23.2236-x86_64.run -y
+#     responses:
+#       'Choose your language': '16'
+#   args:
+#     chdir: /path/to/directory
