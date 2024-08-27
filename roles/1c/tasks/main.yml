@@ -87,7 +87,7 @@
       - "Timezone {{ stdout_timedatectl.stdout }}"
       - "Accessible locale: {{ available_locales.stdout }}"
       - "Default locales: {{ default_locales.stdout }}"
-  when: "{{ debug_status }}" == true
+  when: debug_status  == true
 
 - name: Extract server64_8_3_22_1923.tar.gz
   ansible.builtin.unarchive:
