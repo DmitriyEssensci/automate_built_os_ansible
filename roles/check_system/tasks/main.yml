@@ -38,6 +38,4 @@
     - name: 1.1.8 Display IP address
       debug:
         msg: "Host: {{ inventory_hostname }}, IP: {{ ansible_default_ipv4.address if ansible_default_ipv4 is defined else 'No default IPv4 address' }}" 
-  vars:
-    ansible_python_interpreter: "{{ check_system__python_interpreter }}"
   become: true
