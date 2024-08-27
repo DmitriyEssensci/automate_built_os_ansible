@@ -1,2 +1,4 @@
-- targets:
-    - '{{ prometheus_node_exporter_addres }}:9100'
+- targets: 
+    {% for host in groups['newmachine'] %}
+    - {{ hostvars[host]['ansible_default_ipv4']['address'] }}:9100
+    {% endfor %}
