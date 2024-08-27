@@ -11,6 +11,10 @@
       debug: 
         msg: "Hostname: {{ ansible_hostname }}"
 
+    - name: 1.1.1 Display os name
+      debug:
+        msg: "OS Name: {{ ansible_os_family }}"
+
     - name: 1.1.2 Display operation system name
       debug: 
         msg: "OS Name: {{ ansible_distribution }}" 
