@@ -1,8 +1,9 @@
 ---
 # tasks file for check_system
 - name: 1.0 Gather system information and check internet connectivity
-  gather_facts: true
-  become: true
+  ansible.builtin.setup:
+    gather_subset:
+      - 'network'
 
 - name: 1.1 Gethering and display block
   block:  
