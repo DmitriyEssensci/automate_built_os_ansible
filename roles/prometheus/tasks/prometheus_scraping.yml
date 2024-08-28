@@ -1,39 +1,17 @@
 ---
-
+# prometheus_scraping file for prometheus
 - name: Configure Prometheus
-
-  #hosts: newmachine  # Убедитесь, что указано ваше целевое окружение
-
-  gather_facts: yes  # Директива на уровне плейбука
-
-
-  tasks:
-
+  block:
     - name: 3.0 Create /etc/prometheus directory
-
       ansible.builtin.file:
-
         path: "{{ prometheus_node_exporter_node_dir }}"
-
         state: directory
-
         mode: '0755'
 
-      become: true
-
-
     - name: 3.1 Copy node.yml
-
       template:
-
         src: "templates/{{ item }}.j2"
-
         dest: "/{{ item }}"
-
         mode: '0744'
-
-      with_items: 
-
-        - "{{ prometheus_node_exporter_node_yml }}"
-
-      become: true
+      with_items: "{{ prometheus_node_exporter_node_yml }}"
+  become: true
