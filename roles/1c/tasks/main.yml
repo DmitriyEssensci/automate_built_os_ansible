@@ -6,11 +6,11 @@
   #   ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
 
 - name: 2.0 Install PostgreSQL
-  include_tasks: configurate_node_exporter.yml
+  include_tasks: postgresql_install.yml
   # vars:
   #   ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
 
-- name: 3.0 Configure prometheus scraping
-  include_tasks: prometheus_scraping.yml
+# - name: 3.0 Configure prometheus scraping
+#   include_tasks: prometheus_scraping.yml
   # vars:
   #   ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
