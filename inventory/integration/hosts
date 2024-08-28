@@ -8,7 +8,7 @@
 #DESKTOP-235ILIB ansible_host=192.168.141.129   ansible_ssh_user= ansible_ssh_pass=  # notebook vm
 
 dmitriysa ansible_host=192.168.80.129 ansible_ssh_user=root ansible_ssh_pass="0xV5]A2'h" ansible_python_interpreter=/usr/bin/python3 # workstation vm ubuntu
-opensuse1 ansible_host=192.168.80.131 ansible_ssh_user=root ansible_ssh_pass="111199901012015" ansible_python_interpreter=/usr/bin/python3 # opensuse mashine
+#opensuse1 ansible_host=192.168.80.131 ansible_ssh_user=root ansible_ssh_pass="111199901012015" ansible_python_interpreter=/usr/bin/python3 # opensuse mashine
 # opensuse2 ansible_host=192.168.80.132 ansible_ssh_user=root ansible_ssh_pass="111199901012015" ansible_python_interpreter=/usr/bin/python3 # opensuse mashine
 # opensuse3 ansible_host=192.168.80.134 ansible_ssh_user=root ansible_ssh_pass="111199901012015" ansible_python_interpreter=/usr/bin/python3 # opensuse mashine
 

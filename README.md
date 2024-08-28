@@ -28,14 +28,21 @@ newmachines -> new_machines:children
 1. check_system - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/check_system.yml
 2. install_apps - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/install_apps.yml
 3. prometheus - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/prometheus.yml
-4. grafana - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/grafana.yml
+4. grafana - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/grafana.yml   ***Возможно потребуется включение VPN для отработки  1.1 задачи ***  
 
 ***Prometheus:***  
 	http://hostname_ip:9090   
+	На данный момент приходится приводить файл /etc/prometheus/targets.d/node.yml в следующий вид руками:
+	- targets:
+    	- hostname:9100
+  	  labels:
+        instance: dmitriysa
 
 ***node_exporter:***   
 	http://hostname_ip:9100/metrics   
 
 ***grafana:***   
-	admin - admin   
-	http://hostname_ip:3000   
+	login/ pass: admin - admin   
+	web: http://hostname_ip:3000   
+	web_for_prometheus: http://{{ prometheus_grafana_host_address }}:3000/api/prom/push
+
