@@ -75,13 +75,13 @@
     dest: /tmp/1c_install_2v/
     remote_src: yes
  
-- name: 1.7 'Set executable permissions on {{ 1c_setup_run_file }}'
+- name: "1.7 Set executable permissions on {{ 1c_setup_run_file }}"
   ansible.builtin.file:
     path: "/tmp/1c_install_2v/{{ 1c_setup_run_file }}"
     mode: '0777'
     state: file
 
-- name: 1.8 Install setup-full-{{  1c_version }}-x86_64.run with language selection
+- name: 1.8 Install with language selection
   shell: "./{{ 1c_setup_run_file }} --mode unattended --enable-components server,ws,server_admin,config_storage_server" 
   become: true
 
