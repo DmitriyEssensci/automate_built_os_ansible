@@ -5,18 +5,18 @@
 #     mode: '0755'
 #   become: true
 
-- name: Check timezone
+- name: 1.0 Check timezone
   shell: timedatectl show --property=Timezone --value
   register: stdout_timedatectl
 
-- name: Set timezone
+- name: 1.1 Set timezone
   shell: timedatectl set-timezone Europe/Moscow
   become: true
   when: stdout_timedatectl.stdout != "Europe/Moscow"
 
-- name: Установить нужные локали
+- name: 1.2 Set need locale
   block:
-    - name: Добавить необходимые локали в /etc/locale.gen (для Debian/Ubuntu)
+    - name: 1.2.1 Add needs locale in /etc/locale.gen (for Debian/Ubuntu)
       ansible.builtin.lineinfile:
         path: /etc/locale.gen
         regexp: "^#?({{ item }})"
@@ -26,7 +26,7 @@
       become: true
       when: ansible_os_family == "Debian"
 
-    - name: Добавить локали в /etc/locale.conf (для RedHat)
+    - name: 1.2.2 Add needs locale in /etc/locale.conf (for RedHat)
       ansible.builtin.lineinfile:
         path: /etc/locale.conf
         line: "{{ item }}"
@@ -35,15 +35,15 @@
       become: true
       when: ansible_os_family == "RedHat"
 
-    - name: Сгенерировать локали
+    - name: 1.2.3 Generate locale
       ansible.builtin.command: locale-gen "{{ item }}"
       loop: "{{ locales }}"
       become: true
       when: ansible_os_family == "Debian"
 
-- name: Установить локаль по умолчанию
+- name: 1.3 Set locale as default
   block:
-    - name: Обновить переменную LANG в /etc/default/locale (Debian/Ubuntu)
+    - name: 1.3.1 Refresh var LANG in /etc/default/locale (for Debian/Ubuntu)
       ansible.builtin.lineinfile:
         path: /etc/default/locale
         regexp: "^LANG="
@@ -52,7 +52,7 @@
       become: true
       when: ansible_os_family == "Debian"
 
-    - name: Обновить переменную LANG в /etc/locale.conf (RedHat)
+    - name: 1.3.2 Refresh var LANG in /etc/locale.conf (for RedHat)
       ansible.builtin.lineinfile:
         path: /etc/locale.conf
         regexp: "^LANG="
@@ -61,51 +61,51 @@
       become: true
       when: ansible_os_family == "RedHat"
 
-- name: Показать все доступные локали
+- name: 1.4 Check all aviable locale
   shell: locale -a
   register: available_locales
 
-- name: Показать локали по умолчанию
+- name: 1.5 Check locale as default
   shell: locale
   register: default_locales
 
-- name: Extract server64_8_3_23_2236.tar.gz
+- name: 1.6 Extract server64_8_3_23_2236.tar.gz
   ansible.builtin.unarchive:
     src: /tmp/1c_install_2v/server64_8_3_23_2236.tar.gz
     dest: /tmp/1c_install_2v/
     remote_src: yes
  
-- name: Set executable permissions on {{ 1c_setup_run_file }}
+- name: 1.7 'Set executable permissions on {{ 1c_setup_run_file }}'
   ansible.builtin.file:
     path: "/tmp/1c_install_2v/{{ 1c_setup_run_file }}"
     mode: '0777'
     state: file
 
-- name: Install setup-full-{{  1c_version }}-x86_64.run with language selection
+- name: 1.8 Install setup-full-{{  1c_version }}-x86_64.run with language selection
   shell: "./{{ 1c_setup_run_file }} --mode unattended --enable-components server,ws,server_admin,config_storage_server" 
   become: true
 
-- name: Create simlink on 1c
+- name: 1.9 Create simlink on 1c
   shell: "systemctl link /opt/1cv8/x86_64/{{ 1c_version }}/{{ 1c_service_name }}"
   become: true
 
-- name: 1.9 Reload systemd manager configuration
+- name: 1.10 Reload systemd manager configuration
   ansible.builtin.systemd:
     daemon_reload: yes
   become: true
 
-- name: 1.10 Enable and start {{ 1c_service_name }} service
+- name: 1.11 Enable and start {{ 1c_service_name }} service
   ansible.builtin.systemd:
     name: srv1cv8-8.3.23.2236@default.service
     state: started
     enabled: yes
   become: true
 
-- name: Check status {{ 1c_service_name }}
+- name: 1.12 Check status {{ 1c_service_name }}
   shell:  systemctl status srv1cv8-8.3.23.2236@default.service | grep Active
   register: status_1c_server_service
 
-- name: Debuig system info
+- name: 1.13 Debuig system info
   debug:
     msg: 
       - "Timezone {{ stdout_timedatectl.stdout }}"
