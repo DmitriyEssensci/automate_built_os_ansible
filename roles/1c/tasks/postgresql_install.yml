@@ -37,7 +37,7 @@
       command: apt-get install -f
 
     - name: 2.3.3 Hold packages
-      shell: "apt-mark {{ item }}"
+      shell: "apt-mark hold {{ item }}"
       loop: "{{ srvr1c_postgresql_install_apps }}"
 
   ignore_errors: true
