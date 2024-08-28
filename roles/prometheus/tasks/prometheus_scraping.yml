@@ -1,17 +1,20 @@
 ---
 # prometheus_scraping file for prometheus
-- name: 3.0 Create /etc/prometheus directory
-  ansible.builtin.file:
-    path: "{{ prometheus_node_exporter_node_dir }}"
-    state: directory
-    mode: '0755'
-  become: true
+- name: Configure Prometheus
+  gather_facts: yes
+  tasks:
+    - name: 3.0 Create /etc/prometheus directory
+      ansible.builtin.file:
+        path: "{{ prometheus_node_exporter_node_dir }}"
+        state: directory
+        mode: '0755'
+      become: true
 
-- name: 3.1 Copy node.yml
-  template:
-    src: "templates/{{ item }}.j2"
-    dest: "/{{ item }}"
-    mode: '0744'
-  with_items: 
-    - "{{ prometheus_node_exporter_node_yml }}"
-  become: true
+    - name: 3.1 Copy node.yml
+      template:
+        src: "templates/{{ item }}.j2"
+        dest: "/{{ item }}"
+        mode: '0744'
+      with_items: 
+        - "{{ prometheus_node_exporter_node_yml }}"
+      become: true
