@@ -77,9 +77,41 @@
   debug:
     var: default_locales.stdout_lines
 
-# - name: Refresh package lists
-#   shell: sudo apt update && sudo apt dist-upgrade -y
-#   become: true
+- name: Extract server64_8_3_23_2236.tar.gz
+  ansible.builtin.unarchive:
+    src: /tmp/1c_install_2v/server64_8_3_23_2236.tar.gz
+    dest: /tmp/1c_install_2v/
+    remote_src: yes
+ 
+- name: Set executable permissions on setup-full-{{  1c_version }}-x86_64.run
+  ansible.builtin.file:
+    path: "/tmp/1c_install_2v/setup-full-{{ 1c_version }}-x86_64.run"
+    mode: '0777'
+    state: file
+
+- name: Install setup-full-{{  1c_version }}-x86_64.run with language selection
+  shell: "./setup-full-{{  1c_version }}-x86_64.run --mode unattended --enable-components server,ws,server_admin,config_storage_server" 
+  become: true
+
+- name: Create simlink on 1c
+  shell: "systemctl link /opt/1cv8/x86_64/{{ 1c_version }}/{{ 1c_service_name }}"
+  become: true
+
+- name: 1.9 Reload systemd manager configuration
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  become: true
+
+- name: 1.10 Enable and start {{ 1c_service_name }} service
+  ansible.builtin.systemd:
+    name: srv1cv8-8.3.23.2236@default.service
+    state: started
+    enabled: yes
+  become: true
+
+- name: Check status {{ 1c_service_name }}
+  shell:  systemctl status srv1cv8-8.3.23.2236@default.service | grep Active
+  register: status_1c_server_service
 
 - name: Debuig system info
   debug:
@@ -87,24 +119,5 @@
       - "Timezone {{ stdout_timedatectl.stdout }}"
       - "Accessible locale: {{ available_locales.stdout }}"
       - "Default locales: {{ default_locales.stdout }}"
+      - "1C Server status: {{ status_1c_server_service.stdout }}"
   when: debug_status  == true
-
-- name: Extract server64_8_3_23_2236.tar.gz
-  ansible.builtin.unarchive:
-    src: /tmp/1c_install_2v/server64_8_3_23_2236.tar.gz
-    dest: /tmp/1c_install_2v/
-    remote_src: yes
-
-- name: Set executable permissions on setup-full-8.3.23.2236-x86_64.run
-  ansible.builtin.file:
-    path: /tmp/1c_install_2v/setup-full-8.3.23.2236-x86_64.run
-    mode: '0777'
-    state: file
-
-# - name: Install setup-full-8.3.23.2236-x86_64.run with language selection
-#   expect:
-#     command: sudo ./setup-full-8.3.23.2236-x86_64.run -y
-#     responses:
-#       'Choose your language': '16'
-#   args:
-#     chdir: /path/to/directory
