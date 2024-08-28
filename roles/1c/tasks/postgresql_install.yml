@@ -28,4 +28,6 @@
   loop: 
     - libldap-2.4-2 
     - libssl1.1
+  ignore_errors: true
   become: true
+  
