@@ -1,59 +1,54 @@
-- name: "2.0 Extract {{ srvr1c_postgresql_tar }}"
-  ansible.builtin.unarchive:
-    src: "/tmp/1c_install_2v/postgresql/{{ srvr1c_postgresql_tar }}"
-    dest: /tmp/1c_install_2v/postgresql/
-    remote_src: yes
+---
+# postgresql_install file for prometheus
+- name: 2.0 Check if bionic main universe repository is present
+  ansible.builtin.command: apt-cache policy
+  register: apt_policy
 
-- name: 2.1 Add the bionic main universe repository
-  ansible.builtin.apt_repository:
-    repo: 'deb http://ru.archive.ubuntu.com/ubuntu/ bionic main universe'
-    state: present
+- name: 2.1 Add repository 
+  block: 
+    - name: 2.1.1 Add the bionic main universe repository
+      ansible.builtin.apt_repository:
+        repo: 'deb http://ru.archive.ubuntu.com/ubuntu/ bionic main universe'
+        state: present
 
-- name: 2.2 Update the apt package index
-  ansible.builtin.apt:
-    update_cache: yes
-  ignore_errors: true
-
-- name: 2.3 Add GPG key from Ubuntu keyserver
-  ansible.builtin.apt_key:
-    keyserver: keyserver.ubuntu.com
-    id: 3B4FE6ACC0B21F32
-
-- name: 2.4 Install apps
-  apt:
-    name: "{{ item }}"
-    state: present
-    update_cache: yes
-    force: yes  # Используйте force для принудительной установки
-  loop: 
-    - libldap-2.4-2 
-    - libpq5
-    - libssl1.1
-    - postgresql
-    - postgresql-common
-    - postgresql-client
-    - postgresql-client-common
-    
+    - name: 2.1.2 Update the apt package index
+      ansible.builtin.apt:
+        update_cache: yes
+      
+    - name: 2.1.3 Add GPG key from Ubuntu keyserver
+      ansible.builtin.apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: 3B4FE6ACC0B21F32
+  when: "'bionic main universe' not in apt_policy.stdout"
   ignore_errors: true
   become: true
 
-# - name: 2.5 Install PostgreSQL library package
-#   apt:
-#     deb: "/tmp/1c_install_2v/postgresql/postgresql-{{ srvr1c_postgresql_version }}_amd64_deb/{{ item }}"
-#   loop:
-#     - "libpq5_{{ srvr1c_postgresql_version }}_amd64.deb"
-#     - "postgresql-16_{{ srvr1c_postgresql_version }}_amd64.deb"
-#     - "postgresql-client-16_{{ srvr1c_postgresql_version }}_amd64.deb"
-#   become: true
+- name: 2.2 Check installed packages
+  command: dpkg -l
+  register: installed_packages
 
-# - name: Install PostgreSQL library package with dpkg
-#   command: dpkg -i "/tmp/1c_install_2v/postgresql/postgresql-{{ srvr1c_postgresql_version }}_amd64_deb/{{ item }}"
-#   loop:
-#     - "libpq5_{{ srvr1c_postgresql_version }}_amd64.deb"
-#     - "postgresql-16_{{ srvr1c_postgresql_version }}_amd64.deb"
-#     - "postgresql-client-16_{{ srvr1c_postgresql_version }}_amd64.deb"
-#   become: true
+- name: 2.3 Install and hold pg apps
+  block: 
+    - name: 2.3.1 Install apps
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+        force: yes  # Используйте force для принудительной установки
+      loop: "{{ srvr1c_postgresql_install_apps }}"
+      
+    - name: 2.3.2 Fix broken dependencies
+      command: apt-get install -f
 
-- name: Fix broken dependencies
-  command: apt-get install -f
+    - name: 2.3.3 Hold packages
+      apt:
+        name: "{{ srvr1c_postgresql_install_apps }}"
+        state: held
+      registry: list_hold_packages
+
+    - name: 2.3.4 Debug hold package
+      debug:
+        msg: "{{ list_hold_packages }}"
+  when: item not in installed_packages.stdout
+  ignore_errors: true
   become: true

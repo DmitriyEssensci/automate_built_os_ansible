@@ -20,3 +20,11 @@ srvr1c_service_name: srv1cv8-{{ srvr1c_version }}@.service
 
 srvr1c_postgresql_version: "16.2-3.1C"
 srvr1c_postgresql_tar: "postgresql_16.2_3.1C_amd64_deb.tar.bz2"
+srvr1c_postgresql_install_apps:
+  - libldap-2.4-2 
+  - libpq5
+  - libssl1.1
+  - postgresql
+  - postgresql-common
+  - postgresql-client
+  - postgresql-client-common
