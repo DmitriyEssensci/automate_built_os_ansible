@@ -27,8 +27,13 @@
     force: yes  # Используйте force для принудительной установки
   loop: 
     - libldap-2.4-2 
-    #- libssl1.1
+    - libpq5
+    - libssl1.1
+    - postgresql
+    - postgresql-common
+    - postgresql-client
     - postgresql-client-common
+    
   ignore_errors: true
   become: true
 
@@ -41,13 +46,13 @@
 #     - "postgresql-client-16_{{ srvr1c_postgresql_version }}_amd64.deb"
 #   become: true
 
-- name: Install PostgreSQL library package with dpkg
-  command: dpkg -i "/tmp/1c_install_2v/postgresql/postgresql-{{ srvr1c_postgresql_version }}_amd64_deb/{{ item }}"
-  loop:
-    - "libpq5_{{ srvr1c_postgresql_version }}_amd64.deb"
-    - "postgresql-16_{{ srvr1c_postgresql_version }}_amd64.deb"
-    - "postgresql-client-16_{{ srvr1c_postgresql_version }}_amd64.deb"
-  become: true
+# - name: Install PostgreSQL library package with dpkg
+#   command: dpkg -i "/tmp/1c_install_2v/postgresql/postgresql-{{ srvr1c_postgresql_version }}_amd64_deb/{{ item }}"
+#   loop:
+#     - "libpq5_{{ srvr1c_postgresql_version }}_amd64.deb"
+#     - "postgresql-16_{{ srvr1c_postgresql_version }}_amd64.deb"
+#     - "postgresql-client-16_{{ srvr1c_postgresql_version }}_amd64.deb"
+#   become: true
 
 - name: Fix broken dependencies
   command: apt-get install -f
