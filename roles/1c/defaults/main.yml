@@ -17,3 +17,5 @@ debug_status: true
 srvr1c_version: "8.3.23.2236"
 srvr1c_setup_run_file: setup-full-{{ srvr1c_version }}-x86_64.run
 srvr1c_service_name: srv1cv8-{{ srvr1c_version }}@.service
+
+srvr1c_postgresql_tar: postgresql_16.2_3.1C_amd64_deb.tar.bz2

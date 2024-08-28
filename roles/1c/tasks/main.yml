@@ -1,116 +1,16 @@
-# - name: 'Create {{ 1c_soft_path }}'
-#   ansible.builtin.file:
-#     path: "{{ 1c_soft_path }}"
-#     state: directory
-#     mode: '0755'
-#   become: true
+---
+# main file for prometheus
+- name: 1.0 Install 1C
+  include_tasks: 1c_install.yml
+  # vars:
+  #   ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
 
-- name: 1.0 Check timezone
-  shell: timedatectl show --property=Timezone --value
-  register: stdout_timedatectl
+- name: 2.0 Install PostgreSQL
+  include_tasks: configurate_node_exporter.yml
+  # vars:
+  #   ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
 
-- name: 1.1 Set timezone
-  shell: timedatectl set-timezone Europe/Moscow
-  become: true
-  when: stdout_timedatectl.stdout != "Europe/Moscow"
-
-- name: 1.2 Set need locale
-  block:
-    - name: 1.2.1 Add needs locale in /etc/locale.gen (for Debian/Ubuntu)
-      ansible.builtin.lineinfile:
-        path: /etc/locale.gen
-        regexp: "^#?({{ item }})"
-        line: "{{ item }}"
-        state: present
-      loop: "{{ locales }}"
-      become: true
-      when: ansible_os_family == "Debian"
-
-    - name: 1.2.2 Add needs locale in /etc/locale.conf (for RedHat)
-      ansible.builtin.lineinfile:
-        path: /etc/locale.conf
-        line: "{{ item }}"
-        state: present
-      loop: "{{ locales }}"
-      become: true
-      when: ansible_os_family == "RedHat"
-
-    - name: 1.2.3 Generate locale
-      ansible.builtin.command: locale-gen "{{ item }}"
-      loop: "{{ locales }}"
-      become: true
-      when: ansible_os_family == "Debian"
-
-- name: 1.3 Set locale as default
-  block:
-    - name: 1.3.1 Refresh var LANG in /etc/default/locale (for Debian/Ubuntu)
-      ansible.builtin.lineinfile:
-        path: /etc/default/locale
-        regexp: "^LANG="
-        line: "LANG={{ default_locale }}"
-        create: yes
-      become: true
-      when: ansible_os_family == "Debian"
-
-    - name: 1.3.2 Refresh var LANG in /etc/locale.conf (for RedHat)
-      ansible.builtin.lineinfile:
-        path: /etc/locale.conf
-        regexp: "^LANG="
-        line: "LANG={{ default_locale }}"
-        create: yes
-      become: true
-      when: ansible_os_family == "RedHat"
-
-- name: 1.4 Check all aviable locale
-  shell: locale -a
-  register: available_locales
-
-- name: 1.5 Check locale as default
-  shell: locale
-  register: default_locales
-
-- name: 1.6 Extract server64_8_3_23_2236.tar.gz
-  ansible.builtin.unarchive:
-    src: /tmp/1c_install_2v/server64_8_3_23_2236.tar.gz
-    dest: /tmp/1c_install_2v/
-    remote_src: yes
- 
-- name: "1.7 Set executable permissions on {{ srvr1c_setup_run_file }}"
-  ansible.builtin.file:
-    path: "/tmp/1c_install_2v/{{ srvr1c_setup_run_file }}"
-    mode: '0777'
-    state: file
-  become: true
-
-- name: "1.8 Install {{ srvr1c_setup_run_file }} with language selection"
-  shell: "/tmp/1c_install_2v/{{ srvr1c_setup_run_file }} --mode unattended --enable-components server,ws,server_admin,config_storage_server" 
-  become: true
-
-- name: 1.9 Create simlink on 1c
-  shell: "systemctl link /opt/1cv8/x86_64/{{ srvr1c_version }}/{{ srvr1c_service_name }}"
-  become: true
-
-- name: 1.10 Reload systemd manager configuration
-  ansible.builtin.systemd:
-    daemon_reload: yes
-  become: true
-
-- name: 1.11 Enable and start {{ srvr1c_service_name }} service
-  ansible.builtin.systemd:
-    name: srv1cv8-8.3.23.2236@default.service
-    state: started
-    enabled: yes
-  become: true
-
-- name: 1.12 Check status {{ srvr1c_service_name }}
-  shell:  systemctl status srv1cv8-8.3.23.2236@default.service | grep Active
-  register: status_1c_server_service
-
-- name: 1.13 Debuig system info
-  debug:
-    msg: 
-      - "Timezone {{ stdout_timedatectl.stdout }}"
-      - "Accessible locale: {{ available_locales.stdout }}"
-      - "Default locales: {{ default_locales.stdout }}"
-      - "1C Server status: {{ status_1c_server_service.stdout }}"
-  when: debug_status  == true
+- name: 3.0 Configure prometheus scraping
+  include_tasks: prometheus_scraping.yml
+  # vars:
+  #   ansible_python_interpreter: "{{ prometheus_python_interpreter }}"

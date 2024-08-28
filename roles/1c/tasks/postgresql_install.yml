@@ -1,0 +1,30 @@
+- name: "2.0 Extract {{ srvr1c_postgresql_tar }}"
+  ansible.builtin.unarchive:
+    src: "/tmp/1c_install_2v/postgresql/{{ srvr1c_postgresql_tar }}"
+    dest: /tmp/1c_install_2v/postgresql/
+    remote_src: yes
+
+- name: 2.1 Add the bionic main universe repository
+  ansible.builtin.apt_repository:
+    repo: 'deb http://ru.archive.ubuntu.com/ubuntu/ bionic main universe'
+    state: present
+
+- name: 2.2 Update the apt package index
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: 2.3 Add GPG key from Ubuntu keyserver
+  ansible.builtin.apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 3B4FE6ACC0B21F32
+
+- name: 2.4 nstall apps
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    force: yes  # Используйте force для принудительной установки
+  loop: 
+    - libldap-2.4-2 
+    - libssl1.1
+  become: true
