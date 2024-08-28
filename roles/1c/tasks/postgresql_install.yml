@@ -44,11 +44,15 @@
       apt:
         name: "{{ srvr1c_postgresql_install_apps }}"
         state: held
-      registry: list_hold_packages
 
-    - name: 2.3.4 Debug hold package
-      debug:
-        msg: "{{ list_hold_packages }}"
   when: item not in installed_packages.stdout
   ignore_errors: true
   become: true
+
+- name: 2.4 Check hold packages
+  command: apt-mark showhold
+  register: list_hold_packages
+
+- name: 2.5 Debug hold package
+  debug:
+    msg: "{{ list_hold_packages }}"
