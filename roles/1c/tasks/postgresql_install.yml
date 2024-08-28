@@ -27,8 +27,8 @@
     force: yes  # Используйте force для принудительной установки
   loop: 
     - libldap-2.4-2 
-    - libssl1.1
-    - postgresql-client-16
+    #- libssl1.1
+    - postgresql-client-common
   ignore_errors: true
   become: true
 
