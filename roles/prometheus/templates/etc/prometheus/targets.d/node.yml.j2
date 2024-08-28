@@ -1,6 +1,6 @@
 - targets: 
     {% for host in groups['newmachine'] %}
-    - {{ hostvars[host]['inventory_hostname'] }}:9100
+    - {{ hostvars[host]['ansible_host'] }}:9100
     {% endfor %}
   labels:
     instance: {{ ansible_hostname }}
