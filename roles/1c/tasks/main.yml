@@ -81,7 +81,7 @@
     mode: '0777'
     state: file
 
-- name: 1.8 Install with language selection
+- name: "1.8 Install {{ 1c_setup_run_file }} with language selection"
   shell: "./{{ 1c_setup_run_file }} --mode unattended --enable-components server,ws,server_admin,config_storage_server" 
   become: true
 
