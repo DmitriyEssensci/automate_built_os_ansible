@@ -33,9 +33,9 @@
 
 - name: 2.5 Install PostgreSQL library package
   apt:
-    deb: "/tmp/1c_install_2v/postgresql/postgresql-16.2-3.1C_amd64_deb/{{ item }}"
+    deb: "/tmp/1c_install_2v/postgresql/postgresql-{{ srvr1c_postgresql_version }}_amd64_deb/{{ item }}"
   loop:
-    - libpq5_16.2-3.1C_amd64.deb
-    - postgresql-16_16.2-3.1C_amd64.deb
-    - postgresql-client-16_16.2-3.1C_amd64.deb
+    - "libpq5_{{ srvr1c_postgresql_version }}_amd64.deb"
+    - "postgresql-16_{{ srvr1c_postgresql_version }}_amd64.deb"
+    - "postgresql-client-16_{{ srvr1c_postgresql_version }}_amd64.deb"
   become: true

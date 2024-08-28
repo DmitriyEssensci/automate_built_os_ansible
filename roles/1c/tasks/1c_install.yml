@@ -110,7 +110,6 @@
   debug:
     msg: 
       - "Timezone {{ stdout_timedatectl.stdout }}"
-      #- "Accessible locale: {{ available_locales.stdout }}"
       - "Default locales: {{ default_locales.stdout }}"
       - "1C Server status: {{ status_1c_server_service.stdout }}"
   when: debug_status  == true
