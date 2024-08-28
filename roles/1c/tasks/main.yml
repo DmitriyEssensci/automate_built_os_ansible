@@ -69,28 +69,20 @@
   shell: locale
   register: default_locales
 
-- name: Вывести список всех доступных локалей
-  debug:
-    var: available_locales.stdout_lines
-
-- name: Вывести локали по умолчанию
-  debug:
-    var: default_locales.stdout_lines
-
 - name: Extract server64_8_3_23_2236.tar.gz
   ansible.builtin.unarchive:
     src: /tmp/1c_install_2v/server64_8_3_23_2236.tar.gz
     dest: /tmp/1c_install_2v/
     remote_src: yes
  
-- name: Set executable permissions on setup-full-{{  1c_version }}-x86_64.run
+- name: Set executable permissions on setup-full-'{{  1c_version }}'-x86_64.run
   ansible.builtin.file:
-    path: "/tmp/1c_install_2v/setup-full-{{ 1c_version }}-x86_64.run"
+    path: "/tmp/1c_install_2v/setup-full-'{{ 1c_version }}'-x86_64.run"
     mode: '0777'
     state: file
 
-- name: Install setup-full-{{  1c_version }}-x86_64.run with language selection
-  shell: "./setup-full-{{  1c_version }}-x86_64.run --mode unattended --enable-components server,ws,server_admin,config_storage_server" 
+- name: Install setup-full-'{{  1c_version }}'-x86_64.run with language selection
+  shell: "./setup-full-'{{  1c_version }}'-x86_64.run --mode unattended --enable-components server,ws,server_admin,config_storage_server" 
   become: true
 
 - name: Create simlink on 1c
