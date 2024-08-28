@@ -2,6 +2,9 @@
 # prometheus_scraping file for prometheus
 - name: Configure Prometheus
   block:
+    - name: Gatrher network facts
+      setup:
+      
     - name: 3.0 Create /etc/prometheus directory
       ansible.builtin.file:
         path: "{{ prometheus_node_exporter_node_dir }}"
