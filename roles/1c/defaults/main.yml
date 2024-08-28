@@ -16,5 +16,5 @@ locales:
 default_locale: ru_RU.UTF-8
 debug_status: true
 1c_version: "8.3.23.2236"
-1c_service_name: "srv1cv8-{{ 1c_version }}@.service"
-
+1c_service_name: srv1cv8-{{ 1c_version }}@.service
+1c_setup_run_file: setup-full-{{ 1c_version }}-x86_64.run
