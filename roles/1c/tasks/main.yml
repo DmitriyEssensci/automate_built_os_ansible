@@ -75,18 +75,18 @@
     dest: /tmp/1c_install_2v/
     remote_src: yes
  
-- name: "1.7 Set executable permissions on {{ 1c_setup_run_file }}"
+- name: "1.7 Set executable permissions on {{ srvr1c_setup_run_file }}"
   ansible.builtin.file:
-    path: "/tmp/1c_install_2v/{{ 1c_setup_run_file }}"
+    path: "/tmp/1c_install_2v/{{ srvr1c_setup_run_file }}"
     mode: '0777'
     state: file
 
-- name: "1.8 Install {{ 1c_setup_run_file }} with language selection"
-  shell: "./{{ 1c_setup_run_file }} --mode unattended --enable-components server,ws,server_admin,config_storage_server" 
+- name: "1.8 Install {{ srvr1c_setup_run_file }} with language selection"
+  shell: "./{{ srvr1c_setup_run_file }} --mode unattended --enable-components server,ws,server_admin,config_storage_server" 
   become: true
 
 - name: 1.9 Create simlink on 1c
-  shell: "systemctl link /opt/1cv8/x86_64/{{ 1c_version }}/{{ 1c_service_name }}"
+  shell: "systemctl link /opt/1cv8/x86_64/{{ srvr1c_version }}/{{ srvr1c_service_name }}"
   become: true
 
 - name: 1.10 Reload systemd manager configuration
@@ -94,14 +94,14 @@
     daemon_reload: yes
   become: true
 
-- name: 1.11 Enable and start {{ 1c_service_name }} service
+- name: 1.11 Enable and start {{ srvr1c_service_name }} service
   ansible.builtin.systemd:
     name: srv1cv8-8.3.23.2236@default.service
     state: started
     enabled: yes
   become: true
 
-- name: 1.12 Check status {{ 1c_service_name }}
+- name: 1.12 Check status {{ srvr1c_service_name }}
   shell:  systemctl status srv1cv8-8.3.23.2236@default.service | grep Active
   register: status_1c_server_service
 
