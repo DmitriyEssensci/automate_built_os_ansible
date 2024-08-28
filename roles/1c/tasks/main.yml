@@ -1,7 +1,7 @@
 ---
 # main file for prometheus
-# - name: 1.0 Install 1C
-#   include_tasks: 1c_install.yml
+- name: 1.0 Install 1C
+  include_tasks: 1c_install.yml
   # vars:
   #   ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
 
