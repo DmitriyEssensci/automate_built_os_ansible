@@ -2,7 +2,7 @@
 
 - name: Configure Prometheus
 
-  hosts: newmachine  # Убедитесь, что указано ваше целевое окружение
+  #hosts: newmachine  # Убедитесь, что указано ваше целевое окружение
 
   gather_facts: yes  # Директива на уровне плейбука
 
