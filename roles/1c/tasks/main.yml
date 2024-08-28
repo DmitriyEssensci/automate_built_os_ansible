@@ -80,9 +80,10 @@
     path: "/tmp/1c_install_2v/{{ srvr1c_setup_run_file }}"
     mode: '0777'
     state: file
+  become: true
 
 - name: "1.8 Install {{ srvr1c_setup_run_file }} with language selection"
-  shell: "./{{ srvr1c_setup_run_file }} --mode unattended --enable-components server,ws,server_admin,config_storage_server" 
+  shell: "tmp/1c_install_2v/{{ srvr1c_setup_run_file }} --mode unattended --enable-components server,ws,server_admin,config_storage_server" 
   become: true
 
 - name: 1.9 Create simlink on 1c
