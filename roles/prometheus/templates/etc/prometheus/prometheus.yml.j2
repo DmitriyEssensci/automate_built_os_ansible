@@ -4,10 +4,15 @@ global:
   evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
 
 remote_write:
-  - url: https://prometheus-prod-13-prod-us-east-0.grafana.net/api/prom/push
+  # - url: https://prometheus-prod-13-prod-us-east-0.grafana.net/api/prom/push
+  #   basic_auth:
+  #     username: 1747217
+  #     password: "{{ prometheus_grafana_token_pass }}"
+
+  - url: "http://{{ prometheus_grafana_host_address }}:3000/api/prom/push"
     basic_auth:
-      username: 1747217
-      password: "{{ prometheus_grafana_token_pass }}"
+      username: admin
+      password: admin
 
 # Alertmanager configuration
 alerting:

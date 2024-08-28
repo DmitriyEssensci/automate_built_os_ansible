@@ -54,3 +54,4 @@ prometheus_grafana_token_pass: !vault |
           3338
 
 prometheus_host_machine: dmitriysa
+prometheus_grafana_host_address: 192.168.80.129
