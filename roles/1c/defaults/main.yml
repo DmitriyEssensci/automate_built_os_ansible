@@ -1,6 +1,5 @@
 ---
 # defaults file for 1с
-1c_version: 8.3.13-1644
 1c_soft_path: "opt/1c{{ 1c_version }}/soft/1c{{ 1c_version }}"
 1c_sotf_download_url: https://releases.1c.ru/version_file?nick=Platform83&ver=8.3.13.1644&path=Platform\8_3_13_1644\rpm64_8_3_13_1644.tar.gz
 1c_list_odd_soft:
