@@ -12,13 +12,14 @@
 - name: 2.2 Update the apt package index
   ansible.builtin.apt:
     update_cache: yes
+  ignore_errors: true
 
 - name: 2.3 Add GPG key from Ubuntu keyserver
   ansible.builtin.apt_key:
     keyserver: keyserver.ubuntu.com
     id: 3B4FE6ACC0B21F32
 
-- name: 2.4 nstall apps
+- name: 2.4 Install apps
   apt:
     name: "{{ item }}"
     state: present

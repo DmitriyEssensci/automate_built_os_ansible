@@ -95,14 +95,14 @@
     daemon_reload: yes
   become: true
 
-- name: 1.11 Enable and start {{ srvr1c_service_name }} service
+- name: "1.11 Enable and start {{ srvr1c_service_name }} service"
   ansible.builtin.systemd:
     name: srv1cv8-8.3.23.2236@default.service
     state: started
     enabled: yes
   become: true
 
-- name: 1.12 Check status {{ srvr1c_service_name }}
+- name: "1.12 Check status {{ srvr1c_service_name }}"
   shell:  systemctl status srv1cv8-8.3.23.2236@default.service | grep Active
   register: status_1c_server_service
 
@@ -110,7 +110,7 @@
   debug:
     msg: 
       - "Timezone {{ stdout_timedatectl.stdout }}"
-      - "Accessible locale: {{ available_locales.stdout }}"
+      #- "Accessible locale: {{ available_locales.stdout }}"
       - "Default locales: {{ default_locales.stdout }}"
       - "1C Server status: {{ status_1c_server_service.stdout }}"
   when: debug_status  == true
