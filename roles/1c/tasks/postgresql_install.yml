@@ -28,14 +28,27 @@
   loop: 
     - libldap-2.4-2 
     - libssl1.1
+    - postgresql-client-16
   ignore_errors: true
   become: true
 
-- name: 2.5 Install PostgreSQL library package
-  apt:
-    deb: "/tmp/1c_install_2v/postgresql/postgresql-{{ srvr1c_postgresql_version }}_amd64_deb/{{ item }}"
+# - name: 2.5 Install PostgreSQL library package
+#   apt:
+#     deb: "/tmp/1c_install_2v/postgresql/postgresql-{{ srvr1c_postgresql_version }}_amd64_deb/{{ item }}"
+#   loop:
+#     - "libpq5_{{ srvr1c_postgresql_version }}_amd64.deb"
+#     - "postgresql-16_{{ srvr1c_postgresql_version }}_amd64.deb"
+#     - "postgresql-client-16_{{ srvr1c_postgresql_version }}_amd64.deb"
+#   become: true
+
+- name: Install PostgreSQL library package with dpkg
+  command: dpkg -i "/tmp/1c_install_2v/postgresql/postgresql-{{ srvr1c_postgresql_version }}_amd64_deb/{{ item }}"
   loop:
     - "libpq5_{{ srvr1c_postgresql_version }}_amd64.deb"
     - "postgresql-16_{{ srvr1c_postgresql_version }}_amd64.deb"
     - "postgresql-client-16_{{ srvr1c_postgresql_version }}_amd64.deb"
+  become: true
+
+- name: Fix broken dependencies
+  command: apt-get install -f
   become: true
