@@ -1,25 +1,18 @@
 ---
 # defaults file for 1с
-srvr1c_soft_path: "opt/1c{{ 1c_version }}/soft/1c{{ 1c_version }}"
-srvr1c_sotf_download_url: https://releases.1c.ru/version_file?nick=Platform83&ver=8.3.13.1644&path=Platform\8_3_13_1644\rpm64_8_3_13_1644.tar.gz
-srvr1c_list_odd_soft:
-  - imagemagick
-  - unixodbc
-  - libgsf-bin
-  - t1utils
-
-
-locales:
-  - ru_RU.CP1251
-  - ru_RU.UTF-8
-default_locale: ru_RU.UTF-8
-debug_status: true
 srvr1c_version: "8.3.23.2236"
 srvr1c_setup_run_file: setup-full-{{ srvr1c_version }}-x86_64.run
 srvr1c_service_name: srv1cv8-{{ srvr1c_version }}@.service
 
-srvr1c_postgresql_version: "16.2-3.1C"
-srvr1c_postgresql_tar: "postgresql_16.2_3.1C_amd64_deb.tar.bz2"
+srvr1c_locales:
+  - ru_RU.CP1251
+  - ru_RU.UTF-8
+srvr1c_default_locale: ru_RU.UTF-8
+
+srvr1c_debug_status: true
+
+# srvr1c_postgresql_version: "16.2-3.1C"
+# srvr1c_postgresql_tar: "postgresql_16.2_3.1C_amd64_deb.tar.bz2"
 srvr1c_postgresql_install_apps:
   - libldap-2.4-2 
   - libpq5

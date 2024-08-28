@@ -39,7 +39,6 @@
     - name: 2.3.3 Hold packages
       shell: "apt-mark hold {{ item }}"
       loop: "{{ srvr1c_postgresql_install_apps }}"
-
   ignore_errors: true
   become: true
 

@@ -1,10 +1,5 @@
-# - name: 'Create {{ 1c_soft_path }}'
-#   ansible.builtin.file:
-#     path: "{{ 1c_soft_path }}"
-#     state: directory
-#     mode: '0755'
-#   become: true
-
+---
+# 1c_install file for prometheus
 - name: 1.0 Check timezone
   shell: timedatectl show --property=Timezone --value
   register: stdout_timedatectl
@@ -22,7 +17,7 @@
         regexp: "^#?({{ item }})"
         line: "{{ item }}"
         state: present
-      loop: "{{ locales }}"
+      loop: "{{ srvr1c_locales }}"
       become: true
       when: ansible_os_family == "Debian"
 
@@ -31,13 +26,13 @@
         path: /etc/locale.conf
         line: "{{ item }}"
         state: present
-      loop: "{{ locales }}"
+      loop: "{{ srvr1c_locales }}"
       become: true
       when: ansible_os_family == "RedHat"
 
     - name: 1.2.3 Generate locale
       ansible.builtin.command: locale-gen "{{ item }}"
-      loop: "{{ locales }}"
+      loop: "{{ srvr1c_locales }}"
       become: true
       when: ansible_os_family == "Debian"
 
@@ -47,7 +42,7 @@
       ansible.builtin.lineinfile:
         path: /etc/default/locale
         regexp: "^LANG="
-        line: "LANG={{ default_locale }}"
+        line: "LANG={{ srvr1c_default_locale }}"
         create: yes
       become: true
       when: ansible_os_family == "Debian"
@@ -56,7 +51,7 @@
       ansible.builtin.lineinfile:
         path: /etc/locale.conf
         regexp: "^LANG="
-        line: "LANG={{ default_locale }}"
+        line: "LANG={{ srvr1c_default_locale }}"
         create: yes
       become: true
       when: ansible_os_family == "RedHat"
@@ -112,4 +107,4 @@
       - "Timezone {{ stdout_timedatectl.stdout }}"
       - "Default locales: {{ default_locales.stdout }}"
       - "1C Server status: {{ status_1c_server_service.stdout }}"
-  when: debug_status  == true
+  when: srvr1c_debug_status  == true
