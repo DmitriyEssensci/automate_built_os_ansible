@@ -68,6 +68,6 @@ prometheus_remote_write:
 prometheus_scrape_interval: 15s
 
 prometheus_victoriametrics_dir: /opt/victoriametrics
-prometheus_victoriametrics_status: service --status-all | grep + | grep victoriametrics
+prometheus_victoriametrics_status: service --status-all | grep victoriametrics
 prometheus_victoriametrics_service_name: victoriametrics.service
 prometheus_template_victoriametrics_service_systemd_node: "etc/systemd/system/{{ prometheus_victoriametrics_service_name }}"
