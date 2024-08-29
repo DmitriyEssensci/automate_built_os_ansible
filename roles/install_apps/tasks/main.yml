@@ -6,4 +6,5 @@
     state: present
     update_cache: yes
   loop: "{{ installapps_apps_list }}"
+  ignore_errors: yes
   become: true
