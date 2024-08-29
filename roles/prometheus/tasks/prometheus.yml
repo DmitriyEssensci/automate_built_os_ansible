@@ -1,5 +1,8 @@
 ---
 # configurate_prometheus file for prometheus
+- name: Gatrher network facts
+  setup:
+
 - name: 1.0 Create Prometheus user and group
   block:
     - name: 1.0.1 Create Prometheus group
@@ -200,21 +203,21 @@
   become: true
 
 # prometheus_scraping
-- name: 1.19 Configure Prometheus
-  block:
-    - name: Gatrher network facts
-      setup:
+# - name: 1.19 Configure Prometheus
+#   block:
+#     - name: Gatrher network facts
+#       setup:
       
-    - name: 1.19.1 Create /etc/prometheus directory
-      ansible.builtin.file:
-        path: "{{ prometheus_node_exporter_node_dir }}"
-        state: directory
-        mode: '0755'
+#     - name: 1.19.1 Create /etc/prometheus directory
+#       ansible.builtin.file:
+#         path: "{{ prometheus_node_exporter_node_dir }}"
+#         state: directory
+#         mode: '0755'
 
-    - name: 1.19.2 Copy node.yml
-      template:
-        src: "templates/{{ item }}.j2"
-        dest: "/{{ item }}"
-        mode: '0744'
-      with_items: "{{ prometheus_node_exporter_node_yml }}"
-  become: true
+#     - name: 1.19.2 Copy node.yml
+#       template:
+#         src: "templates/{{ item }}.j2"
+#         dest: "/{{ item }}"
+#         mode: '0744'
+#       with_items: "{{ prometheus_node_exporter_node_yml }}"
+#   become: true
