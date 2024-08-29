@@ -15,7 +15,7 @@
     url: "{{ item }}"
     dest: /tmp/
   ignore_errors: yes
-  with_items: https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v1.102.1/victoria-metrics-darwin-amd64-v1.102.1-enterprise.tar.gz
+  with_items: https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v1.102.1/victoria-metrics-linux-amd64-v1.102.1.tar.gz
   become: true
   
 - name: 2.3 Create var_dir and run_dir directory
@@ -32,7 +32,7 @@
     src: "{{ item }}"
     dest: "{{ prometheus_victoriametrics_bin_dir }}"
     remote_src: yes
-  with_items: /tmp/victoria-metrics-darwin-amd64-v1.102.1-enterprise.tar.gz
+  with_items: /tmp/victoria-metrics-linux-amd64-v1.102.1.tar.gz
   become: true
 
 - name: 2.5 Create victoriametrics group
