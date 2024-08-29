@@ -6,12 +6,12 @@ global:
   external_labels:
     server_name: {{ ansible_hostname }}
 
-{% if prometheus_remote_write.url is defined %}
+{% if prometheus_pr_remote_write.url is defined %}
 remote_write:
-  - url: {{ prometheus_remote_write.url }}
+  - url: {{ prometheus_pr_remote_write.url }}
     basic_auth:
-      username: {{ prometheus_remote_write.username }}
-      password: {{ prometheus_remote_write.password }}
+      username: {{ prometheus_pr_remote_write.username }}
+      password: {{ prometheus_pr_remote_write.password }}
 {% endif %}
 
 # Alertmanager configuration
