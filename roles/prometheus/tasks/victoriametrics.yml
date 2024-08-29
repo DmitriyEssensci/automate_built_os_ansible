@@ -47,22 +47,31 @@
     shell: /sbin/nologin
     group: prometheus
 
-- name: 2.7 Daemon reload
+- name: 2.7 Copy prometheus.service
+  template:
+    src: "templates/{{ item }}.j2"
+    dest: "/{{ item }}"
+    mode: '0744'
+  with_items: 
+    - "{{ prometheus_template_vistoriametrics_service_systemd_node }}"
+  become: true
+
+- name: 2.8 Daemon reload
   ansible.builtin.systemd:
     daemon_reload: yes
   become: true
 
-- name: 2.8 Enable and start Prometheus service
+- name: 2.9 Enable and start Prometheus service
   ansible.builtin.systemd:
     name: vistoriametrics
     state: started
     enabled: yes
   become: true
 
-- name: 2.9 Check grafana service start
+- name: 2.10 Check grafana service start
   shell: "{{ prometheus_vistoriametrics_status }}"
   register: grafana_status
 
-- name: 2.10 Debug check grafana service start
+- name: 2.11 Debug check grafana service start
   debug:
     msg: "{{ vistoriametrics_status }}"

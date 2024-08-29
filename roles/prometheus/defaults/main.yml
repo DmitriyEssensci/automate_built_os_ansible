@@ -69,3 +69,5 @@ prometheus_scrape_interval: 15s
 
 prometheus_vistoriametrics_dir: /opt/vistoriametrics
 prometheus_vistoriametrics_status: service --status-all | grep + | grep vistoriametrics
+prometheus_vistoriametrics_service_name: vistoriametrics.service
+prometheus_template_vistoriametrics_service_systemd_node: "etc/systemd/system/{{ prometheus_vistoriametrics_service_name }}"
