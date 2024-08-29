@@ -7,12 +7,12 @@
   block:
     - name: 1.0.1 Create Prometheus group
       ansible.builtin.group:
-        name: prometheus
+        name: "{{ prometheus_group }}"
         system: yes
 
     - name: 1.0.2 Create Prometheus user
       ansible.builtin.user:
-        name: prometheus
+        name: "{{ prometheus_user }}"
         system: yes
         shell: /sbin/nologin
         group: prometheus
@@ -43,6 +43,7 @@
     src: "{{ item }}"
     dest: /opt/
     remote_src: yes
+  ignore_errors: yes
   with_items: "{{ prometheus_archive }}"
   become: true
 
@@ -137,7 +138,7 @@
 
 - name: 1.10 Enable and start Prometheus service
   ansible.builtin.systemd:
-    name: prometheus
+    name: "{{ prometheus_service_name }}"
     state: started
     enabled: yes
   become: true
@@ -197,7 +198,7 @@
 
 - name: 1.18 Enable and start node_exporter service
   ansible.builtin.systemd:
-    name: node_exporter
+    name: "{{ prometheus_node_exporter_service_name }}"
     state: started
     enabled: yes
   become: true
