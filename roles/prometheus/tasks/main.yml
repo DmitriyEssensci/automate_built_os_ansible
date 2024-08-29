@@ -1,7 +1,7 @@
 ---
 # main file for prometheus
-# - name: 1.0 Install and setting prometheus
-#   include_tasks: prometheus_scraping.yml
+- name: 1.0 Install and setting prometheus
+  include_tasks: prometheus_scraping.yml
   # vars:
   #   ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
 
