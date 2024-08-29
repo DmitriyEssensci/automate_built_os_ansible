@@ -64,6 +64,8 @@ prometheus_remote_write:
   password: admin
 prometheus_scrape_interval: 15s
 
+prometheus_victoriametrics_user: victoriametrics
+prometheus_victoriametrics_group: victoriametrics
 prometheus_victoriametrics_var_dir: /var/lib/victoriametrics
 prometheus_victoriametrics_run_dir: /run/victoriametrics
 prometheus_victoriametrics_bin_dir: /usr/local/bin
