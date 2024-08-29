@@ -2,11 +2,7 @@
 # main file for prometheus
 - name: 1.0 Install and setting prometheus
   include_tasks: prometheus.yml
-  # vars:
-  #   ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
 
-- name: 2.0 Install and setting Victoria Metrics
-  include_tasks: victoriametrics.yml
-  when: inventory_hostname == prometheus_host_machine
-  # vars:
-  #   ansible_python_interpreter: "{{ prometheus_python_interpreter }}"
+# - name: 2.0 Install and setting Victoria Metrics
+#   include_tasks: victoriametrics.yml
+#   when: inventory_hostname == prometheus_host_machine
