@@ -47,7 +47,7 @@
     shell: /sbin/nologin
     group: prometheus
 
-- name: 2.7 Copy prometheus.service
+- name: 2.7 Copy victoriametrics.service
   template:
     src: "templates/{{ item }}.j2"
     dest: "/{{ item }}"
@@ -61,17 +61,17 @@
     daemon_reload: yes
   become: true
 
-- name: 2.9 Enable and start Prometheus service
+- name: 2.9 Enable and start victoriametrics service
   ansible.builtin.systemd:
     name: victoriametrics
     state: started
     enabled: yes
   become: true
 
-- name: 2.10 Check grafana service start
+- name: 2.10 Check victoriametrics service start
   shell: "{{ prometheus_victoriametrics_status }}"
   register: grafana_status
 
-- name: 2.11 Debug check grafana service start
+- name: 2.11 Debug check victoriametrics service start
   debug:
     msg: "{{ victoriametrics_status }}"
