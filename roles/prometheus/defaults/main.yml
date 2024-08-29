@@ -53,5 +53,5 @@ prometheus_grafana_token_pass: !vault |
           62626239383436326633656138663138616235346634366335636163353339663161393234646131
           6162
 
-prometheus_host_machine: dmitriysa
+prometheus_host_machine: ubuntu1
 prometheus_grafana_host_address: 192.168.80.129
