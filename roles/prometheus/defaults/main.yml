@@ -69,6 +69,6 @@ prometheus_victoriametrics_group: victoriametrics
 prometheus_victoriametrics_var_dir: /var/lib/victoriametrics
 prometheus_victoriametrics_run_dir: /run/victoriametrics
 prometheus_victoriametrics_bin_dir: /usr/local/bin
-prometheus_victoriametrics_status: service --status-all | grep victoriametrics
+prometheus_victoriametrics_status: systemctl status | grep victoriametrics
 prometheus_victoriametrics_service_name: victoriametrics.service
 prometheus_template_victoriametrics_service_systemd_node: "etc/systemd/system/{{ prometheus_victoriametrics_service_name }}"
