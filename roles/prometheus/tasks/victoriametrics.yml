@@ -18,19 +18,19 @@
   with_items: https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v1.102.1/victoria-metrics-darwin-amd64-v1.102.1-enterprise.tar.gz
   become: true
   
-- name: 2.3 Create /etc/prometheus directory
+- name: 2.3 Create var_dir and run_dir directory
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: '0755'
   loop:
-    - "{{ prometheus_victoriametrics_dir }}"
-    - /run/victoriametrics
+    - "{{ prometheus_victoriametrics_var_dir }}"
+    - "{{ prometheus_victoriametrics_run_dir }}"
 
 - name: 2.4 Extract the binare nifi files 
   ansible.builtin.unarchive:
     src: "{{ item }}"
-    dest: "{{ prometheus_victoriametrics_binary_dir }}"
+    dest: "{{ prometheus_victoriametrics_bin_dir }}"
     remote_src: yes
   with_items: /tmp/victoria-metrics-darwin-amd64-v1.102.1-enterprise.tar.gz
   become: true
