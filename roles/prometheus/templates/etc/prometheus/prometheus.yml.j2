@@ -1,18 +1,16 @@
+# {{ ansible_managed }}
 # my global config
 global:
-  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
-  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  scrape_interval: {{ prometheus_scinterval }} # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: {{ prometheus_scinterval }} # Evaluate rules every 15 seconds. The default is every 1 minute.
 
+{% if prometheus_remote_write.url is defined %}
 remote_write:
-- url: https://prometheus-prod-13-prod-us-east-0.grafana.net/api/prom/push
-  basic_auth:
-    username: 1763065
-    password: {{ prometheus_grafana_token_pass }}
-
-  # - url: "http://{{ prometheus_grafana_host_address }}:3000/api/prom/push"
-  #   basic_auth:
-  #     username: admin
-  #     password: admin
+  - url: {{ prometheus_remote_write.url }}
+    basic_auth:
+      username: {{ prometheus_remote_write.username }}
+      password: {{ prometheus_remote_write.password }}
+{% endif %}
 
 # Alertmanager configuration
 alerting:
@@ -28,6 +26,7 @@ rule_files:
 
 scrape_configs:
   - job_name: 'node_cluster'
+    scrape_interval: {{prometheus_scrape_interval}}
     file_sd_configs:
       - files:
           - "{{ prometheus_node_exporter_node_dir }}/node.yml"

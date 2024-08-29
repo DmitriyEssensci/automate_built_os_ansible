@@ -55,3 +55,14 @@ prometheus_grafana_token_pass: !vault |
 
 prometheus_host_machine: ubuntu1
 prometheus_grafana_host_address: 192.168.80.129
+
+prometheus_user: prometheus
+prometheus_group: prometheus
+
+prometheus_prometheusconf: etc/prometheus/prometheus.yml
+prometheus_scinterval: 15s
+prometheus_remote_write: 
+  url: http://192.168.80.129:9090/api/v1/write
+  username: admin
+  password: admin
+prometheus_scrape_interval: 15s

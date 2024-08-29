@@ -1,14 +1,14 @@
+# {{ ansible_managed }}
 [Unit]
 Description=Prometheus
 Wants=network-online.target
 After=network-online.target
 
 [Service]
-User=prometheus
-Group=prometheus
-Type=simple
+User={{ prometheus_user }}
+Group={{ prometheus_group }}
 ExecStart=/usr/local/bin/prometheus \
-    --config.file /etc/prometheus/prometheus.yml \
+    --config.file /{{ prometheus_prometheusconf }} \
     --storage.tsdb.path /var/lib/prometheus/ \
     --web.console.templates=/etc/prometheus/consoles \
     --web.console.libraries=/etc/prometheus/console_libraries
