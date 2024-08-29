@@ -8,11 +8,9 @@ installapps_apps_list:
   - vim
   - file
   - ufw 
-  - netstat 
-  - ip
-  - network
   - curl
   - mc 
   - htop 
+  - telnet
   - iotop
   - iftop 
