@@ -1,0 +1,38 @@
+# {{ ansible_managed }}
+# my global config
+global:
+  scrape_interval: {{ prometheus_scinterval }} # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: {{ prometheus_scinterval }} # Evaluate rules every 15 seconds. The default is every 1 minute.
+  external_labels:
+    server_name: {{ ansible_hostname }}
+
+# {% if prometheus_pr_remote_write.url is defined %}
+# remote_write:
+#   - url: {{ prometheus_pr_remote_write.url }}
+#     basic_auth:
+#       username: {{ prometheus_pr_remote_write.username }}
+#       password: {{ prometheus_pr_remote_write.password }}
+# {% endif %}
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  - job_name: 'node'
+    scrape_interval: {{prometheus_scrape_interval}}
+    file_sd_configs:
+      - files:
+          - "{{ prometheus_node_exporter_node_dir }}/node.yml"
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+    metrics_path: '/prometheus/metrics'
