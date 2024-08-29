@@ -66,3 +66,6 @@ prometheus_remote_write:
   username: admin
   password: admin
 prometheus_scrape_interval: 15s
+
+prometheus_vistoriametrics_dir: /opt/vistoriametrics
+prometheus_vistoriametrics_status: service --status-all | grep + | grep vistoriametrics

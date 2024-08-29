@@ -1,0 +1,68 @@
+---
+#
+- name: 2.0 Open 8428 port fo vistoria metrics
+  shell: iptables -I INPUT -p tcp --dport 8428 -j ACCEPT
+  become: true
+
+- name: 2.1 Save network result
+  shell: "{{ item }}"
+  loop:
+    # - apt install iptables-persistent -y сделать обработчик для согласия 
+    - netfilter-persistent save
+
+- name: 2.2 Download file from artifactory
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: /tmp/
+  ignore_errors: yes
+  with_items: https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v1.102.1/victoria-metrics-darwin-amd64-v1.102.1-enterprise.tar.gz
+  become: true
+  
+- name: 2.3 Create /etc/prometheus directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ prometheus_vistoriametrics_dir }}"
+    - /run/victoriametrics
+
+- name: 2.4 Extract the binare nifi files 
+  ansible.builtin.unarchive:
+    src: "{{ item }}"
+    dest: "{{ prometheus_vistoriametrics_dir }}"
+    remote_src: yes
+  with_items: victoria-metrics-darwin-amd64-v1.102.1-enterprise.tar.gz
+  become: true
+
+- name: 2.5 Create vistoriametrics group
+  ansible.builtin.group:
+    name: vistoriametrics
+    system: yes
+
+- name: 2.6 Create vistoriametrics user
+  ansible.builtin.user:
+    name: vistoriametrics
+    system: yes
+    shell: /sbin/nologin
+    group: prometheus
+
+- name: 2.7 Daemon reload
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  become: true
+
+- name: 2.8 Enable and start Prometheus service
+  ansible.builtin.systemd:
+    name: vistoriametrics
+    state: started
+    enabled: yes
+  become: true
+
+- name: 2.9 Check grafana service start
+  shell: "{{ prometheus_vistoriametrics_status }}"
+  register: grafana_status
+
+- name: 2.10 Debug check grafana service start
+  debug:
+    msg: "{{ vistoriametrics_status }}"

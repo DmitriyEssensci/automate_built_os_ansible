@@ -14,3 +14,4 @@ installapps_apps_list:
   - telnet
   - iotop
   - iftop 
+  - tar
