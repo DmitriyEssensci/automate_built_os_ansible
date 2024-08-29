@@ -32,7 +32,7 @@
     src: "{{ item }}"
     dest: "{{ prometheus_vistoriametrics_dir }}"
     remote_src: yes
-  with_items: victoria-metrics-darwin-amd64-v1.102.1-enterprise.tar.gz
+  with_items: /tmp/victoria-metrics-darwin-amd64-v1.102.1-enterprise.tar.gz
   become: true
 
 - name: 2.5 Create vistoriametrics group
