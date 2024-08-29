@@ -49,13 +49,12 @@
     mode: '0644'
     recurse: yes
 
-- name: Рекурсивно установить владельца и группу для папки {{ prometheus_victoriametrics_bin_dir }}
+- name: Рекурсивно установить владельца и группу для файла  {{ prometheus_victoriametrics_bin_dir }}/victoria-metrics-prod
   file:
     path: "{{ prometheus_victoriametrics_bin_dir }}/victoria-metrics-prod"
     owner: victoriametrics
     group: victoriametrics
     mode: '0644'
-    recurse: yes
 
 - name: 2.6 Extract the binare nifi files 
   ansible.builtin.unarchive:
