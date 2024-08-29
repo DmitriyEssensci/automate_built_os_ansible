@@ -30,7 +30,7 @@
 - name: 2.4 Extract the binare nifi files 
   ansible.builtin.unarchive:
     src: "{{ item }}"
-    dest: "{{ prometheus_victoriametrics_dir }}"
+    dest: "{{ prometheus_victoriametrics_binary_dir }}"
     remote_src: yes
   with_items: /tmp/victoria-metrics-darwin-amd64-v1.102.1-enterprise.tar.gz
   become: true
