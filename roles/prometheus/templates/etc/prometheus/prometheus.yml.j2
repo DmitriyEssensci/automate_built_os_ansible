@@ -20,4 +20,4 @@ scrape_configs:
       - targets:
         {% for host in groups['newmachine'] %}
         - {{ hostvars[host]['ansible_host'] }}:9100
-        {% endfor %}  # Адрес второго node_exporter
+        {% endfor %}
