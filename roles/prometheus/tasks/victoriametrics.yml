@@ -34,7 +34,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: '0644'
+    mode: '0755'
     owner: "{{ prometheus_victoriametrics_user }}"
     group: "{{ prometheus_victoriametrics_group }}"
   loop:
@@ -46,7 +46,7 @@
     path: "{{ prometheus_victoriametrics_var_dir }}"
     owner: victoriametrics
     group: victoriametrics
-    mode: '0644'
+    mode: '0755'
     recurse: yes
 
 - name: Рекурсивно установить владельца и группу для файла  {{ prometheus_victoriametrics_bin_dir }}/victoria-metrics-prod
@@ -54,7 +54,7 @@
     path: "{{ prometheus_victoriametrics_bin_dir }}/victoria-metrics-prod"
     owner: victoriametrics
     group: victoriametrics
-    mode: '0644'
+    mode: '0755'
 
 - name: 2.6 Extract the binare nifi files 
   ansible.builtin.unarchive:
@@ -68,7 +68,7 @@
   template:
     src: "templates/{{ item }}.j2"
     dest: "/{{ item }}"
-    mode: '0744'
+    mode: '0755'
   with_items: 
     - "{{ prometheus_template_victoriametrics_service_systemd_node }}"
   become: true
@@ -87,7 +87,7 @@
 
 - name: 2.10 Check victoriametrics service start
   shell: "{{ prometheus_victoriametrics_status }}"
-  register: grafana_status
+  register: victoriametrics_status
 
 - name: 2.11 Debug check victoriametrics service start
   debug:
