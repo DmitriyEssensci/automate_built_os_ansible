@@ -41,9 +41,17 @@
     - "{{ prometheus_victoriametrics_var_dir }}"
     - "{{ prometheus_victoriametrics_run_dir }}"
 
-- name: Рекурсивно установить владельца и группу для папки
+- name: Рекурсивно установить владельца и группу для папки {{ prometheus_victoriametrics_var_dir }}
   file:
     path: "{{ prometheus_victoriametrics_var_dir }}"
+    owner: victoriametrics
+    group: victoriametrics
+    mode: '0644'
+    recurse: yes
+
+- name: Рекурсивно установить владельца и группу для папки {{ prometheus_victoriametrics_bin_dir }}
+  file:
+    path: "{{ prometheus_victoriametrics_bin_dir }}"/victoria-metrics-prod
     owner: victoriametrics
     group: victoriametrics
     mode: '0644'
