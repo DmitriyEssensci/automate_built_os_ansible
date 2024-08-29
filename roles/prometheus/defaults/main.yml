@@ -67,7 +67,7 @@ prometheus_remote_write:
   password: admin
 prometheus_scrape_interval: 15s
 
-prometheus_vistoriametrics_dir: /opt/victoriametrics
-prometheus_vistoriametrics_status: service --status-all | grep + | grep victoriametrics
-prometheus_vistoriametrics_service_name: victoriametrics.service
-prometheus_template_vistoriametrics_service_systemd_node: "etc/systemd/system/{{ prometheus_victoriametrics_service_name }}"
+prometheus_victoriametrics_dir: /opt/victoriametrics
+prometheus_victoriametrics_status: service --status-all | grep + | grep victoriametrics
+prometheus_victoriametrics_service_name: victoriametrics.service
+prometheus_template_victoriametrics_service_systemd_node: "etc/systemd/system/{{ prometheus_victoriametrics_service_name }}"
