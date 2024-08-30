@@ -3,7 +3,7 @@
 #prometheus
 prometheus_version: 2.43.0
 prometheus_download_url: https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz
-prometheus_archive: /tmp/prometheus-2.43.0.linux-amd64.tar.gz
+prometheus_archive: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
 prometheus_bin_file:
   - prometheus
   - promtool
