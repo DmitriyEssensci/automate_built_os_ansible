@@ -27,6 +27,9 @@ Including an example of how to use your role (for instance, with variables passe
       roles:
          - { role: username.rolename, x: 42 }
 
+***Start role***
+ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/1c.yml
+
 License
 -------
 

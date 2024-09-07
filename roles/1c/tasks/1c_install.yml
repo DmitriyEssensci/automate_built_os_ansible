@@ -1,19 +1,19 @@
 ---
 # 1c_install file for prometheus
 - name: 1.0 Check timezone
-  shell: timedatectl show --property=Timezone --value
+  shell: "{{ srvr1c_shell_check_timezone }}"
   register: stdout_timedatectl
 
 - name: 1.1 Set timezone
-  shell: timedatectl set-timezone Europe/Moscow
+  shell: "{{ srvr1c_shell_timezone }}"
   become: true
   when: stdout_timedatectl.stdout != "Europe/Moscow"
 
 - name: 1.2 Set need locale
   block:
-    - name: 1.2.1 Add needs locale in /etc/locale.gen (for Debian/Ubuntu)
+    - name: 1.2.1 Add needs locale in {{ srvr1c_locales_files.locale_gen }} (for Debian/Ubuntu)
       ansible.builtin.lineinfile:
-        path: /etc/locale.gen
+        path: "{{ srvr1c_locales_files.locale_gen }}"
         regexp: "^#?({{ item }})"
         line: "{{ item }}"
         state: present
@@ -21,9 +21,9 @@
       become: true
       when: ansible_os_family == "Debian"
 
-    - name: 1.2.2 Add needs locale in /etc/locale.conf (for RedHat)
+    - name: 1.2.2 Add needs locale in {{ srvr1c_locales_files.locale_conf }} (for RedHat)
       ansible.builtin.lineinfile:
-        path: /etc/locale.conf
+        path: "{{ srvr1c_locales_files.locale_conf }}"
         line: "{{ item }}"
         state: present
       loop: "{{ srvr1c_locales }}"
@@ -38,18 +38,18 @@
 
 - name: 1.3 Set locale as default
   block:
-    - name: 1.3.1 Refresh var LANG in /etc/default/locale (for Debian/Ubuntu)
+    - name: 1.3.1 Refresh var LANG in {{ srvr1c_locale_path }} (for Debian/Ubuntu)
       ansible.builtin.lineinfile:
-        path: /etc/default/locale
+        path: "{{ srvr1c_locale_path }}"
         regexp: "^LANG="
         line: "LANG={{ srvr1c_default_locale }}"
         create: yes
       become: true
       when: ansible_os_family == "Debian"
 
-    - name: 1.3.2 Refresh var LANG in /etc/locale.conf (for RedHat)
+    - name: 1.3.2 Refresh var LANG in {{ srvr1c_locales_files.locale_conf }} (for RedHat)
       ansible.builtin.lineinfile:
-        path: /etc/locale.conf
+        path: "{{ srvr1c_locales_files.locale_conf }}"
         regexp: "^LANG="
         line: "LANG={{ srvr1c_default_locale }}"
         create: yes
@@ -64,25 +64,36 @@
   shell: locale
   register: default_locales
 
-- name: 1.6 Extract server64_8_3_23_2236.tar.gz
-  ansible.builtin.unarchive:
-    src: /tmp/1c_install_2v/server64_8_3_23_2236.tar.gz
-    dest: /tmp/1c_install_2v/
-    remote_src: yes
+# - name: "1.6 Extract {{ srvr1c_run_files}}"
+#   ansible.builtin.unarchive:
+#     src: "/tmp/{{ srvr1c_artifactory_directory}}/{{ srvr1c_run_files}}"
+#     dest: "/tmp/{{ srvr1c_artifactory_directory}}/"
+#     remote_src: yes
  
+- name: "1.6 Extract {{ srvr1c_run_files }}"
+  shell: tar -xzvf "/tmp/{{ srvr1c_artifactory_directory }}/{{ srvr1c_run_files }}" -C "/tmp/{{ srvr1c_artifactory_directory }}/"
+
 - name: "1.7 Set executable permissions on {{ srvr1c_setup_run_file }}"
   ansible.builtin.file:
-    path: "/tmp/1c_install_2v/{{ srvr1c_setup_run_file }}"
+    path: "/tmp/{{ srvr1c_artifactory_directory}}/{{ srvr1c_setup_run_file }}"
     mode: '0777'
     state: file
   become: true
 
-- name: "1.8 Install {{ srvr1c_setup_run_file }} with language selection"
-  shell: "/tmp/1c_install_2v/{{ srvr1c_setup_run_file }} --mode unattended --enable-components server,ws,server_admin,config_storage_server" 
-  become: true
+# - name: "1.8 Install {{ srvr1c_setup_run_file }} with language selection"
+#   shell: "{{ srvr1c_shell_install_1c }}"
+#   become: true
 
+- name: Move service file
+  template:
+    src: '{{ srvr1c_templates_service[0] }}'
+    dest: '{{ srvr1c_templates_service[1] }}'
+    owner: root
+    group: root
+    mode: 0750
+  
 - name: 1.9 Create simlink on 1c
-  shell: "systemctl link /opt/1cv8/x86_64/{{ srvr1c_version }}/{{ srvr1c_service_name }}"
+  shell: "{{ srvr1c_shell_create_simlink }}"
   become: true
 
 - name: 1.10 Reload systemd manager configuration
@@ -92,19 +103,19 @@
 
 - name: "1.11 Enable and start {{ srvr1c_service_name }} service"
   ansible.builtin.systemd:
-    name: srv1cv8-8.3.23.2236@default.service
+    name: "srv1cv8-{{ srvr1c_version }}@default.service"
     state: started
     enabled: yes
   become: true
 
 - name: "1.12 Check status {{ srvr1c_service_name }}"
-  shell:  systemctl status srv1cv8-8.3.23.2236@default.service | grep Active
+  shell:  "systemctl status srv1cv8-{{ srvr1c_version }}@default.service | grep Active"
   register: status_1c_server_service
 
-- name: 1.13 Debuig system info
+- name: 1.13 Debug system info
   debug:
     msg: 
       - "Timezone {{ stdout_timedatectl.stdout }}"
       - "Default locales: {{ default_locales.stdout }}"
-      - "1C Server status: {{ status_1c_server_service.stdout }}"
+      - "1C Server service status: {{ status_1c_server_service.stdout }}"
   when: srvr1c_debug_status  == true
