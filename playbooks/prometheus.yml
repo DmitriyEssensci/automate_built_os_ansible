@@ -1,4 +1,4 @@
 ---
-- hosts: '{{ newmachine | default("all") }}'
+- hosts: '{{ prometheus_hosts | default("newmachine") }}'
   roles:
     - role: prometheus

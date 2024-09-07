@@ -1,4 +1,4 @@
 ---
-- hosts: '{{ newmachine | default("all") }}'
+- hosts: '{{ install_apps_hosts | default("newmachine") }}'
   roles:
     - role: install_apps
