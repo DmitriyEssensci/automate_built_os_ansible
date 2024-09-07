@@ -49,9 +49,10 @@
       when: artifactory_connection.status == 200
 
     - name: Install Grafana Enterprise package from .deb file
-      ansible.builtin.dpkg:
-        name: /tmp/grafana-enterprise_11.2.0_amd64.deb
+      ansible.builtin.apt:
+        deb: /tmp/grafana-enterprise_11.2.0_amd64.deb
         state: present
+      become: true
       when: artifactory_connection.status is not defined or artifactory_connection.status != 200
 
 - name: 1.5 Create var/lib/grafana/dashboard directory
