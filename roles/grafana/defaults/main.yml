@@ -16,4 +16,4 @@ grafana_dashboard_path: var/lib/grafana/dashboard
 grafana_dashboard_main_dashboard_name: node_exporter_full-dashboard.json
 grafana_dashboard_main_dashboard_dir: "{{ grafana_dashboard_path }}/{{ grafana_dashboard_main_dashboard_name }}"
 
-grafana_host_address: 192.168.80.129
+grafana_host_address: "{{ ansible_default_ipv4.address }}"

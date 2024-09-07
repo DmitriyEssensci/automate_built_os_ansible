@@ -1,5 +1,5 @@
 ---
-- hosts: '{{ check_system_host | default("all") }}'
+- hosts: '{{ check_system_hosts | default("newmachine") }}'
   roles:
     - role: check_system
 

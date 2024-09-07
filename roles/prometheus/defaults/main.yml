@@ -32,7 +32,7 @@ prometheus_template_service_systemd_node: "etc/systemd/system/{{ prometheus_node
 prometheus_template_service_initd_node: "etc/init.d/{{ prometheus_node_exporter_service_name }}" # Не применимо на ubuntu
 prometheus_template_default_options_node: etc/default/node_exporter
 
-prometheus_node_exporter_addres: 192.168.80.129
+prometheus_node_exporter_addres: "{{ ansible_default_ipv4.address }}"
 
 prometheus_grafana_token_pass: !vault |
           $ANSIBLE_VAULT;1.1;AES256
@@ -50,18 +50,18 @@ prometheus_grafana_token_pass: !vault |
           62626239383436326633656138663138616235346634366335636163353339663161393234646131
           6162
 
-prometheus_host_machine: ubuntu1
-prometheus_grafana_host_address: 192.168.80.129
+prometheus_host_machine: "{{ inventory_hostname }}"
+prometheus_grafana_host_address: ansible_default_ipv4.address
 
 prometheus_prometheusconf: etc/prometheus/prometheus.yml
 prometheus_scinterval: 15s
 prometheus_vm_remote_write: 
-  url: http://192.168.80.129:8428/api/v1/write
+  url: "http://{{ prometheus_grafana_host_address }}:8428/api/v1/write"
   username: admin
   password: admin
 
 prometheus_pr_remote_write: 
-  url: http://192.168.80.129:9090/api/v1/write
+  url: "http://{{ prometheus_grafana_host_address }}:9090/api/v1/write"
   username: admin
   password: admin
   
