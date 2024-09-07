@@ -1,7 +1,7 @@
 [mainserver]
 radialadmin-MS-7D99 ansible_host=192.168.12.2 ansible_ssh_pass="{{ radialadmin_pass }}" ansible_python_interpreter=/usr/bin/python3
 
-[main_server:mainserver]
+[main_server:children]
 mainserver
 
 [newmachine]
