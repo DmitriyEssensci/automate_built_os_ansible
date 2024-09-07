@@ -1,52 +1,52 @@
 ---
 # tasks file for grafana
-- name: Chouse source for download grafana
+- name: Choose source for downloading Grafana
   block:
     - name: 1.6.1 Check connection to Artifactory server
       ansible.builtin.uri:
-        url: "wget https://dl.grafana.com/enterprise/release/grafana-enterprise_11.2.0_amd64.deb"
+        url: "https://dl.grafana.com/enterprise/release/grafana-enterprise_11.2.0_amd64.deb"
         method: HEAD
         return_content: no
         timeout: 10
       register: artifactory_connection
       ignore_errors: yes
 
-    block:
-      - name: 1.0 Ensure /etc/apt/keyrings directory exists
-        file:
-          path: "{{ grafana_ensure_keyrings }}"
-          state: directory
-          mode: '0755'
-        become: true
+    - block:
+        - name: 1.0 Ensure /etc/apt/keyrings directory exists
+          ansible.builtin.file:
+            path: "{{ grafana_ensure_keyrings }}"
+            state: directory
+            mode: '0755'
+          become: true
 
-      - name: 1.1 Download and dearmor Grafana GPG key
-        ansible.builtin.get_url:
-          url: "{{ grafana_download_pgp }}"
-          dest: "{{ grafana_dest_gpg }}"
-          mode: '0644'
-        become: true
+        - name: 1.1 Download and dearmor Grafana GPG key
+          ansible.builtin.get_url:
+            url: "{{ grafana_download_pgp }}"
+            dest: "{{ grafana_dest_gpg }}"
+            mode: '0644'
+          become: true
 
-      - name: 1.2 Convert Grafana GPG key to binary format
-        ansible.builtin.command:
-          cmd: "{{ grafana_convert_gpg }}"
-        args:
-          creates: "{{ grafana_ensure_keyrings }}/grafana.gpg"
-        become: true
+        - name: 1.2 Convert Grafana GPG key to binary format
+          ansible.builtin.command:
+            cmd: "{{ grafana_convert_gpg }}"
+          args:
+            creates: "{{ grafana_ensure_keyrings }}/grafana.gpg"
+          become: true
 
-      - name: 1.3 Add Grafana APT repository
-        ansible.builtin.apt_repository:
-          repo: "{{ grafana_repo }}"
-          state: present
-          filename: grafana
-        become: true
+        - name: 1.3 Add Grafana APT repository
+          ansible.builtin.apt_repository:
+            repo: "{{ grafana_repo }}"
+            state: present
+            filename: grafana
+          become: true
 
-      - name: 1.4 Install Grafana
-        ansible.builtin.apt:
-          name: grafana
-          state: present
-          update_cache: yes
-        become: true
-    when: artifactory_connection.status == 200
+        - name: 1.4 Install Grafana
+          ansible.builtin.apt:
+            name: grafana
+            state: present
+            update_cache: yes
+          become: true
+      when: artifactory_connection.status == 200
 
     - name: Install Grafana Enterprise package from .deb file
       ansible.builtin.dpkg:
