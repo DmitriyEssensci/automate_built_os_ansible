@@ -1,0 +1,7 @@
+---
+# defaults file for jenkins
+jenkins_ensure_keyrings: /etc/apt/keyrings
+jenkins_download_pgp: https://pkg.jenkins.io/debian/jenkins.io-2023.key
+jenkins_dest_gpg: /usr/share/keyrings/jenkins-keyring.asc
+jenkins_service_status: systemctl status jenkins.service | grep Active
+jenkins_ssl_dir: /etc/nifi/ssl

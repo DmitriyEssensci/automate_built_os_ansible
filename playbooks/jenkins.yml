@@ -1,0 +1,4 @@
+---
+- hosts: '{{ jenkins_hosts | default("newmachine") }}'
+  roles:
+    - role: jenkins

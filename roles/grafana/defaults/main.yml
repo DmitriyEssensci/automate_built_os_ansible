@@ -8,7 +8,7 @@ grafana_dest_gpg: /usr/share/keyrings/grafana.gpg.key
 grafana_convert_gpg: "gpg --dearmor -o {{ grafana_ensure_keyrings }}/grafana.gpg {{ grafana_dest_gpg }}"
 
 grafana_check_version: grafana-server -v | grep Version
-grafana_service_status: systemctl status grafana | grep Active
+grafana_service_status: systemctl status grafana-server.service | grep Active
 
 grafana_config_file: etc/grafana/grafana.ini
 

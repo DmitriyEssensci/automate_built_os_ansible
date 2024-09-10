@@ -1,0 +1,63 @@
+---
+# tasks file for jenkins
+- name: Ensure /etc/apt/keyrings directory exists
+  ansible.builtin.file:
+    path: "{{ jenkins_ensure_keyrings }}"
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Download and Jenkins GPG key
+  ansible.builtin.get_url:
+    url: "{{ jenkins_download_pgp }}"
+    dest: "{{ jenkins_dest_gpg }}"
+    mode: '0644'
+  become: true
+
+- name: Добавить Jenkins репозиторий в список источников
+  ansible.builtin.lineinfile:
+    path: /etc/apt/sources.list.d/jenkins.list
+    line: 'deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian binary/'
+    create: yes
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install jenkins
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - jenkins
+    - fontconfig 
+    - openjdk-17-jre
+  become: true
+
+- name: Create SSL directory and create ssl cert
+  block:
+    - name: Create SSL directory
+      file:
+        path: "{{ jenkins_ssl_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0644'
+
+- name: Reload daemon
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Enable and start jenkins service
+  ansible.builtin.systemd:
+    name: jenkins
+    state: started
+    enabled: yes
+
+- name: Check jenkins service start
+  shell: "{{ jenkins_service_status }}"
+  register: jenkins_status
+
+- name: Debug check jenkins service start
+  debug:
+    msg: "{{ jenkins_status.stdout }}"
