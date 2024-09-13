@@ -32,11 +32,6 @@ newmachines -> new_machines:children
 
 ***Prometheus:***  
 	http://hostname_ip:9090   
-	На данный момент приходится приводить файл /etc/prometheus/targets.d/node.yml в следующий вид руками:
-	- targets:
-    	- hostname:9100
-  	  labels:
-        instance: dmitriysa
 
 ***node_exporter:***   
 	http://hostname_ip:9100/metrics   
