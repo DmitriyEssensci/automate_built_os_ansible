@@ -24,28 +24,104 @@
 
 - name: 2.3 Install and hold pg apps
   block: 
-    - name: 2.3.1 Install apps
-      apt:
-        name: "{{ item }}"
-        state: present
-        update_cache: yes
-        force: yes
-      loop: "{{ srvr1c_postgresql_install_apps }}"
-      when: item not in installed_packages.stdout
+    # - name: Remove postgres and postgres common file
+    #   apt:
+    #     name: "{{ item }}"
+    #     state: absent
+    #     update_cache: yes
+    #     force: yes
+    #   loop: "{{ srvr1c_postgresql_install_apps }}"
+
+    - name: Ensure directories for PostgreSQL deb files exist
+      ansible.builtin.file:
+        path: "{{ item.dest }}"
+        state: directory
+        mode: '0755'
+      with_items: "{{ srvr1c_postgresql_archives_packages }}"
+
+    - name: 2.3.1 Extract the deb PostgreSQL files
+      ansible.builtin.unarchive:
+        src: '{{ item.name }}'
+        dest: '{{ item.dest }}'
+        remote_src: yes
+      with_items: "{{ srvr1c_postgresql_archives_packages }}"
+
+    - name: Find all deb files in PostgreSQL directories
+      ansible.builtin.find:
+        paths:
+          - "{{ srvr1c_postgresql_packages_directory }}/{{ srvr1c_postgresql_package_name_directory[0] }}"
+          - "{{ srvr1c_postgresql_packages_directory }}/{{ srvr1c_postgresql_package_name_directory[1] }}"
+        patterns: "*.deb"
+      register: deb_files
+
+    - name: Debug find .deb packages
+      debug:
+        msg: "Found this package: {{ item.path }}"
+      with_items: "{{ deb_files.files }}"
+
+    - name: Ensure no older versions of the packages are installed
+      ansible.builtin.apt:
+        name: "{{ item.name }}"
+        state: absent
+      with_items: "{{ deb_files.files | map(attribute='path') | map('basename') | list }}"
+      become: yes
+      ignore_errors: yes  # Игнорируем ошибки, если пакет не установлен
+
+    # - name: Install all found deb files
+    #   ansible.builtin.apt:
+    #     deb: "{{ item.path }}"
+    #   with_items: "{{ deb_files.files }}"
+    #   become: yes
+      # when: item not in installed_packages.stdout
 
     - name: 2.3.2 Fix broken dependencies
       command: "{{ srvr1c_shell_fix_broken_package }}"
 
-    - name: 2.3.3 Hold packages
-      shell: "apt-mark hold {{ item }}"
-      loop: "{{ srvr1c_postgresql_install_apps }}"
+    # - name: 2.3.3 Hold packages
+    #   shell: "apt-mark hold {{ item }}"
+    #   loop: "{{ srvr1c_postgresql_install_apps }}"
+  #ignore_errors: true
+  become: true
+
+# - name: 2.4 Check hold packages
+#   command: "{{ srvr1c_shell_check_hold_package }}"
+#   register: list_hold_packages
+
+# - name: 2.5 Debug hold package
+#   debug:
+#     msg: "{{ list_hold_packages.stdout }}"
+
+- name: Move postgres config file
+  template:
+    src: '{{ srvr1c_templates_postgresql_conf_file[0] }}'
+    dest: '{{ srvr1c_templates_postgresql_conf_file[1] }}'
+    owner: postgres
+    group: postgres
+    mode: 0750
+
+- name: Reload systemd manager configuration
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  become: true
+
+# - name: Unmask postgresql
+#   shell: systemctl unmask postgresql
+#   become: true
+
+- name: Enable and start posgresql
+  ansible.builtin.systemd:
+    name: postgresql@14-main.service
+    state: started
+    enabled: yes
   ignore_errors: true
   become: true
 
-- name: 2.4 Check hold packages
-  command: "{{ srvr1c_shell_check_hold_package }}"
-  register: list_hold_packages
+- name: Check status postgresql service
+  shell: systemctl status postgresql@14-main.service | grep Active
+  register: status_postgresql_service
 
-- name: 2.5 Debug hold package
+- name: Debug postgresql info
   debug:
-    msg: "{{ list_hold_packages.stdout }}"
+    msg: 
+      - "PostgreSQL status: {{ status_postgresql_service.stdout }}"
+  when: srvr1c_debug_status  == true

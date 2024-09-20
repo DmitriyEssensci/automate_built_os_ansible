@@ -5,10 +5,15 @@ srvr1c_add_repository_keyserver: keyserver.ubuntu.com
 srvr1c_add_repository_id: 3B4FE6ACC0B21F32
 
 srvr1c_version: "8.3.23.2236"
+srvr1c_destination: "/opt/1cv8/x86_64/{{ srvr1c_version }}"
 srvr1c_artifactory_directory: 1c_install_2v
 srvr1c_run_files: server64_8_3_23_2236.tar.gz
 srvr1c_setup_run_file: setup-full-{{ srvr1c_version }}-x86_64.run
+
 srvr1c_service_name: srv1cv8-{{ srvr1c_version }}@.service
+srvr1c_ras_service_name: rassrv1cv8@.service
+srvr1c_postgresql_service_name: postgresql.service
+srvr1c_services_destionation: /etc/systemd/system
 
 srvr1c_default_locale: ru_RU.UTF-8
 srvr1c_locales_files:
@@ -24,23 +29,44 @@ srvr1c_shell_check_timezone: timedatectl show --property=Timezone --value
 srvr1c_shell_check_service_status: systemctl status srv1cv8-{{ srvr1c_version }}@default.service | grep Active
 srvr1c_shell_check_hold_package: apt-mark showhold
 srvr1c_shell_install_1c: /tmp/{{ srvr1c_artifactory_directory}}/{{ srvr1c_setup_run_file }} --mode unattended --enable-components server,ws,server_admin,config_storage_server
-srvr1c_shell_create_simlink: systemctl link /opt/1cv8/x86_64/{{ srvr1c_version }}/{{ srvr1c_service_name }}
 srvr1c_shell_fix_broken_package: apt-get install -f
 srvr1c_shell_set_timezone: timedatectl set-timezone Europe/Moscow
+srvr1c_shell_create_server_simlink: systemctl link {{ srvr1c_services_destionation }}/{{ srvr1c_service_name }}
+srvr1c_shell_create_ras_simlink: systemctl link {{ srvr1c_services_destionation }}/{{ srvr1c_ras_service_name }}
 
-srvr1c_debug_status: true
+srvr1c_templates_service:
+  - 'templates{{ srvr1c_services_destionation }}/{{ srvr1c_service_name }}.j2'
+  - '{{ srvr1c_services_destionation }}/{{ srvr1c_service_name }}'
+srvr1c_templates_ras_service:
+  - 'templates{{ srvr1c_services_destionation }}/{{ srvr1c_ras_service_name }}.j2'
+  - '{{ srvr1c_services_destionation }}/{{ srvr1c_ras_service_name }}'
 
-# srvr1c_postgresql_version: "16.2-3.1C"
-# srvr1c_postgresql_tar: "postgresql_16.2_3.1C_amd64_deb.tar.bz2"
+srvr1c_postgresql_service:  
+  - 'templates{{ srvr1c_services_destionation }}/{{ srvr1c_postgresql_service_name }}.j2'
+  - '{{ srvr1c_services_destionation }}/{{ srvr1c_postgresql_service_name }}'
 srvr1c_postgresql_install_apps:
   - libldap-2.4-2
   - libpq5
   - libssl1.1
-  - postgresql
   - postgresql-common
+  - postgresql
   - postgresql-client
   - postgresql-client-common
+srvr1c_postgresql_tmp_directory: "/tmp/{{ srvr1c_artifactory_directory}}/postgresql"
+srvr1c_postgresql_packages_directory: "{{ srvr1c_postgresql_tmp_directory }}/postgresql_deb_files"
+srvr1c_postgresql_package_name: 
+  - postgresql_14.12_2.1C_amd64_deb
+  - postgresql_14.12_2.1C_amd64_addon_deb
+srvr1c_postgresql_package_name_directory:
+  - postgresql-14.12-2.1C_amd64_deb
+  - postgresql-14.12-2.1C_amd64_addon_deb
+srvr1c_postgresql_archives_packages:
+  - name: "{{ srvr1c_postgresql_tmp_directory }}/{{ srvr1c_postgresql_package_name[0] }}.tar.bz2" 
+    dest: "{{ srvr1c_postgresql_packages_directory }}"
+  - name: "{{ srvr1c_postgresql_tmp_directory }}/{{ srvr1c_postgresql_package_name[1] }}.tar.bz2"
+    dest: "{{ srvr1c_postgresql_packages_directory }}"
+srvr1c_templates_postgresql_conf_file:
+  - 'templates/etc/postgresql/14/main/postgresql.conf.j2'
+  - '/etc/postgresql/14/main/postgresql.conf'
 
-srvr1c_templates_service:
-  - 'templates/opt/1cv8/x86_64/8.3.23.2236/srv1cv8-8.3.23.2236@.service.j2'
-  - '/opt/1cv8/x86_64/8.3.23.2236/srv1cv8-8.3.23.2236@.service'
+srvr1c_debug_status: true

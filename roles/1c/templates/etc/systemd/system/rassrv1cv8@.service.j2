@@ -1,0 +1,17 @@
+[Unit]
+Description=1C:Enterprise Remote Administration Service
+After=network.target remote-fs.target nss-lookup.target
+Requires={{ srvr1c_service_name }}
+ 
+[Service]
+Type=simple
+ExecStart={{ srvr1c_destination }}/ras cluster --port=1545
+KillSignal=SIGINT
+PrivateTmp=true
+Restart=on-failure
+RestartSec=5
+User=usr1cv8
+Group=grp1cv8
+ 
+[Install]
+WantedBy=multi-user.target

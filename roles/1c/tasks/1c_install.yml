@@ -84,38 +84,68 @@
 #   shell: "{{ srvr1c_shell_install_1c }}"
 #   become: true
 
-- name: Move service file
+- name: 1.9 Move service file
   template:
-    src: '{{ srvr1c_templates_service[0] }}'
-    dest: '{{ srvr1c_templates_service[1] }}'
+    src: '{{ item[0] }}'
+    dest: '{{ item[1] }}'
     owner: root
     group: root
     mode: 0750
+  loop:
+    - "{{ srvr1c_templates_service }}"
+    - "{{ srvr1c_templates_ras_service }}"
   
-- name: 1.9 Create simlink on 1c
-  shell: "{{ srvr1c_shell_create_simlink }}"
-  become: true
+# - name: 1.10 Create simlink on 1c
+#   shell: "{{ item }}"
+#   loop:
+#     - "{{ srvr1c_shell_create_ras_simlink }}"
+#     - "{{ srvr1c_shell_create_server_simlink }}"
+#   become: true
 
-- name: 1.10 Reload systemd manager configuration
+- name: 1.11 Reload systemd manager configuration
   ansible.builtin.systemd:
     daemon_reload: yes
   become: true
 
-- name: "1.11 Enable and start {{ srvr1c_service_name }} service"
+- name: "1.12 Enable and start srv1cv8-{{ srvr1c_version }}@default.service and rassrv1cv8@default.service service"
   ansible.builtin.systemd:
-    name: "srv1cv8-{{ srvr1c_version }}@default.service"
+    name: "{{ item }}"
     state: started
     enabled: yes
+  loop:
+    - "srv1cv8-{{ srvr1c_version }}@default.service"
+    - "rassrv1cv8@default.service"
   become: true
 
-- name: "1.12 Check status {{ srvr1c_service_name }}"
+- name: 1.13 Add rac to PATH in .bashrc
+  block:
+    - name: Write rac dir to PATH
+      ansible.builtin.lineinfile:
+        path: "{{ ansible_env.HOME }}/.bashrc"
+        line: 'export PATH=$PATH:/opt/1cv8/x86_64/8.3.23.2236'
+        insertafter: EOF
+        state: present
+    
+    - name: Apply changes by sourcing .bashrc
+      ansible.builtin.shell: |
+        source ~/.bashrc
+      args:
+        executable: /bin/bash
+  become: true
+
+- name: "1.14 Check status srv1cv8-{{ srvr1c_version }}@default.service"
   shell:  "systemctl status srv1cv8-{{ srvr1c_version }}@default.service | grep Active"
   register: status_1c_server_service
 
-- name: 1.13 Debug system info
+- name: "1.15 Check status rassrv1cv8@default.service"
+  shell:  "systemctl status rassrv1cv8@default.service | grep Active"
+  register: status_1c_server_ras_service
+
+- name: 1.16 Debug system info
   debug:
     msg: 
       - "Timezone {{ stdout_timedatectl.stdout }}"
       - "Default locales: {{ default_locales.stdout }}"
       - "1C Server service status: {{ status_1c_server_service.stdout }}"
+      - "1C Server RAS status: {{ status_1c_server_ras_service.stdout }}"
   when: srvr1c_debug_status  == true

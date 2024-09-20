@@ -1,4 +1,4 @@
 ---
-- hosts: '{{ 1c_hosts | default("newmachine") }}'
+- hosts: '{{ srv1c_hosts | default("newmachine") }}'
   roles:
     - role: 1c
