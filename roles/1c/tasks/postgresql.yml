@@ -1,0 +1,99 @@
+---
+# postgresql file for 1c
+- name: 3.1 Download pgpro-repo-add.sh script
+  ansible.builtin.get_url:
+    url: "{{ srvr1c_postgresql_repo_url }}"
+    dest: "{{ srvr1c_postgresql_repo_dest }}"
+    mode: '0755'
+  ignore_errors: true
+
+- name: 3.2 Run pgpro-repo-add.sh script
+  ansible.builtin.shell: "{{ srvr1c_postgresql_repo_dest }}"
+  args:
+    chdir: /tmp
+  ignore_errors: true
+
+- name: 3.3 Install postgrespro-1c-14
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop: 
+    - "{{ srvr1c_postgresql_service }}"
+
+- name: 3.4 Move postgres config file
+  template:
+    src: '{{ srvr1c_templates_postgresql_conf_file[0] }}'
+    dest: '{{ srvr1c_templates_postgresql_conf_file[1] }}'
+    owner: "{{ srvr1c_postgresql_user }}"
+    group: "{{ srvr1c_postgresql_group }}"
+    mode: 0750
+
+- name: 3.5 Reload systemd manager configuration
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  become: true
+
+- name: 3.6 Enable and start posgresql
+  ansible.builtin.systemd:
+    name: "{{ srvr1c_postgresql_service }}"
+    state: started
+    enabled: yes
+  ignore_errors: true
+  become: true
+
+- name: 3.7 Check status postgresql service
+  shell: "{{ srvr1c_shell_check_postgresql_status }}"
+  register: status_postgresql_service
+
+- name: 3.8 Debug postgresql info
+  debug:
+    msg: 
+      - "PostgreSQL status: {{ status_postgresql_service.stdout }}"
+  when: srvr1c_debug_status  == true
+
+- name: Install psycopg2 for PostgreSQL
+  ansible.builtin.apt:
+    name: python3-psycopg2
+    state: present
+  become: true
+
+- name: 3.9 Change password for postgres user
+  ansible.builtin.postgresql_user:
+    name: "{{ srvr1c_postgresql_user }}"
+    password: "{{ srvr1c_postgresql_psql_pass }}"
+    login_user: "{{ srvr1c_postgresql_user }}"
+    login_host: "{{ ansible_default_ipv4.address }}"
+  become: true
+
+- name: 3.10 Add allowed subnet to pg_hba.conf
+  ansible.builtin.lineinfile:
+    path: "{{ pg_hba_conf_path }}"
+    line: "{{ srvr1c_postgresql_subnet }}"
+    insertafter: EOF
+    state: present
+  become: true
+
+- name: 3.11 Restart PostgreSQL service
+  ansible.builtin.systemd:
+    name: "{{ srvr1c_postgresql_service }}"
+    state: restarted
+  become: true
+
+- name: 3.12 Get postgresql.conf path
+  ansible.builtin.command: "{{ srvr1c_shell_postgresql_conf_postgresql_path }}"
+  register: config_file_result
+  become: true
+
+- name: 3.13 Get pg_hba.conf path
+  ansible.builtin.command: "{{ srvr1c_shell_postgresql_conf_pg_hba_path }}"
+  register: hba_file_result
+  become: true
+
+- name: 3.14 Set PostgreSQL config file path
+  set_fact:
+    postgresql_conf_path: "{{ config_file_result.stdout_lines[2].strip() }}"
+
+- name: 3.15 Set pg_hba.conf file path
+  set_fact:
+    pg_hba_conf_path: "{{ hba_file_result.stdout_lines[2].strip() }}"

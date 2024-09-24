@@ -4,22 +4,29 @@ srvr1c_add_repository: deb http://ru.archive.ubuntu.com/ubuntu/ bionic main univ
 srvr1c_add_repository_keyserver: keyserver.ubuntu.com
 srvr1c_add_repository_id: 3B4FE6ACC0B21F32
 
+srvr1c_service_name: srv1cv8-{{ srvr1c_version }}@.service
+srvr1c_ras_service_name: rassrv1cv8@.service
+
 srvr1c_version: "8.3.23.2236"
 srvr1c_destination: "/opt/1cv8/x86_64/{{ srvr1c_version }}"
+srvr1c_services_destionation: /etc/systemd/system
 srvr1c_artifactory_directory: 1c_install_2v
 srvr1c_run_files: server64_8_3_23_2236.tar.gz
 srvr1c_setup_run_file: setup-full-{{ srvr1c_version }}-x86_64.run
 
-srvr1c_service_name: srv1cv8-{{ srvr1c_version }}@.service
-srvr1c_ras_service_name: rassrv1cv8@.service
-srvr1c_postgresql_service_name: postgresql.service
-srvr1c_services_destionation: /etc/systemd/system
+srvr1c_sentinel_fullnes_archive_file_name: Sentinel_LDK_Linux_Run-time_Installer_script
+srvr1c_sentinel_pkg_archive_file_name: aksusbd-10.11.1
+srvr1c_sentinel_tmp_dir: "/tmp/{{ srvr1c_artifactory_directory}}/sentinel"
+srvr1c_sentinel_fullnes_archive_dir: "{{ srvr1c_sentinel_tmp_dir }}/{{ srvr1c_sentinel_fullnes_archive_file_name }}"
+srvr1c_sentinel_pkg_archive_dir: "{{ srvr1c_sentinel_tmp_dir }}/{{ srvr1c_sentinel_fullnes_archive_file_name }}/{{ srvr1c_sentinel_pkg_archive_file_name }}"
+
+srvr1c_aksusbd_service: aksusbd.service
+srvr1c_hasp_service: hasplmd.service
 
 srvr1c_default_locale: ru_RU.UTF-8
 srvr1c_locales_files:
   locale_gen: /etc/locale.gen
   locale_conf: /etc/locale.conf
-
 srvr1c_locales:
   - ru_RU.CP1251
   - "{{ srvr1c_default_locale }}"
@@ -34,6 +41,16 @@ srvr1c_shell_set_timezone: timedatectl set-timezone Europe/Moscow
 srvr1c_shell_create_server_simlink: systemctl link {{ srvr1c_services_destionation }}/{{ srvr1c_service_name }}
 srvr1c_shell_create_ras_simlink: systemctl link {{ srvr1c_services_destionation }}/{{ srvr1c_ras_service_name }}
 
+srvr1c_shell_postgresql_conf_postgresql_path: sudo -u postgres psql -c "show config_file;"
+srvr1c_shell_postgresql_conf_pg_hba_path: sudo -u postgres psql -c "show hba_file;"
+srvr1c_shell_check_postgresql_status: "systemctl status {{ srvr1c_postgresql_service }}  | grep Active"
+
+srvr1c_shell_install_sentinel: "dpkg -i {{ srvr1c_sentinel_pkg_archive_dir }}/pkg/aksusbd_10.11-1_amd64.deb"
+srvr1c_shell_check_aksusbd_status: "systemctl status {{ srvr1c_aksusbd_service }}  | grep Active"
+srvr1c_shell_check_hasplmd_status: "systemctl status {{ srvr1c_hasp_service }}  | grep Active"
+
+srvr1c_shell_check_apache2_status: "systemctl status {{ srvr1c_apache_service }}  | grep Active"
+
 srvr1c_templates_service:
   - 'templates{{ srvr1c_services_destionation }}/{{ srvr1c_service_name }}.j2'
   - '{{ srvr1c_services_destionation }}/{{ srvr1c_service_name }}'
@@ -41,32 +58,24 @@ srvr1c_templates_ras_service:
   - 'templates{{ srvr1c_services_destionation }}/{{ srvr1c_ras_service_name }}.j2'
   - '{{ srvr1c_services_destionation }}/{{ srvr1c_ras_service_name }}'
 
-srvr1c_postgresql_service:  
-  - 'templates{{ srvr1c_services_destionation }}/{{ srvr1c_postgresql_service_name }}.j2'
-  - '{{ srvr1c_services_destionation }}/{{ srvr1c_postgresql_service_name }}'
-srvr1c_postgresql_install_apps:
-  - libldap-2.4-2
-  - libpq5
-  - libssl1.1
-  - postgresql-common
-  - postgresql
-  - postgresql-client
-  - postgresql-client-common
-srvr1c_postgresql_tmp_directory: "/tmp/{{ srvr1c_artifactory_directory}}/postgresql"
-srvr1c_postgresql_packages_directory: "{{ srvr1c_postgresql_tmp_directory }}/postgresql_deb_files"
-srvr1c_postgresql_package_name: 
-  - postgresql_14.12_2.1C_amd64_deb
-  - postgresql_14.12_2.1C_amd64_addon_deb
-srvr1c_postgresql_package_name_directory:
-  - postgresql-14.12-2.1C_amd64_deb
-  - postgresql-14.12-2.1C_amd64_addon_deb
-srvr1c_postgresql_archives_packages:
-  - name: "{{ srvr1c_postgresql_tmp_directory }}/{{ srvr1c_postgresql_package_name[0] }}.tar.bz2" 
-    dest: "{{ srvr1c_postgresql_packages_directory }}"
-  - name: "{{ srvr1c_postgresql_tmp_directory }}/{{ srvr1c_postgresql_package_name[1] }}.tar.bz2"
-    dest: "{{ srvr1c_postgresql_packages_directory }}"
+srvr1c_postgresql_user: postgresql
+srvr1c_postgresql_group: postgresql
+srvr1c_postgresql_psql_pass: postgresql
+
+srvr1c_postgresql_service: postgrespro-1c-14.service 
+srvr1c_postgresql_conf_dir: var/lib/pgpro/1c-14/data
+srvr1c_postgresql_conf_file: postgresql.conf
+srvr1c_postgresql_repo_url: https://repo.postgrespro.ru/1c/1c-14/keys/pgpro-repo-add.sh
+srvr1c_postgresql_repo_dest: /tmp/pgpro-repo-add.sh
 srvr1c_templates_postgresql_conf_file:
-  - 'templates/etc/postgresql/14/main/postgresql.conf.j2'
-  - '/etc/postgresql/14/main/postgresql.conf'
+  - 'templates/{{ srvr1c_postgresql_conf_dir }}/{{ srvr1c_postgresql_conf_file }}.j2'
+  - '/{{ srvr1c_postgresql_conf_dir }}/{{ srvr1c_postgresql_conf_file }}'
+srvr1c_postgresql_subnet: "host    all    all    192.168.80.0/24    md5"
+
+srvr1c_apache_service: apache2
+srvr1c_apache_webservice_name: radial
+srvr1c_apache_vrd_dir: "/var/www/1c/{{ srvr1c_apache_webservice_name }}"
+srvr1c_apache_conf_file: "/etc/apache2/conf-available/{{ srvr1c_apache_webservice_name }}.conf"
+srvr1c_apache_publish_webinst: "./webinst -apache24 -wsdir {{ srvr1c_apache_webservice_name }} -dir '{{ srvr1c_apache_vrd_dir }}' -connstr 'Srvr=\"localhost\";Ref=\"{{ srvr1c_apache_webservice_name }}\";' -confPath {{ srvr1c_apache_conf_file }}"
 
 srvr1c_debug_status: true

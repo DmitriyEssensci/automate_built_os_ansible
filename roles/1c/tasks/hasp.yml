@@ -1,0 +1,53 @@
+---
+# hasp file for 1c
+- name: 2.1 Extract fullnes archive
+  ansible.builtin.unarchive:
+    src: '{{ item }}'
+    dest: "{{ srvr1c_sentinel_tmp_dir }}"
+    remote_src: yes
+  loop: 
+    - "{{ srvr1c_sentinel_fullnes_archive_dir }}.tar.gz"
+
+- name: 2.2 Extract pkg archive
+  ansible.builtin.unarchive:
+    src: '{{ item }}'
+    dest: "{{ srvr1c_sentinel_fullnes_archive_dir }}"
+    remote_src: yes
+  loop: 
+    - "{{ srvr1c_sentinel_pkg_archive_dir }}.tar.gz"
+  
+- name: 2.3 Install aksusbd-10.11.1 package using dpkg
+  command: "{{ srvr1c_shell_install_sentinel }}"
+  become: true
+  ignore_errors: yes
+
+- name: 2.4 Reload systemd manager configuration
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  become: true
+
+- name: 2.5 Enable and start posgresql
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  ignore_errors: true
+  loop:
+    - "{{ srvr1c_aksusbd_service }}"
+    - "{{ srvr1c_hasp_service }}"
+  become: true
+
+- name: 2.6 Check status aksusbd service
+  shell: "{{ srvr1c_shell_check_aksusbd_status }}"
+  register: status_aksusbd_service
+  
+- name: 2.7 Check status hasplmd service
+  shell: "{{ srvr1c_shell_check_hasplmd_status }}"
+  register: status_hasplmd_service
+
+- name: 2.8 Debug postgresql info
+  debug:
+    msg: 
+      - "Hasplmd status: {{ status_aksusbd_service.stdout }}"
+      - "Aksusbd status: {{ status_hasplmd_service.stdout }}"
+  when: srvr1c_debug_status  == true

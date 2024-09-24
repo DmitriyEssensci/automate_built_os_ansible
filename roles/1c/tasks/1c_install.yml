@@ -1,5 +1,5 @@
 ---
-# 1c_install file for prometheus
+# 1c_install file for 1c
 - name: 1.0 Check timezone
   shell: "{{ srvr1c_shell_check_timezone }}"
   register: stdout_timedatectl
