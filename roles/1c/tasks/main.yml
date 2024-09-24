@@ -1,13 +1,13 @@
 ---
 # main file for 1c
-# - name: 1.0 Install 1C
-#   include_tasks: 1c_install.yml
+- name: 1.0 Install 1C
+  include_tasks: 1c_install.yml
 
-# - name: 2.0 Install HASP
-#   include_tasks: hasp.yml
+- name: 2.0 Install HASP
+  include_tasks: hasp.yml
 
-# - name: 3.0 Install PostgreSQL
-#   include_tasks: postgresql.yml
+- name: 3.0 Install PostgreSQL
+  include_tasks: postgresql.yml
 
 - name: 4.0 Install PostgreSQL
   include_tasks: apache.yml
