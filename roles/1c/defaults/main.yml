@@ -132,8 +132,8 @@ srvr1c_cluster_database_type: PostgreSQL
 srvr1c_postgresql_locale: ru
 srvr1c_postgresql_license_distribution: allow
 srvr1c_postgresql_scheduled_jobs: 'on'
-srvr1c_postgresql_db_descr: Radial_BP_db
-srvr1c_postgresql_db_name: radial
+srvr1c_postgresql_db_descr: Decription_BP_db
+srvr1c_postgresql_db_name: my_db
 srvr1c_postgresql_user: postgres
 srvr1c_postgresql_group: postgres
 srvr1c_postgresql_psql_pass: postgresql
@@ -149,7 +149,7 @@ srvr1c_templates_postgresql_conf_file:
 srvr1c_postgresql_subnet: "host    all    all    192.168.80.0/24    md5"
 
 srvr1c_apache_service: apache2
-srvr1c_apache_webservice_name: radial
+srvr1c_apache_webservice_name: my_server
 srvr1c_apache_vrd_dir: "/var/www/1c/{{ srvr1c_apache_webservice_name }}"
 srvr1c_apache_conf_file: "/etc/apache2/conf-available/{{ srvr1c_apache_webservice_name }}.conf"
 srvr1c_apache_publish_webinst: "./webinst -apache24 -wsdir {{ srvr1c_apache_webservice_name }} -dir '{{ srvr1c_apache_vrd_dir }}' -connstr 'Srvr=\"localhost\";Ref=\"{{ srvr1c_apache_webservice_name }}\";' -confPath {{ srvr1c_apache_conf_file }}"
