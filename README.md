@@ -1,5 +1,4 @@
-Alex Essensci, [28.09.2024 1:53]
-# Репозиторий automate_built_os
+# Репозиторий automate_built_os_ansible
 
 Репозиторий с IaC решением по установке сервисов, программного обеспечения и пакетов, а также настройке конфигураций системы.
 
@@ -7,7 +6,7 @@ Alex Essensci, [28.09.2024 1:53]
 
 Пример команды для создания новой роли с заданной структурой, которая является стандартом написания роли:
 
-ansible-galaxy init role_name
+- ansible-galaxy init role_name
 
 ## Роли
 
@@ -46,36 +45,21 @@ ansible-galaxy init role_name
 
 Рекомендованный список запуска ролей для проверки системы, установки ПО и сервисов для конфигурирования полного комплекса пакетов для 1С сервера:
 
-1. check_system  
-      ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/check_system.yml
-   
+| Название роли   | Команда для запуска (bash)                                                                 |
+|-----------------|---------------------------------------------------------------------------------------------|
+| check_system    | ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/check_system.yml |
+| install_apps    | ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/install_apps.yml |
+| jenkins         | ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/jenkins.yml |
+| prometheus      | ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/prometheus.yml |
+| grafana         | ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/grafana.yml |
+| 1c              | ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/1c.yml |
 
-2. install_apps  
-      ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/install_apps.yml
-   
+### Примечание 1: Для установки Grafana требуется VPN-подключение, либо .deb пакет Grafana, который должен находиться по пути /tmp/grafana-enterprise_11.2.0_amd64.deb.
 
-3. jenkins  
-      ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/jenkins.yml
-   
-
-4. prometheus  
-      ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/prometheus.yml
-   
-
-5. grafana  
-      ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/grafana.yml
-   
-
-6. 1c  
-      ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/1c.yml
-   
-
-Примечание 1: Для установки Grafana требуется VPN-подключение, либо .deb пакет Grafana, который должен находиться по пути /tmp/grafana-enterprise_11.2.0_amd64.deb.  
-Примечание 2: При установке сервисов мониторинга на клиентские виртуальные или bare-metal машины необходимо установить переменные {{ prometheus_host_machine }} и {{ prometheus_grafana_host_address }} на hostname хоста для Prometheus и его IPv4 адрес.
+### Примечание 2: При установке сервисов мониторинга на клиентские виртуальные или bare-metal машины необходимо установить переменные {{ prometheus_host_machine }} и {{ prometheus_grafana_host_address }} на hostname хоста для Prometheus и его IPv4 адрес.
 
 ## Список сервисов, развёрнутых по адресу/доменному имени и порту
 
-Alex Essensci, [28.09.2024 1:53]
 | Название сервиса/подсервиса     | Полный адрес сервера с портом                    | Учётные данные                          |
 |---------------------------------|--------------------------------------------------|------------------------------------------|
 | Prometheus                      | http://hostname_ip:9090                          | -                                        |
