@@ -1,6 +1,7 @@
-[newmachines]
-docker_car1 ansible_host=
-docker_car2 ansible_host=
+[all]
 
-[new_machines:children]
-newmachines
+[mainserver]
+
+[main_server:children]
+mainserver
+

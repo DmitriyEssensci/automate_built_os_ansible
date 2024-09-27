@@ -1,17 +1,17 @@
 ---
 # apache file for 1c
-- name: Install psycopg2 for apache2
+- name: 4.1 Install apache2
   ansible.builtin.apt:
     name: "{{ srvr1c_apache_service }}"
     state: present
   become: true
 
-- name: 3.5 Reload systemd manager configuration
+- name: 4.2 Reload systemd manager configuration
   ansible.builtin.systemd:
     daemon_reload: yes
   become: true
 
-- name: 3.6 Enable and start apache2
+- name: 4.3 Enable and start apache2
   ansible.builtin.systemd:
     name: "{{ srvr1c_apache_service }}"
     state: started
@@ -19,51 +19,51 @@
   ignore_errors: true
   become: true
 
-- name: 3.7 Check status apache2 service
-  shell: "{{ srvr1c_shell_check_apache2_status }}"
-  register: status_apache2_service
-
-- name: 3.8 Debug apache2 info
-  debug:
-    msg: 
-      - "Apache2 status: {{ status_apache2_service.stdout }}"
-  when: srvr1c_debug_status  == true
-
-- name: Create directory for vrd file
+- name: 4.4 Create directory for vrd file
   ansible.builtin.file:
     path: "{{ srvr1c_apache_vrd_dir }}"
     state: directory
 
-- name: Create Apache configuration file
+- name: 4.5 Create Apache configuration file
   ansible.builtin.file:
     path: "{{ srvr1c_apache_conf_file }}"
     state: touch
 
-- name: Publish the database using webinst
+- name: 4.6 Publish the database using webinst
   ansible.builtin.command:
     cmd: "{{ srvr1c_apache_publish_webinst }}"
   args:
-    chdir: "{{ srvr1c_version }}"
+    chdir: "{{ srvr1c_destination }}"
 
-- name: Reload Apache configuration
+- name: 4.7 Reload Apache configuration
   ansible.builtin.systemd:
     name: "{{ srvr1c_apache_service }}"
     state: reloaded
 
-- name: "Enable {{ srvr1c_apache_webservice_name }} configuration in Apache"
+- name: 4.8 "Enable {{ srvr1c_apache_webservice_name }} configuration in Apache"
   ansible.builtin.command:
     cmd: "a2enconf {{ srvr1c_apache_webservice_name }}"
 
-- name: Reload Apache configuration again
+- name: 4.9 Reload Apache configuration again
   ansible.builtin.systemd:
     name: "{{ srvr1c_apache_service }}"
     state: reloaded
 
-- name: Check HTTP status code
+- name: 4.10 Check HTTP status code
   ansible.builtin.command: >
     curl -o /dev/null -s -w "%{http_code}" http://{{ ansible_default_ipv4.address }}/{{ srvr1c_apache_webservice_name }}
   register: curl_result
 
-- name: Print HTTP status code
+- name: 4.11 Print HTTP status code
   debug:
     msg: "HTTP status code: {{ curl_result.stdout }}"
+
+- name: 4.12 Check status apache2 service
+  shell: "{{ srvr1c_shell_check_apache2_status }}"
+  register: status_apache2_service
+
+- name: 4.13 Debug apache2 info
+  debug:
+    msg: 
+      - "Apache2 status: {{ status_apache2_service.stdout }}"
+  when: srvr1c_debug_status  == true

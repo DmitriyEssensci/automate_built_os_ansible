@@ -18,7 +18,9 @@ A description of the settable variables for this role should go here, including 
 ***srvr1c_add_repository_id***  
 
 ***srvr1c_service_name***  
+***srvr1c_full_service_name***  
 ***srvr1c_ras_service_name***  
+***srvr1c_full_ras_service_name***  
 
 ***srvr1c_version***  
 ***srvr1c_destination***  
@@ -26,6 +28,10 @@ A description of the settable variables for this role should go here, including 
 ***srvr1c_artifactory_directory***  
 ***srvr1c_run_files***  
 ***srvr1c_setup_run_file***  
+
+***srvr1c_rac_user***  
+***srvr1c_rac_group***  
+***srvr1c_rac_port***  
  
 ***srvr1c_sentinel_fullnes_archive_file_name***  
 ***srvr1c_sentinel_pkg_archive_file_name***  
@@ -42,6 +48,16 @@ A description of the settable variables for this role should go here, including 
   **locale_conf**  
 ***srvr1c_locales***  
 ***srvr1c_locale_path***  
+
+***srvr1c_shell_check_rac_service_status***  
+***srvr1c_shell_rac_add_admin***  
+***srvr1c_shell_rac_get_admin_info***  
+***srvr1c_shell_rac_get_infobase***  
+***srvr1c_shell_rac_drop_db***  
+***srvr1c_shell_rac_create_db***  
+***srvr1c_shell_rac_check_db_list***  
+***srvr1c_shell_rac_get_general_cluster_info***  
+***srvr1c_shell_rac_start_cluster***  
 
 ***srvr1c_shell_check_timezone***  
 ***srvr1c_shell_check_service_status***  
@@ -65,10 +81,19 @@ A description of the settable variables for this role should go here, including 
 ***srvr1c_templates_service***  
 ***srvr1c_templates_ras_service***  
 
+***srvr1c_cluster_admin_login***  
+***srvr1c_cluster_admin_pass***  
+***srvr1c_cluster_database_type***  
+
+***srvr1c_postgresql_locale***  
+***srvr1c_postgresql_license_distribution***  
+***srvr1c_postgresql_scheduled_jobs***  
+***srvr1c_postgresql_db_descr***  
+***srvr1c_postgresql_db_name***  
 ***srvr1c_postgresql_user***  
 ***srvr1c_postgresql_group***  
 ***srvr1c_postgresql_psql_pass***  
-
+***srvr1c_postgresql_package_name***  
 ***srvr1c_postgresql_service***  
 ***srvr1c_postgresql_conf_dir***  
 ***srvr1c_postgresql_conf_file***  
@@ -85,6 +110,19 @@ A description of the settable variables for this role should go here, including 
 ***srvr1c_apache_vrd_dir***  
 ***srvr1c_apache_conf_file***  
 ***srvr1c_apache_publish_webinst***  
+
+***srvr1c_test_version***  
+***srvr1c_test_destination***  
+***srvr1c_test_run_files***  
+***srvr1c_test_setup_run_file***  
+***srvr1c_test_shell_install_1c***  
+***srvr1c_test_service_name***  
+***srvr1c_test_full_service_name***  
+***srvr1c_test_serice_port***  
+***srvr1c_test_database_name***  
+***srvr1c_test_service_user***  
+***srvr1c_test_templates_service***  
+***srvr1c_test_shell_check_service_status***  
 
 ***srvr1c_debug_status***  
 
@@ -105,7 +143,11 @@ Including an example of how to use your role (for instance, with variables passe
          - { role: username.rolename, x: 42 }
 
 ***Start role***  
+**Раскатка prod контура**  
 ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/1c.yml  
+
+**Раскатка test контура**  
+ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/1c.yml --extra-vars "srvr1c_traning_use=true"  
 
 License
 -------

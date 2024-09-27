@@ -1,13 +1,21 @@
 ---
 # main file for 1c
-- name: 1.0 Install 1C
+- name: 1.0 Install 1C-prod
   include_tasks: 1c_install.yml
+  when: not srvr1c_traning_use | bool
+
+# - name: 1.0 Install 1C-test
+#   include_tasks: test/1c_install_test.yml
+#   when: srvr1c_traning_use | bool
 
 - name: 2.0 Install HASP
   include_tasks: hasp.yml
 
-- name: 3.0 Install PostgreSQL
+- name: 3.0 Install PostgreSQL-prod
   include_tasks: postgresql.yml
 
-- name: 4.0 Install PostgreSQL
+- name: 4.0 Install apache-prod
   include_tasks: apache.yml
+
+- name: 5.0 Create 1C db
+  include_tasks: createdb.yml

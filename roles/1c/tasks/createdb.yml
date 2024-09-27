@@ -1,0 +1,77 @@
+---
+# createdb file for 1c
+- name: 5.1 Manage 1C Cluster and Database
+  block:
+    - name: 5.1.1 Start cluster server
+      command: "{{ srvr1c_shell_rac_start_cluster }}"
+      args:
+        chdir: "{{ srvr1c_destination }}"
+
+    - name: 5.1.2 Get cluster UUID
+      command: "{{ srvr1c_shell_rac_get_general_cluster_info }}"
+      args:
+        chdir: "{{ srvr1c_destination }}"
+      register: cluster_info
+
+    - name: 5.1.3 Extract cluster UUID
+      set_fact:
+        cluster_uuid: "{{ cluster_info.stdout_lines[0].split(':')[1] | trim }}"
+
+    - name: 5.1.4 Add cluster administrator
+      command: "{{ srvr1c_shell_rac_add_admin }}"
+      args:
+        chdir: "{{ srvr1c_destination }}"
+
+    - name: 5.1.5 Get cluster admin info
+      command: "{{ srvr1c_shell_rac_get_admin_info }}"
+      args:
+        chdir: "{{ srvr1c_destination }}"
+      register: admins_info
+
+    - name: 5.1.6 Get infobase summary list
+      command: "{{ srvr1c_shell_rac_get_infobase }}"
+      args:
+        chdir: "{{ srvr1c_destination }}"
+      register: infobase_info
+
+    - name: 5.1.7 "Check and remove if base with name - {{ srvr1c_postgresql_db_name }} > 0"
+      block:
+        - name: 5.1.7.1 Extract infobase name
+          set_fact:
+            infobase_name: "{{ infobase_info.stdout_lines | select('search', 'name     :') | map('split', ':') | map('last') | map('trim') | list | first }}"
+
+        - name: 5.1.7.2 Extract infobase UUID
+          set_fact:
+            infobase_uuid: "{{ infobase_info.stdout_lines | select('search', 'infobase :') | map('split', ':') | map('last') | map('trim') | list | first }}"
+
+        - name: 5.1.7.3 "Drop infobase if name is {{ srvr1c_postgresql_db_name }}"
+          command: "{{ srvr1c_shell_rac_drop_db }}"
+          when: infobase_name == srvr1c_postgresql_db_name
+          args:
+            chdir: "{{ srvr1c_destination }}"
+      when: infobase_info.stdout_lines | length > 0
+
+    - name: 5.1.8 Create infobase
+      command: "{{ srvr1c_shell_rac_create_db }}"
+      args:
+        chdir: "{{ srvr1c_destination }}"
+
+    - name: 5.1.9 Check database summary
+      command: "{{ srvr1c_shell_rac_check_db_list }}"
+      args:
+        chdir: "{{ srvr1c_destination }}"
+      register: db_summary          
+
+    - name: 5.1.10 Get gewneral cluster info
+      command: "{{ srvr1c_shell_rac_get_general_cluster_info }}"
+      args:
+        chdir: "{{ srvr1c_destination }}"
+      register: cluster_info
+
+    - name: 5.1.11 Output cluster info
+      debug:
+        msg: 
+          - "General cluster info:\n{{ cluster_info.stdout_lines | join('\n') }}"
+          - "Active admin in system:\n{{ admins_info.stdout_lines | join('\n') }}"
+          - "DB was created:\n{{ db_summary.stdout_lines | join('\n') }}"
+  become: true

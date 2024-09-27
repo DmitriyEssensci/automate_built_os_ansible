@@ -1,18 +1,28 @@
 ---
 # defaults file for 1с
+srvr1c_traning_use: ''
+
 srvr1c_add_repository: deb http://ru.archive.ubuntu.com/ubuntu/ bionic main universe
 srvr1c_add_repository_keyserver: keyserver.ubuntu.com
 srvr1c_add_repository_id: 3B4FE6ACC0B21F32
 
 srvr1c_service_name: srv1cv8-{{ srvr1c_version }}@.service
+srvr1c_full_service_name: "srv1cv8-{{ srvr1c_version }}@default.service"
 srvr1c_ras_service_name: rassrv1cv8@.service
+srvr1c_full_ras_service_name: rassrv1cv8@default.service
 
 srvr1c_version: "8.3.23.2236"
+srvr1c_sys_dest: /opt/1cv8
 srvr1c_destination: "/opt/1cv8/x86_64/{{ srvr1c_version }}"
 srvr1c_services_destionation: /etc/systemd/system
 srvr1c_artifactory_directory: 1c_install_2v
 srvr1c_run_files: server64_8_3_23_2236.tar.gz
 srvr1c_setup_run_file: setup-full-{{ srvr1c_version }}-x86_64.run
+
+srvr1c_rac_sys_dir: /home/usr1cv8
+srvr1c_rac_user: usr1cv8
+srvr1c_rac_group: grp1cv8
+srvr1c_rac_port: 1545
 
 srvr1c_sentinel_fullnes_archive_file_name: Sentinel_LDK_Linux_Run-time_Installer_script
 srvr1c_sentinel_pkg_archive_file_name: aksusbd-10.11.1
@@ -32,8 +42,65 @@ srvr1c_locales:
   - "{{ srvr1c_default_locale }}"
 srvr1c_locale_path: /etc/default/locale
 
+srvr1c_shell_check_rac_service_status: "systemctl status {{ srvr1c_full_ras_service_name }} | grep Active"
+srvr1c_shell_rac_add_admin: >
+  ./rac cluster admin 
+  --cluster={{ cluster_uuid }} 
+  register 
+  --name={{ srvr1c_cluster_admin_login }} 
+  --pwd={{ srvr1c_cluster_admin_pass }} 
+  --auth=pwd 
+  --cluster-user={{ srvr1c_cluster_admin_login }} 
+  --cluster-pwd={{ srvr1c_cluster_admin_pass }} 
+srvr1c_shell_rac_get_admin_info: >
+  ./rac cluster admin list 
+  --cluster={{ cluster_uuid }}  
+  --cluster-user={{ srvr1c_cluster_admin_login }} 
+  --cluster-pwd={{ srvr1c_cluster_admin_pass }} 
+srvr1c_shell_rac_get_infobase: >
+  ./rac infobase summary list 
+  --cluster={{ cluster_uuid }} 
+  --cluster-user={{ srvr1c_cluster_admin_login }} 
+  --cluster-pwd={{ srvr1c_cluster_admin_pass }}
+srvr1c_shell_rac_drop_db: >
+  ./rac infobase drop 
+  --cluster={{ cluster_uuid }} 
+  --infobase={{ infobase_uuid }} 
+  --infobase-user={{ srvr1c_postgresql_user }} 
+  --infobase-pwd={{ srvr1c_postgresql_psql_pass }} 
+  --cluster-user={{ srvr1c_cluster_admin_login }} 
+  --cluster-pwd={{ srvr1c_cluster_admin_pass }} 
+  --drop-database
+srvr1c_shell_rac_create_db: >
+  ./rac infobase create
+  --cluster={{ cluster_uuid }}
+  --cluster-user={{ srvr1c_cluster_admin_login }}
+  --cluster-pwd={{ srvr1c_cluster_admin_pass }} 
+  --create-database
+  --name={{ srvr1c_postgresql_db_name }}
+  --descr={{ srvr1c_postgresql_db_descr }}
+  --dbms={{ srvr1c_cluster_database_type }}
+  --db-server={{ ansible_default_ipv4.address }}
+  --db-name={{ srvr1c_postgresql_db_name }}
+  --locale={{ srvr1c_postgresql_locale }}
+  --db-user={{ srvr1c_postgresql_user }}
+  --db-pwd={{ srvr1c_postgresql_psql_pass }}
+  --license-distribution={{ srvr1c_postgresql_license_distribution }}
+  --scheduled-jobs-deny={{ srvr1c_postgresql_scheduled_jobs }}
+srvr1c_shell_rac_check_db_list: >
+  ./rac infobase 
+  --cluster={{ cluster_uuid }} 
+  --cluster-user={{ srvr1c_cluster_admin_login }} 
+  --cluster-pwd={{ srvr1c_cluster_admin_pass }} 
+  summary list
+srvr1c_shell_rac_get_general_cluster_info: >
+  ./rac cluster list
+srvr1c_shell_rac_start_cluster: > 
+  ./ras --daemon cluster
+
+
 srvr1c_shell_check_timezone: timedatectl show --property=Timezone --value
-srvr1c_shell_check_service_status: systemctl status srv1cv8-{{ srvr1c_version }}@default.service | grep Active
+srvr1c_shell_check_service_status: "systemctl status {{ srvr1c_full_service_name }} | grep Active"
 srvr1c_shell_check_hold_package: apt-mark showhold
 srvr1c_shell_install_1c: /tmp/{{ srvr1c_artifactory_directory}}/{{ srvr1c_setup_run_file }} --mode unattended --enable-components server,ws,server_admin,config_storage_server
 srvr1c_shell_fix_broken_package: apt-get install -f
@@ -58,10 +125,19 @@ srvr1c_templates_ras_service:
   - 'templates{{ srvr1c_services_destionation }}/{{ srvr1c_ras_service_name }}.j2'
   - '{{ srvr1c_services_destionation }}/{{ srvr1c_ras_service_name }}'
 
-srvr1c_postgresql_user: postgresql
-srvr1c_postgresql_group: postgresql
-srvr1c_postgresql_psql_pass: postgresql
+srvr1c_cluster_admin_login: admin
+srvr1c_cluster_admin_pass: admin
 
+srvr1c_cluster_database_type: PostgreSQL
+srvr1c_postgresql_locale: ru
+srvr1c_postgresql_license_distribution: allow
+srvr1c_postgresql_scheduled_jobs: 'on'
+srvr1c_postgresql_db_descr: Radial_BP_db
+srvr1c_postgresql_db_name: radial
+srvr1c_postgresql_user: postgres
+srvr1c_postgresql_group: postgres
+srvr1c_postgresql_psql_pass: postgresql
+srvr1c_postgresql_package_name: postgrespro-1c-14
 srvr1c_postgresql_service: postgrespro-1c-14.service 
 srvr1c_postgresql_conf_dir: var/lib/pgpro/1c-14/data
 srvr1c_postgresql_conf_file: postgresql.conf
@@ -79,3 +155,20 @@ srvr1c_apache_conf_file: "/etc/apache2/conf-available/{{ srvr1c_apache_webservic
 srvr1c_apache_publish_webinst: "./webinst -apache24 -wsdir {{ srvr1c_apache_webservice_name }} -dir '{{ srvr1c_apache_vrd_dir }}' -connstr 'Srvr=\"localhost\";Ref=\"{{ srvr1c_apache_webservice_name }}\";' -confPath {{ srvr1c_apache_conf_file }}"
 
 srvr1c_debug_status: true
+
+############# TEST #############
+srvr1c_test_version: "8.3.25.1257"
+srvr1c_test_destination: "/opt/1cv8t/x86_64/{{ srvr1c_test_version }}"
+srvr1c_test_run_files: training_8_3_25_1257_LinuxRun.tar.gz
+srvr1c_test_setup_run_file: "setup-training-{{ srvr1c_test_version }}-x86_64.run"
+srvr1c_test_shell_install_1c: /tmp/{{ srvr1c_artifactory_directory}}/{{ srvr1c_test_setup_run_file }} --mode unattended --enable-components ws,client_full,v8_install_deps,desktop_icons
+srvr1c_test_service_name: srv1cv8-{{ srvr1c_test_version }}-training@.service
+srvr1c_test_full_service_name: srv1cv8-{{ srvr1c_test_version }}-training@default.service
+srvr1c_test_serice_port: 1539
+srvr1c_test_database_name: testdb
+srvr1c_test_service_user: root
+srvr1c_test_templates_service:
+  - 'templates{{ srvr1c_services_destionation }}/{{ srvr1c_test_service_name }}.j2'
+  - '{{ srvr1c_services_destionation }}/{{ srvr1c_test_service_name }}'
+srvr1c_test_shell_check_service_status: systemctl status srv1cv8-{{ srvr1c_test_version }}-training@default.service | grep Active
+############# TEST #############

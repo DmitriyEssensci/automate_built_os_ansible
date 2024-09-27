@@ -19,7 +19,7 @@
     state: present
     update_cache: yes
   loop: 
-    - "{{ srvr1c_postgresql_service }}"
+    - "{{ srvr1c_postgresql_package_name }}"
 
 - name: 3.4 Move postgres config file
   template:
@@ -52,48 +52,56 @@
       - "PostgreSQL status: {{ status_postgresql_service.stdout }}"
   when: srvr1c_debug_status  == true
 
-- name: Install psycopg2 for PostgreSQL
+- name: 3.9 Install psycopg2 for PostgreSQL
   ansible.builtin.apt:
     name: python3-psycopg2
     state: present
   become: true
 
-- name: 3.9 Change password for postgres user
-  ansible.builtin.postgresql_user:
-    name: "{{ srvr1c_postgresql_user }}"
-    password: "{{ srvr1c_postgresql_psql_pass }}"
-    login_user: "{{ srvr1c_postgresql_user }}"
-    login_host: "{{ ansible_default_ipv4.address }}"
+- name: 3.10 Change password for default PostgreSQL user "postgres"
   become: true
+  become_user: "{{ srvr1c_postgresql_user }}"
+  ansible.builtin.shell: |
+    psql -c "ALTER USER postgres WITH PASSWORD '{{ srvr1c_postgresql_psql_pass }}';"
 
-- name: 3.10 Add allowed subnet to pg_hba.conf
+- name: 3.11 Add allowed subnet to pg_hba.conf
   ansible.builtin.lineinfile:
-    path: "{{ pg_hba_conf_path }}"
+    path: "/{{ srvr1c_postgresql_conf_dir }}/pg_hba.conf"
     line: "{{ srvr1c_postgresql_subnet }}"
     insertafter: EOF
     state: present
   become: true
 
-- name: 3.11 Restart PostgreSQL service
+- name: 3.12 Restart PostgreSQL service
   ansible.builtin.systemd:
     name: "{{ srvr1c_postgresql_service }}"
     state: restarted
   become: true
 
-- name: 3.12 Get postgresql.conf path
+- name: 3.13 Get postgresql.conf path
   ansible.builtin.command: "{{ srvr1c_shell_postgresql_conf_postgresql_path }}"
   register: config_file_result
   become: true
 
-- name: 3.13 Get pg_hba.conf path
+- name: 3.14 Get pg_hba.conf path
   ansible.builtin.command: "{{ srvr1c_shell_postgresql_conf_pg_hba_path }}"
   register: hba_file_result
   become: true
 
-- name: 3.14 Set PostgreSQL config file path
+- name: 3.15 Set PostgreSQL config file path
   set_fact:
     postgresql_conf_path: "{{ config_file_result.stdout_lines[2].strip() }}"
 
-- name: 3.15 Set pg_hba.conf file path
+- name: 3.16 Set pg_hba.conf file path
   set_fact:
     pg_hba_conf_path: "{{ hba_file_result.stdout_lines[2].strip() }}"
+
+- name: 3.17 Check status postgresql service
+  shell: "{{ srvr1c_shell_check_postgresql_status }}"
+  register: status_postgresql_service
+
+- name: 3.18 Debug postgresql info
+  debug:
+    msg: 
+      - "PostgreSQL status: {{ status_postgresql_service.stdout }}"
+  when: srvr1c_debug_status  == true

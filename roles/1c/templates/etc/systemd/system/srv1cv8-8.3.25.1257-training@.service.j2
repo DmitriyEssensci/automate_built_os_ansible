@@ -1,0 +1,16 @@
+#{{ ansible_managed }}
+[Unit]
+Description=1C:Enterprise 8.3 Training Service
+After=network.target
+
+[Service]
+Type=simple
+User={{ srvr1c_test_service_user }}
+ExecStart={{ srvr1c_test_destination }} ws http://localhost:{{ srvr1c_test_serice_port }}/{{ srvr1c_test_database_name }} /f {{ srvr1c_test_destination }}
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
