@@ -144,10 +144,12 @@ Including an example of how to use your role (for instance, with variables passe
 
 ***Start role***  
 **Раскатка prod контура**  
-ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/1c.yml  
+
+    - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/1c.yml  
 
 **Раскатка test контура**  
-ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/1c.yml --extra-vars "srvr1c_traning_use=true"  
+
+    - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/1c.yml --extra-vars "srvr1c_traning_use=true"  
 
 License
 -------
