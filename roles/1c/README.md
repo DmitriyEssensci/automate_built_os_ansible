@@ -338,8 +338,6 @@
 - srvr1c_test_shell_check_service_status    
   Переменная объявлена в default/main.yml, содержит команду для проверки статуса сервиса 1С. Используется в ...
 
----
-
 ### ############# TEST #############
 
 - srvr1c_debug_status   
@@ -362,7 +360,7 @@
       roles:
          - { role: username.rolename, x: 42 }
 
-## Запуск роли***  
+## Запуск роли
 ### Разворачивание prod окружения
 
     - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/1c.yml  
