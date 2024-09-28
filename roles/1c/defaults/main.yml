@@ -96,7 +96,6 @@ srvr1c_shell_rac_start_cluster: >
 
 srvr1c_shell_check_timezone: timedatectl show --property=Timezone --value
 srvr1c_shell_check_service_status: "systemctl status {{ srvr1c_full_service_name }} | grep Active"
-srvr1c_shell_check_hold_package: apt-mark showhold
 srvr1c_shell_install_1c: /tmp/{{ srvr1c_artifactory_directory}}/{{ srvr1c_setup_run_file }} --mode unattended --enable-components server,ws,server_admin,config_storage_server
 srvr1c_shell_fix_broken_package: apt-get install -f
 srvr1c_shell_set_timezone: timedatectl set-timezone Europe/Moscow
