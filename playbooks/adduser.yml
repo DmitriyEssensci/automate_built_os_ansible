@@ -1,4 +1,4 @@
 ---
-- hosts: '{{ adduser_hosts | default("newmachine") }}'
+- hosts: '{{ adduser_hosts | default("new_machine") }}'
   roles:
     - role: adduser
