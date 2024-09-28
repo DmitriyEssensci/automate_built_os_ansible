@@ -1,16 +1,16 @@
 ---
-# configurate_prometheus file for prometheus
-- name: Gatrher network facts
+# prometheus file for prometheus
+- name: 1.1 Gatrher network facts
   setup:
 
-- name: 1.0 Create Prometheus user and group
+- name: 1.2 Create Prometheus user and group
   block:
-    - name: 1.0.1 Create Prometheus group
+    - name: 1.2.1 Create Prometheus group
       ansible.builtin.group:
         name: "{{ prometheus_group }}"
         system: yes
 
-    - name: 1.0.2 Create Prometheus user
+    - name: 1.2.2 Create Prometheus user
       ansible.builtin.user:
         name: "{{ prometheus_user }}"
         system: yes
@@ -18,19 +18,19 @@
         group: prometheus
   become: true
 
-- name: 1.1 Create /etc/prometheus directory
+- name: "1.3 Create {{ prometheus_conf_dir }} directory"
   file:
-    path: /etc/prometheus
+    path: "{{ prometheus_conf_dir }}"
     state: directory
     mode: '0755'
 
-- name: 1.2 Create /var/lib/prometheus directory
+- name: "1.4 Create {{ prometheus_lib_dir }} directory"
   file:
-    path: /var/lib/prometheus
+    path: "{{ prometheus_lib_dir }}"
     state: directory
     mode: '0755'
 
-- name: 1.3 Download prometheus
+- name: 1.5 Download prometheus
   get_url:
     url: "{{ item }}"
     dest: "{{ prometheus_archive }}"
@@ -38,7 +38,7 @@
   with_items: "{{ prometheus_download_url }}"
   become: true
 
-- name: 1.4 Extract the binare prometheus files 
+- name: 1.6 Extract the binare prometheus files 
   unarchive:
     src: "{{ item }}"
     dest: /opt/
@@ -47,23 +47,23 @@
   with_items: "{{ prometheus_archive }}"
   become: true
 
-- name: 1.5 Check exist temp file
+- name: 1.7 Check exist temp file
   ansible.builtin.stat:
     path: "{{ prometheus_archive }}"
   register: prometheus_file
 
-- name: 1.6 Remove temp file
+- name: 1.8 Remove temp file
   ansible.builtin.file:
     path: "{{ prometheus_archive }}"
     state: absent
   when: prometheus_file.stat.exists
 
-- name: 1.7 Move binary & Set Owner
+- name: 1.9 Move binary & Set Owner
   block: 
-    - name: 1.7.1 Copy promtool binary to /usr/local/bin
+    - name: "1.9.1 Copy promtool binary to {{ prometheus_service_bin_dir }}"
       ansible.builtin.copy:
-        src: "/opt/prometheus-{{ prometheus_version }}.linux-amd64/{{ item }}"
-        dest: "/usr/local/bin/{{ item }}"
+        src: "{{prometheus_system_dir}}/{{ item }}"
+        dest: "{{ prometheus_service_bin_dir }}/{{ item }}"
         owner: "{{ prometheus_user }}"
         group: "{{ prometheus_group }}"
         mode: '0755'
@@ -71,21 +71,21 @@
       with_items: "{{ prometheus_bin_file }}"
       ignore_errors: true
 
-    - name: 1.7.2 Change ownership of /usr/local/bin/
+    - name: "1.9.2 Change ownership of {{ prometheus_service_bin_dir }}/"
       ansible.builtin.file:
-        path: "/usr/local/bin/{{ item }}"
+        path: "{{ prometheus_service_bin_dir }}/{{ item }}"
         owner: "{{ prometheus_user }}"
         group: "{{ prometheus_group }}"
         state: file
       with_items: "{{ prometheus_bin_file }}"
   become: true
 
-- name: 1.8 Move the Configuration Files & Set Owner
+- name: 1.10 Move the Configuration Files & Set Owner
   block: 
-    - name: 1.8.1 Copy prometheus binary to /etc/prometheus
+    - name: "1.10.1 Copy prometheus binary to {{ prometheus_conf_dir }}"
       ansible.builtin.copy:
-        src: "/opt/prometheus-2.43.0.linux-amd64/{{ item }}"
-        dest: "/etc/prometheus/{{ item }}"
+        src: "{{prometheus_system_dir}}/{{ item }}"
+        dest: "{{ prometheus_conf_dir }}/{{ item }}"
         owner: "{{ prometheus_user }}"
         group: "{{ prometheus_group }}"
         mode: '0755'
@@ -93,27 +93,27 @@
       with_items: "{{ prometheus_conf_file }}"
       ignore_errors: true
 
-    - name: 1.8.2 Change ownership of /etc/prometheus
+    - name: "1.10.2 Change ownership of {{ prometheus_conf_dir }}"
       ansible.builtin.file:
-        path: /etc/prometheus
+        path: "{{ prometheus_conf_dir }}"
         owner: "{{ prometheus_user }}"
         group: "{{ prometheus_group }}"
 
-    - name: 1.8.3 Change ownership of Prometheus configuration files
+    - name: 1.10.3 Change ownership of Prometheus configuration files
       ansible.builtin.file:
-        path: "/etc/prometheus/{{ item }}"
+        path: "{{ prometheus_conf_dir }}/{{ item }}"
         owner: "{{ prometheus_user }}"
         group: "{{ prometheus_group }}"
       with_items: "{{ prometheus_conf_file }}"
 
-    - name: 1.8.4 Change ownership of /var/lib/prometheus
+    - name: "1.10.4 Change ownership of {{ prometheus_lib_dir }}"
       ansible.builtin.file:
-        path: /var/lib/prometheus
+        path: "{{ prometheus_lib_dir }}"
         owner: "{{ prometheus_user }}"
         group: "{{ prometheus_group }}"
         recurse: yes
 
-    - name: 1.8.7 Copy prometheus.service
+    - name: 1.10.7 Copy prometheus.service
       template:
         src: "templates/{{ item }}.j2"
         dest: "/{{ item }}"
@@ -122,83 +122,27 @@
         - "{{ prometheus_template_service_systemd }}"
         - "{{ prometheus_template_prometheus_yml }}"
 
-    - name: 1.8.8 Change ownership of Prometheus /etc/prometheus/prometheus.yml
+    - name: 1.10.8 Change ownership of Prometheus {{ prometheus_conf_dir }}/prometheus.yml
       ansible.builtin.file:
-        path: "/etc/prometheus/{{ item }}"
+        path: "{{ prometheus_conf_dir }}/{{ item }}"
         owner: "{{ prometheus_user }}"
         group: "{{ prometheus_group }}"
       with_items: "{{ prometheus_service_conf_file }}"
   become: true
 
-- name: 1.9 Reload systemd manager configuration
+- name: 1.11 Reload systemd manager configuration
   ansible.builtin.systemd:
     daemon_reload: yes
   become: true
-  when: inventory_hostname == prometheus_host_machine
 
-- name: 1.10 Enable and start Prometheus service
+- name: 1.12 Enable and start Prometheus service
   ansible.builtin.systemd:
     name: "{{ prometheus_service_name }}"
     state: started
     enabled: yes
   become: true
-  when: inventory_hostname == prometheus_host_machine
 
-- name: 1.11 Open 9090 in firewall
+- name: 1.13 Open 9090 in firewall
   ansible.builtin.command:
     cmd: ufw allow 9090/tcp
-  become: true
-  when: >
-    ansible_os_family != "MosOS Arbat" and
-    inventory_hostname == prometheus_host_machine
-
-#Node_exporter
-- name: 1.12 Download node_exporter
-  ansible.builtin.get_url:
-    url: "{{ item }}"
-    dest: "{{ prometheus_node_exporter_archive }}"
-  ignore_errors: yes
-  with_items: "{{ prometheus_node_exporter_download_url }}"
-  become: true
-
-- name: 1.13 Extract the binare prometheus files 
-  ansible.builtin.unarchive:
-    src: "{{ item }}"
-    dest: /opt/
-    remote_src: yes
-  with_items: "{{ prometheus_node_exporter_archive }}"
-  become: true
-
-- name: 1.14 Check exist temp file
-  ansible.builtin.stat:
-    path: "{{ prometheus_node_exporter_archive }}"
-  register: prometheus_file
-
-- name: 1.15 Remove temp file
-  ansible.builtin.file:
-    path: "{{ prometheus_node_exporter_archive }}"
-    state: absent
-  when: prometheus_file.stat.exists
-  become: true
-
-- name: 1.16 Copy prometheus.service
-  template:
-    src: "templates/{{ item }}.j2"
-    dest: "/{{ item }}"
-    mode: '0744'
-  with_items: 
-    - "{{ prometheus_template_service_systemd_node }}"
-    - "{{ prometheus_template_default_options_node }}"
-  become: true
-
-- name: 1.17 Reload systemd manager configuration
-  ansible.builtin.systemd:
-    daemon_reload: yes
-  become: true
-
-- name: 1.18 Enable and start node_exporter service
-  ansible.builtin.systemd:
-    name: "{{ prometheus_node_exporter_service_name }}"
-    state: started
-    enabled: yes
   become: true

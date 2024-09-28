@@ -10,5 +10,6 @@ ubuntu2 ansible_host=192.168.80.136 ansible_ssh_user=root ansible_ssh_pass="0xV5
 [newmachine]
 
 [new_machine:children]
-newmachine
+master_node
 slave_node
+newmachine
