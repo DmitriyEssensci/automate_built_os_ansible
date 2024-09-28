@@ -1,5 +1,6 @@
-# Название Роли
-=========
+# Роль 1с
+------------
+
 Данная роль позволяет установить 1С со всеми зависимыми сервисами. Настраиваются тонкий, толстый и веб-клиенты, устанавливается PostgreSQL, Apache2, HASP, а также создаётся "тестовый" контур, который устанавливает тестовую конфигурацию 1С.
 
 Краткое описание роли здесь.
@@ -7,7 +8,38 @@
 ## Требования
 ------------
 
-Укажите любые предварительные требования, которые могут не быть охвачены самим Ansible или ролью. Например, если роль использует модуль EC2, может быть целесообразно упомянуть в этом разделе, что требуется пакет boto.
+### Установка роли
+
+Для раскатки роли необходимо перенести архив с сервисными пакетами:
+
+- sentinel/Sentinel_LDK_Linux_Run-time_Installer_script.tar.gz
+- server64_8_3_23_2236.tar.gz
+- setup-training-8.3.25.1257-x86_64.run
+- training_8_3_25_1257_LinuxRun.tar.gz
+
+Эти сервисные пакеты позволят прокинуть необходимые зависимости, а также содержат необходимые сервисы для отработки роли.
+
+### Настройки роли
+
+Для того чтобы роль раскаталась с Вашими сервисными настройками, необходимо поменять значения данных переменных:
+
+| Наименование переменной                          | Значение по умолчанию                  | Предназначение                                               |
+|------------------------------------------------|---------------------------------------|------------------------------------------------------------|
+| {{ srvr1c_artifactory_directory }}           | 1c_install_2v                      | Папка с архивами и пакетами в tmp/1c_install_2v         |
+| {{ srvr1c_rac_port }}                        | 1545                                | Порт сервиса RAC                                           |
+| {{ srvr1c_cluster_admin_login }}             | admin                               | Логин админа RAC                                          |
+| {{ srvr1c_cluster_admin_pass }}              | admin                               | Пароль админа RAC                                         |
+| {{ srvr1c_pgadmin_email }}                   | test@gmail.com                     | Адрес для аутентификации в pgAdmin4                       |
+| {{ srvr1c_pgadmin_pass }}                    | TestAdmin1234                      | Пароль для аутентификации в pgAdmin4                      |
+| {{ srvr1c_postgresql_db_descr }}             | Decription_BP_db                   | Описание БД                                               |
+| {{ srvr1c_postgresql_db_name }}              | my_db                              | Название БД                                               |
+| {{ srvr1c_postgresql_user }}                 | postgres                            | Наименование юзера БД                                     |
+| {{ srvr1c_postgresql_group }}                | postgres                            | Наименование группы БД                                    |
+| {{ srvr1c_postgresql_psql_pass }}            | postgresql                          | Пароль для оболочки psql                                   |
+| {{ srvr1c_postgresql_addr }}                 | {{ ansible_default_ipv4.address }} | Адрес, на котором опубликована БД                          |
+| {{ srvr1c_postgresql_port }}                 | 5432                                | Порт, на котором опубликована БД                           |
+| {{ srvr1c_postgresql_addr_subnet }}          | 192.168.80.0/24                     | Маска подсети с адресом для доступа к БД                  |
+| {{ srvr1c_apache_webservice_addr }}          | {{ ansible_default_ipv4.address }} | Адрес всех сервисов Apache, на которых разворачиваются сервисы |
 
 ## Переменные Роли
 --------------
@@ -149,187 +181,202 @@
 - srvr1c_shell_service_check  
   Переменная объявлена в defaults/main.yml, содержит команду, которая проверяет статус всех установленных сервисов 1С, используется в.
 
-***srvr1c_shell_postgresql_conf_postgresql_path***  
-Переменная объявлена в default/main.yml, содержит в себе команду, которая запускается в оболочке psql и выполняет запрос на вывод конфигурационного файла - postgresql, используется в 
-***srvr1c_shell_postgresql_conf_pg_hba_path***  
-Переменная объявлена в default/main.yml, содержит в себе команду, которая запускается в оболочке psql и выполняет запрос на вывод конфигурационного файла - pg_hba, используется в 
-***srvr1c_shell_check_postgresql_status***  
-Переменная объявлена в default/main.yml, содержит в себе команду, которая проверяет статус сервиса postgrespro-1c-14, используется в 
+- srvr1c_shell_postgresql_conf_postgresql_path
+  Переменная объявлена в default/main.yml, содержит команду, которая запускается в оболочке psql и выполняет запрос на вывод конфигурационного файла - postgresql. Используется в ...
 
-***srvr1c_shell_install_sentinel***  
-Переменная объявлена в default/main.yml, содержит в себе команду, которая устанавливает методами dpkg hasp сервисы, используется в 
-***srvr1c_shell_check_aksusbd_status***  
-Переменная объявлена в default/main.yml, содержит в себе команду, которая проверяет статус сервиса aksusbd, используется в 
-***srvr1c_shell_check_hasplmd_status***  
-Переменная объявлена в default/main.yml, содержит в себе команду, которая проверяет статус сервиса hasplmd, используется в 
+- srvr1c_shell_postgresql_conf_pg_hba_path
+  Переменная объявлена в default/main.yml, содержит команду, которая запускается в оболочке psql и выполняет запрос на вывод конфигурационного файла - pg_hba. Используется в ...
 
-***srvr1c_shell_check_apache2_status***  
-Переменная объявлена в default/main.yml, содержит в себе команду, которая проверяет статус сервиса apache2, используется в 
+- srvr1c_shell_check_postgresql_status
+  Переменная объявлена в default/main.yml, содержит команду, которая проверяет статус сервиса postgrespro-1c-14. Используется в ...
 
-***srvr1c_templates_service***  
-Переменная объявлена в default/main.yml, содержит в себе директории для перемещения сервисных файлов связанных с сервисом 1с, используется в 
-***srvr1c_templates_ras_service***  
-Переменная объявлена в default/main.yml, содержит в себе директории для перемещения сервисных файлов связанных с сервисом rac, используется в 
+- srvr1c_shell_install_sentinel
+  Переменная объявлена в default/main.yml, содержит команду, которая устанавливает сервисы hasp методами dpkg. Используется в ...
 
-***srvr1c_cluster_admin_login*** 
-Переменная объявлена в default/main.yml, содержит в себе учётные данные в виде логина для админа кластера rac, используется в 
-***srvr1c_cluster_admin_pass***  
-Переменная объявлена в default/main.yml, содержит в себе учётные данные в виде пароля для админа кластера rac, используется в 
-***srvr1c_cluster_database_type***  
-Переменная объявлена в default/main.yml, содержит в себе тип базы данных для кластера rac, используется в 
+- srvr1c_shell_check_aksusbd_status
+  Переменная объявлена в default/main.yml, содержит команду, которая проверяет статус сервиса aksusbd. Используется в ...
 
-***srvr1c_pgadmin_email***  
-Переменная объявлена в default/main.yml, содержит в себе email для доступа к интерфейсу сервиса pgadmin4, используется в 
-***srvr1c_pgadmin_pass***  
-Переменная объявлена в default/main.yml, содержит в себе пароль для доступа к интерфейсу сервиса pgadmin4, используется в 
+- srvr1c_shell_check_hasplmd_status
+  Переменная объявлена в default/main.yml, содержит команду, которая проверяет статус сервиса hasplmd. Используется в ...
 
-***srvr1c_postgresql_locale***  
-Переменная объявлена в default/main.yml, содержит в себе локаль postgresql для установки в базу данных, используется в 
-***srvr1c_postgresql_license_distribution***  
-Переменная объявлена в default/main.yml, содержит в себе значение включения лицензионного соглашения, используется в 
-***srvr1c_postgresql_scheduled_jobs***  
-Переменная объявлена в default/main.yml, содержит в себе значение включения шедулера на джобу, используется в 
-***srvr1c_postgresql_db_descr***  
-Переменная объявлена в default/main.yml, содержит в себе значение в виде краткого описания для базы данных, используется в  
-***srvr1c_postgresql_db_name***  
-Переменная объявлена в default/main.yml, содержит в себе значение наименования базы данных, используется в 
-***srvr1c_postgresql_user***  
-Переменная объявлена в default/main.yml, содержит в себе логин юзера Postgresql, используется в 
-***srvr1c_postgresql_group***  
-Переменная объявлена в default/main.yml, содержит в себе группу юзера Postgresql, используется в 
-***srvr1c_postgresql_psql_pass***  
-Переменная объявлена в default/main.yml, содержит в себе пароль юзера Postgresql, используется в 
-***srvr1c_postgresql_package_name***  
-Переменная объявлена в default/main.yml, содержит в себе название пакета postgresql, который устанавливается, используется в 
-***srvr1c_postgresql_addr***  
-Переменная объявлена в default/main.yml, содержит в себе адресс postgresql на котором будут хоститься базы данных, используется в 
-***srvr1c_postgresql_port***  
-Переменная объявлена в default/main.yml, содержит в себе порт postgresql на котором будут хоститься базы данных, используется в 
-***srvr1c_postgresql_service***  
-Переменная объявлена в default/main.yml, содержит в себе название сервиса postgresql, используется в 
-***srvr1c_postgresql_conf_dir***  
-Переменная объявлена в default/main.yml, содержит в себе путь к директории с конфигурационными файлами для postgresql, используется в 
-***srvr1c_postgresql_conf_file***  
-Переменная объявлена в default/main.yml, содержит в себе конфигурационный файл для postgresql, используется в 
-***srvr1c_postgresql_repo_url***  
-Переменная объявлена в default/main.yml, содержит в себе репозиторий откуда скачиваются методанные для его установки в систему, используется в 
-***srvr1c_postgresql_repo_dest***  
-Переменная объявлена в default/main.yml, содержит в себе директорию куда будет прописываться репозиторий, используется в 
-***srvr1c_templates_postgresql_conf_file***  
-Переменная объявлена в default/main.yml, содержит в себе директории для перемещения конфигурационных файлов для сервиса postgresql, используется в 
-***srvr1c_postgresql_addr_subnet***   
-Переменная объявлена в default/main.yml, содержит в себе только маску подсети для проведения настроек сервиса postgresql, используется в 
-***srvr1c_postgresql_subnet***  
-Переменная объявлена в default/main.yml, содержит в себе сетевую настройку маски подсети для конфигурационного файла postgresql, используется в 
+- srvr1c_shell_check_apache2_status
+  Переменная объявлена в default/main.yml, содержит команду, которая проверяет статус сервиса apache2. Используется в ...
 
-***srvr1c_apache_service***  
-Переменная объявлена в default/main.yml, содержит в себе название сервиса apache2, используется в 
-***srvr1c_apache_webservice_name***  
-Переменная объявлена в default/main.yml, содержит в себе название веб сервиса 1с, который будет доступен по данном имени, используется в 
-***srvr1c_apache_webservice_addr***  
-Переменная объявлена в default/main.yml, содержит в себе адрес веб сервиса 1с и всех сервисов на котором apache2 будет поднимать сервисы, используется в 
-***srvr1c_apache_vrd_dir***  
-Переменная объявлена в default/main.yml, содержит в себе директорию с вебсервисом 1с, используется в 
-***srvr1c_apache_conf_file***  
-Переменная объявлена в default/main.yml, содержит в себе конфигурационный файл apache2, используется в 
-***srvr1c_apache_publish_webinst***  
-Переменная объявлена в default/main.yml, содержит в себе команду для запуска веб сервиса 1с на apache2 по веб клиенту 1с, используется в 
+- srvr1c_templates_service
+  Переменная объявлена в default/main.yml, содержит директории для перемещения сервисных файлов, связанных с сервисом 1С. Используется в ...
 
-############# TEST #############
-***srvr1c_test_version***  
-Переменная объявлена в default/main.yml, содержит в себе версию 1с для тестовой конфигурации, используется в 
-***srvr1c_test_destination***  
-Переменная объявлена в default/main.yml, содержит в себе путь куда будет ставить тестовая конфигурация 1с, используется в 
-***srvr1c_test_run_files***  
-Переменная объявлена в default/main.yml, содержит в себе название архива для установки тестовой конфигурации 1с, используется в 
-***srvr1c_test_setup_run_file***  
-Переменная объявлена в default/main.yml, содержит в себе название .run файла для установки тестовой конфигурации 1с, используется в 
-***srvr1c_test_shell_install_1c***  
-Переменная объявлена в default/main.yml, содержит в себе команду для установки тестовой конфигурации 1с с ключами, используется в 
-***srvr1c_test_service_name***  
-Переменная объявлена в default/main.yml, содержит в себе краткое название сервиса 1с тестового, используется в 
-***srvr1c_test_full_service_name***  
-Переменная объявлена в default/main.yml, содержит в себе полное название сервиса 1с тестового, используется в 
-***srvr1c_test_serice_port***  
-Переменная объявлена в default/main.yml, содержит в себе адрес порта который будет слушать тестовый 1с, используется в 
-***srvr1c_test_database_name***  
-Переменная объявлена в default/main.yml, содержит в себе название базы данных которая будет создана для тествой конфигурации 1с, используется в 
-***srvr1c_test_service_user***  
-Переменная объявлена в default/main.yml, содержит в себе название юзера который будет управлять тестовым 1с, используется в 
-***srvr1c_test_templates_service***  
-Переменная объявлена в default/main.yml, содержит в себе директории с конфигурационными файлами для сервиса 1с тестовой конфигурации, используется в 
-***srvr1c_test_shell_check_service_status***  
-Переменная объявлена в default/main.yml, содержит в себе команду для проверку статуса сервиса 1с, используется в 
-############# TEST #############
+- srvr1c_templates_ras_service
+  Переменная объявлена в default/main.yml, содержит директории для перемещения сервисных файлов, связанных с сервисом RAC. Используется в ...
 
-***srvr1c_debug_status***  
-Переменная объявлена в default/main.yml, содержит в себе значение которое отвечает за дебаг результатов на определённых этапах, используется в 
+- srvr1c_cluster_admin_login
+  Переменная объявлена в default/main.yml, содержит учётные данные в виде логина для администратора кластера RAC. Используется в ...
 
-***srv1c_hosts***  
-Переменная объявлена в default/main.yml, содержит в себе значение группы машин на которых раскатывается роль, используется в 
+- srvr1c_cluster_admin_pass
+  Переменная объявлена в default/main.yml, содержит учётные данные в виде пароля для администратора кластера RAC. Используется в ...
 
-Dependencies
-------------
+- srvr1c_cluster_database_type
+  Переменная объявлена в default/main.yml, содержит тип базы данных для кластера RAC. Используется в ...
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+- srvr1c_pgadmin_email
+  Переменная объявлена в default/main.yml, содержит email для доступа к интерфейсу сервиса pgadmin4. Используется в ...
 
-# Установка роли
+- srvr1c_pgadmin_pass
+  Переменная объявлена в default/main.yml, содержит пароль для доступа к интерфейсу сервиса pgadmin4. Используется в ...
 
-Для раскатки роли необходимо перенести архив с сервисными пакетами:
+- srvr1c_postgresql_locale
+  Переменная объявлена в default/main.yml, содержит локаль postgresql для установки в базу данных. Используется в ...
 
-- sentinel/Sentinel_LDK_Linux_Run-time_Installer_script.tar.gz
-- server64_8_3_23_2236.tar.gz
-- setup-training-8.3.25.1257-x86_64.run
-- training_8_3_25_1257_LinuxRun.tar.gz
+- srvr1c_postgresql_license_distribution
+  Переменная объявлена в default/main.yml, содержит значение включения лицензионного соглашения. Используется в ...
 
-Эти сервисные пакеты позволят прокинуть необходимые зависимости, а также содержат необходимые сервисы для отработки роли.
+- srvr1c_postgresql_scheduled_jobs
+  Переменная объявлена в default/main.yml, содержит значение включения шедулера на джобу. Используется в ...
 
-## Настройки роли
+- srvr1c_postgresql_db_descr
+  Переменная объявлена в default/main.yml, содержит краткое описание для базы данных. Используется в ...
 
-Для того чтобы роль раскаталась с Вашими сервисными настройками, необходимо поменять значения данных переменных:
+- srvr1c_postgresql_db_name
+  Переменная объявлена в default/main.yml, содержит наименование базы данных. Используется в ...
 
-| Наименование переменной                          | Значение по умолчанию                  | Предназначение                                               |
-|------------------------------------------------|---------------------------------------|------------------------------------------------------------|
-| {{ srvr1c_artifactory_directory }}           | 1c_install_2v                      | Папка с архивами и пакетами в tmp/1c_install_2v         |
-| {{ srvr1c_rac_port }}                        | 1545                                | Порт сервиса RAC                                           |
-| {{ srvr1c_cluster_admin_login }}             | admin                               | Логин админа RAC                                          |
-| {{ srvr1c_cluster_admin_pass }}              | admin                               | Пароль админа RAC                                         |
-| {{ srvr1c_pgadmin_email }}                   | test@gmail.com                     | Адрес для аутентификации в pgAdmin4                       |
-| {{ srvr1c_pgadmin_pass }}                    | TestAdmin1234                      | Пароль для аутентификации в pgAdmin4                      |
-| {{ srvr1c_postgresql_db_descr }}             | Decription_BP_db                   | Описание БД                                               |
-| {{ srvr1c_postgresql_db_name }}              | my_db                              | Название БД                                               |
-| {{ srvr1c_postgresql_user }}                 | postgres                            | Наименование юзера БД                                     |
-| {{ srvr1c_postgresql_group }}                | postgres                            | Наименование группы БД                                    |
-| {{ srvr1c_postgresql_psql_pass }}            | postgresql                          | Пароль для оболочки psql                                   |
-| {{ srvr1c_postgresql_addr }}                 | {{ ansible_default_ipv4.address }} | Адрес, на котором опубликована БД                          |
-| {{ srvr1c_postgresql_port }}                 | 5432                                | Порт, на котором опубликована БД                           |
-| {{ srvr1c_postgresql_addr_subnet }}          | 192.168.80.0/24                     | Маска подсети с адресом для доступа к БД                  |
-| {{ srvr1c_apache_webservice_addr }}          | {{ ansible_default_ipv4.address }} | Адрес всех сервисов Apache, на которых разворачиваются сервисы |
+- srvr1c_postgresql_user
+  Переменная объявлена в default/main.yml, содержит логин пользователя Postgresql. Используется в ...
 
-Example Playbook
-----------------
+- srvr1c_postgresql_group
+  Переменная объявлена в default/main.yml, содержит группу пользователя Postgresql. Используется в ...
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+- srvr1c_postgresql_psql_pass
+  Переменная объявлена в default/main.yml, содержит пароль пользователя Postgresql. Используется в ...
+
+- srvr1c_postgresql_package_name
+  Переменная объявлена в default/main.yml, содержит название пакета postgresql, который устанавливается. Используется в ...
+
+- srvr1c_postgresql_addr
+  Переменная объявлена в default/main.yml, содержит адрес postgresql, на котором будут хоститься базы данных. Используется в ...
+
+- srvr1c_postgresql_port
+  Переменная объявлена в default/main.yml, содержит порт postgresql, на котором будут хоститься базы данных. Используется в ...
+
+- srvr1c_postgresql_service
+  Переменная объявлена в default/main.yml, содержит название сервиса postgresql. Используется в ...
+
+- srvr1c_postgresql_conf_dir
+  Переменная объявлена в default/main.yml, содержит путь к директории с конфигурационными файлами для postgresql. Используется в ...
+
+- srvr1c_postgresql_conf_file
+  Переменная объявлена в default/main.yml, содержит конфигурационный файл для postgresql. Используется в ...
+
+- srvr1c_postgresql_repo_url
+  Переменная объявлена в default/main.yml, содержит репозиторий, откуда скачиваются метаданные для установки в систему. Используется в ...
+
+- srvr1c_postgresql_repo_dest
+  Переменная объявлена в default/main.yml, содержит директорию, куда будет прописываться репозиторий. Используется в ...
+
+- srvr1c_templates_postgresql_conf_file
+  Переменная объявлена в default/main.yml, содержит директории для перемещения конфигурационных файлов для сервиса postgresql. Используется в ...
+
+- srvr1c_postgresql_addr_subnet
+  Переменная объявлена в default/main.yml, содержит только маску подсети для настройки сервиса postgresql. Используется в ...
+
+- srvr1c_postgresql_subnet
+  Переменная объявлена в default/main.yml, содержит сетевую настройку маски подсети для конфигурационного файла postgresql. Используется в ...
+
+- srvr1c_apache_service
+  Переменная объявлена в default/main.yml, содержит название сервиса apache2. Используется в ...
+
+- srvr1c_apache_webservice_name
+  Переменная объявлена в default/main.yml, содержит название веб-сервиса 1С, который будет доступен под данным именем. Используется в ...
+
+- srvr1c_apache_webservice_addr
+  Переменная объявлена в default/main.yml, содержит адрес веб-сервиса 1С и всех сервисов, на котором apache2 будет поднимать сервисы. Используется в ...
+
+- srvr1c_apache_vrd_dir
+  Переменная объявлена в default/main.yml, содержит директорию с веб-сервисом 1С. Используется в ...
+
+- srvr1c_apache_conf_file
+  Переменная объявлена в default/main.yml, содержит конфигурационный файл apache2. Используется в ...
+
+- srvr1c_apache_publish_webinst
+  Переменная объявлена в default/main.yml, содержит команду для запуска веб-сервиса 1С на apache2 через веб-клиент 1С. Используется в ...
+
+---
+
+### ############# TEST #############
+
+- srvr1c_test_version
+  Переменная объявлена в default/main.yml, содержит версию 1С для тестовой конфигурации. Используется в ...
+
+- srvr1c_test_destination
+  Переменная объявлена в default/main.yml, содержит путь, куда будет установлена тестовая конфигурация 1С. Используется в ...
+
+- srvr1c_test_run_files
+  Переменная объявлена в default/main.yml, содержит название архива для установки тестовой конфигурации 1С. Используется в ...
+
+- srvr1c_test_setup_run_file
+  Переменная объявлена в default/main.yml, содержит название .run файла для установки тестовой конфигурации 1С. Используется в ...
+
+- srvr1c_test_shell_install_1c
+  Переменная объявлена в default/main.yml, содержит команду для установки тестовой конфигурации 1С с ключами. Используется в ...
+
+- srvr1c_test_service_name
+  Переменная объявлена в default/main.yml, содержит краткое название тестового сервиса 1С. Используется в ...
+
+- srvr1c_test_full_service_name
+  Переменная объявлена в default/main.yml, содержит полное название тестового сервиса 1С. Используется в ...
+
+- srvr1c_test_service_port
+  Переменная объявлена в default/main.yml, содержит адрес порта, который будет слушать тестовый 1С. Используется в ...
+
+- srvr1c_test_database_name
+  Переменная объявлена в default/main.yml, содержит название базы данных, которая будет создана для тестовой конфигурации 1С. Используется в ...
+
+- srvr1c_test_service_user
+  Переменная объявлена в default/main.yml, содержит название пользователя, который будет управлять тестовым 1С. Используется в ...
+
+- srvr1c_test_templates_service
+  Переменная объявлена в default/main.yml, содержит директории с конфигурационными файлами для сервиса 1С тестовой конфигурации. Используется в ...
+
+- srvr1c_test_shell_check_service_status
+  Переменная объявлена в default/main.yml, содержит команду для проверки статуса сервиса 1С. Используется в ...
+
+---
+
+### ############# TEST #############
+
+- srvr1c_debug_status
+  Переменная объявлена в default/main.yml, содержит значение, которое отвечает за дебаг результатов на определённых этапах. Используется в ...
+
+- srv1c_hosts
+  Переменная объявлена в default/main.yml, содержит значение группы машин, на которых раскатывается роль. Используется в ...
+
+Зависимости
+-----------
+
+Здесь должен быть указан список других ролей, размещённых на Galaxy, а также любые детали, касающиеся параметров, которые могут быть установлены для других ролей, или переменные, используемые из других ролей.
+
+Пример Playbook
+---------------
+
+Пример использования роли (например, с переменными, передаваемыми в качестве параметров):
 
     - hosts: servers
       roles:
          - { role: username.rolename, x: 42 }
 
-***Start role***  
-**Раскатка prod контура**  
+## Запуск роли***  
+### Разворачивание prod окружения
 
     - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/1c.yml  
 
-**Раскатка test контура**  
+### Разворачивание test окружения
 
     - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/1c.yml --extra-vars "srvr1c_traning_use=true"  
 
-License
--------
+Лицензия
+--------
 
 BSD
 
-Author Information
-------------------
+Информация об авторе
+--------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Опциональный раздел для указания контактной информации автора роли или сайта (HTML не допускается).
