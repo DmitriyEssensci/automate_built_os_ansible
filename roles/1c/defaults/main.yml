@@ -2,10 +2,6 @@
 # defaults file for 1с
 srvr1c_traning_use: ''
 
-srvr1c_add_repository: deb http://ru.archive.ubuntu.com/ubuntu/ bionic main universe
-srvr1c_add_repository_keyserver: keyserver.ubuntu.com
-srvr1c_add_repository_id: 3B4FE6ACC0B21F32
-
 srvr1c_service_name: srv1cv8-{{ srvr1c_version }}@.service
 srvr1c_full_service_name: "srv1cv8-{{ srvr1c_version }}@default.service"
 srvr1c_ras_service_name: rassrv1cv8@.service
@@ -80,7 +76,7 @@ srvr1c_shell_rac_create_db: >
   --name={{ srvr1c_postgresql_db_name }}
   --descr={{ srvr1c_postgresql_db_descr }}
   --dbms={{ srvr1c_cluster_database_type }}
-  --db-server={{ ansible_default_ipv4.address }}
+  --db-server={{ srvr1c_postgresql_addr }}
   --db-name={{ srvr1c_postgresql_db_name }}
   --locale={{ srvr1c_postgresql_locale }}
   --db-user={{ srvr1c_postgresql_user }}
@@ -97,7 +93,6 @@ srvr1c_shell_rac_get_general_cluster_info: >
   ./rac cluster list
 srvr1c_shell_rac_start_cluster: > 
   ./ras --daemon cluster
-
 
 srvr1c_shell_check_timezone: timedatectl show --property=Timezone --value
 srvr1c_shell_check_service_status: "systemctl status {{ srvr1c_full_service_name }} | grep Active"
@@ -127,8 +122,11 @@ srvr1c_templates_ras_service:
 
 srvr1c_cluster_admin_login: admin
 srvr1c_cluster_admin_pass: admin
-
 srvr1c_cluster_database_type: PostgreSQL
+
+srvr1c_pgadmin_email: test@gmail.com
+srvr1c_pgadmin_pass: TestAdmin1234 
+
 srvr1c_postgresql_locale: ru
 srvr1c_postgresql_license_distribution: allow
 srvr1c_postgresql_scheduled_jobs: 'on'
@@ -138,6 +136,8 @@ srvr1c_postgresql_user: postgres
 srvr1c_postgresql_group: postgres
 srvr1c_postgresql_psql_pass: postgresql
 srvr1c_postgresql_package_name: postgrespro-1c-14
+srvr1c_postgresql_addr: "{{ ansible_default_ipv4.address }}"
+srvr1c_postgresql_port: 5432
 srvr1c_postgresql_service: postgrespro-1c-14.service 
 srvr1c_postgresql_conf_dir: var/lib/pgpro/1c-14/data
 srvr1c_postgresql_conf_file: postgresql.conf
@@ -146,10 +146,12 @@ srvr1c_postgresql_repo_dest: /tmp/pgpro-repo-add.sh
 srvr1c_templates_postgresql_conf_file:
   - 'templates/{{ srvr1c_postgresql_conf_dir }}/{{ srvr1c_postgresql_conf_file }}.j2'
   - '/{{ srvr1c_postgresql_conf_dir }}/{{ srvr1c_postgresql_conf_file }}'
-srvr1c_postgresql_subnet: "host    all    all    192.168.80.0/24    md5"
+srvr1c_postgresql_addr_subnet: 192.168.80.0/24
+srvr1c_postgresql_subnet: "host         all         all         {{ srvr1c_postgresql_addr_subnet }}         md5"
 
 srvr1c_apache_service: apache2
 srvr1c_apache_webservice_name: my_server
+srvr1c_apache_webservice_addr: "{{ ansible_default_ipv4.address }}"
 srvr1c_apache_vrd_dir: "/var/www/1c/{{ srvr1c_apache_webservice_name }}"
 srvr1c_apache_conf_file: "/etc/apache2/conf-available/{{ srvr1c_apache_webservice_name }}.conf"
 srvr1c_apache_publish_webinst: "./webinst -apache24 -wsdir {{ srvr1c_apache_webservice_name }} -dir '{{ srvr1c_apache_vrd_dir }}' -connstr 'Srvr=\"localhost\";Ref=\"{{ srvr1c_apache_webservice_name }}\";' -confPath {{ srvr1c_apache_conf_file }}"

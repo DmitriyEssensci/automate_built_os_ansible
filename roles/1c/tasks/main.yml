@@ -4,9 +4,9 @@
   include_tasks: 1c_install.yml
   when: not srvr1c_traning_use | bool
 
-# - name: 1.0 Install 1C-test
-#   include_tasks: test/1c_install_test.yml
-#   when: srvr1c_traning_use | bool
+- name: 1.0 Install 1C-test
+  include_tasks: test/1c_install_test.yml
+  when: srvr1c_traning_use | bool
 
 - name: 2.0 Install HASP
   include_tasks: hasp.yml

@@ -1,5 +1,5 @@
 ---
-# postgresql file for 1c
+#postgresql file for 1c
 - name: 3.1 Download pgpro-repo-add.sh script
   ansible.builtin.get_url:
     url: "{{ srvr1c_postgresql_repo_url }}"
@@ -105,3 +105,119 @@
     msg: 
       - "PostgreSQL status: {{ status_postgresql_service.stdout }}"
   when: srvr1c_debug_status  == true
+
+- name: 3.19 Install and setting pgadmin4
+  block:
+    - name: 3.19.1 Установка ключа для репозитория pgAdmin
+      ansible.builtin.apt_key:
+        url: https://www.pgadmin.org/static/packages_pgadmin_org.pub
+        state: present
+        validate_certs: yes
+
+    - name: 3.19.2 Добавление репозитория pgAdmin в sources.list.d
+      ansible.builtin.apt_repository:
+        repo: "deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/{{ ansible_distribution_release }} pgadmin4 main"
+        state: present
+
+    - name: 3.19.3 Обновление списка пакетов
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: 3.19.4 Установка pgAdmin без рекомендуемых пакетов
+      ansible.builtin.apt:
+        name: pgadmin4-web
+        state: present
+        install_recommends: no
+
+    - name: 3.19.5 Setting pgadmin
+      block:
+        - name: 3.19.5.1 Check if pgAdmin has been set up
+          stat:
+            path: /var/lib/pgadmin
+          register: pgadmin_setup
+
+        - name: 3.19.5.2 Ensure required directories exist
+          file:
+            path: "{{ item }}"
+            state: directory
+            mode: '0755'
+          loop:
+            - /var/log/pgadmin
+            - /var/lib/pgadmin
+
+        - name: 3.19.5.3 Create configuration database
+          command: /usr/pgadmin4/venv/bin/python3 /usr/pgadmin4/web/setup.py setup-db
+          when: not pgadmin_setup.stat.exists
+          register: db_setup_output
+          failed_when: db_setup_output.rc != 0
+
+        - name: 3.19.5.4 Ensure Apache is installed
+          apt:
+            name: "{{ item }}"
+            state: present
+          loop:
+            - apache2
+            - libapache2-mod-wsgi-py3  # Если необходимо, добавьте другие зависимости
+
+        - name: 3.19.5.5 Enable Apache WSGI module
+          command: a2enmod wsgi
+          register: a2enmod_output
+          when: pgadmin_setup.stat.exists == false  # Запускаем, если pgAdmin еще не был установлен
+          failed_when: a2enmod_output.rc != 0
+
+        - name: 3.19.5.6 Enable pgAdmin4 Apache configuration
+          command: a2enconf pgadmin4
+          register: a2enconf_output
+          failed_when: a2enconf_output.rc != 0
+
+        - name: 3.19.5.7 Check if Apache is running
+          command: pgrep apache2
+          register: apache_running
+          ignore_errors: yes
+
+        - name: 3.19.5.8 Restart Apache if running
+          command: systemctl restart apache2
+          when: apache_running.rc == 0
+          register: apache_restart_output
+          failed_when: apache_restart_output.rc != 0
+
+        - name: 3.19.5.9 Enable and start Apache if not running
+          block:
+            - name: 3.19.5.9.1 Enable Apache
+              command: systemctl enable apache2
+              register: apache_enable_output
+              failed_when: apache_enable_output.rc != 0
+
+            - name: 3.19.5.9.2 Start Apache
+              command: systemctl start apache2
+              register: apache_start_output
+              failed_when: apache_start_output.rc != 0
+          when: apache_running.rc != 0
+
+        - name: 3.19.5.10 Add pgAdmin user with maximum roles
+          command: >
+            /usr/pgadmin4/venv/bin/python3 /usr/pgadmin4/web/setup.py add-user {{ srvr1c_pgadmin_email }} {{ srvr1c_pgadmin_pass }} --admin --active
+          args:
+            chdir: /usr/pgadmin4/web/
+          register: result
+
+        - name: 3.19.5.11 Log setup completion
+          command: touch /var/log/pgadmin/setup_completed.log
+          when: pgadmin_setup.stat.exists == false
+
+        - name: 3.19.5.12 Print result
+          debug:
+            var: result.stdout
+
+        - name: 3.19.5.13 Debug pgadmin
+          debug:
+            msg: 
+              - "Pgadmin4 was opened on: http://{{ srvr1c_postgresql_addr }}/pgadmin4"
+              - "Email for auth on pgadmin4: {{ srvr1c_pgadmin_email }}"
+              - "Pass for auth on pgadmin4: {{ srvr1c_pgadmin_pass }}"
+              - "Hostaddr server for connect to server in pgadmin: {{ srvr1c_postgresql_addr }}"
+              - "Port for connect to server in pgadmin: {{ srvr1c_postgresql_port }}"
+              - "Username for connect to server in pgadmin: {{ srvr1c_postgresql_user }}"
+              - "Password for connect to server in pgadmin: {{ srvr1c_postgresql_psql_pass }}"
+          when: apache_running.rc == 0
+  become: true

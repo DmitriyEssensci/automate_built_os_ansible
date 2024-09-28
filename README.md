@@ -33,7 +33,7 @@
 
 | Плейбук                     | Название роли      | Название сервиса/пакета                            | Тип системы для установки |
 |-----------------------------|-------------------|---------------------------------------------------|---------------------------|
-| playbooks/1c.yml             | 1c                | 1С, PostgreSQL, HASP, Apache, RAC                  | bare-metal                 |
+| playbooks/1c.yml             | 1c                | 1С, PostgreSQL, HASP, Apache, RAC, Pgadmin4                  | bare-metal                 |
 | playbooks/adduser.yml        | adduser           | -                                                 | bare-metal                 |
 | playbooks/check_system.yml   | check_system      | -                                                 | bare-metal                 |
 | playbooks/grafana.yml        | grafana           | Grafana                                           | bare-metal                 |
@@ -91,6 +91,7 @@
 | RAC Cluster                     | 1541                                             | -                                        |
 | Apache2                         | 80                                               | -                                        |
 | PostgreSQL                      | http://hostname_ip:5432/                         | login/pass: postgres/postgresql          |
+| Pgadmin4						       | http://hostname/pgadmin4						       | login/pass: {{ srvr1c_pgadmin_login }}/{{ srvr1c_pgadmin_pass }}			|
 
 ## Рабочие рекомендации и полезные ссылки
 
