@@ -3,13 +3,12 @@
 grafana_ensure_keyrings: /etc/apt/keyrings
 grafana_download_pgp: https://apt.grafana.com/gpg.key
 grafana_repo: "deb [signed-by={{ grafana_ensure_keyrings }}/grafana.gpg] https://apt.grafana.com stable main"
-
 grafana_dest_gpg: /usr/share/keyrings/grafana.gpg.key
 grafana_convert_gpg: "gpg --dearmor -o {{ grafana_ensure_keyrings }}/grafana.gpg {{ grafana_dest_gpg }}"
-grafana_srvice_name: grafana-server
+grafana_service_name: grafana-server
 
 grafana_check_version: grafana-server -v | grep Version
-grafana_service_status: systemctl status {{ grafana_srvice_name }}.service | grep Active
+grafana_check_service_status: systemctl status {{ grafana_service_name }}.service | grep Active
 
 grafana_user: grafana
 grafana_group: grafana
