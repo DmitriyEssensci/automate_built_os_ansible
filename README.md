@@ -35,15 +35,15 @@
 
 В данном репозитории предоставлены следующие роли, которые доступны для раскатки. Каждая роль и плейбук соответствует сервису по названию.
 
-| Плейбук                     | Название роли      | Название сервиса/пакета                            | Тип системы для установки |
-|-----------------------------|-------------------|---------------------------------------------------|---------------------------|
-| playbooks/1c.yml             | 1c                | 1С, PostgreSQL, HASP, Apache, RAC, Pgadmin4                  | bare-metal                 |
-| playbooks/adduser.yml        | adduser           | -                                                 | bare-metal                 |
-| playbooks/check_system.yml   | check_system      | -                                                 | bare-metal                 |
-| playbooks/grafana.yml        | grafana           | Grafana                                           | bare-metal                 |
-| playbooks/install_apps.yml   | install_apps      | {{ installapps_apps_list }}                       | bare-metal                 |
-| playbooks/jenkins.yml        | jenkins           | Jenkins                                           | bare-metal                 |
-| playbooks/prometheus.yml     | prometheus        | Prometheus, node_exporter                         | bare-metal                 |
+| Плейбук                     | Название роли      | Название пакета                               | Название сервиса  | Тип системы для установки |
+|-----------------------------|--------------------|-----------------------------------------------|-------------------|---------------------------|
+| playbooks/1c.yml             | 1c                | 1С, PostgreSQL, HASP, Apache, RAC, Pgadmin4   | srv1cv8-8.3.23.2236@default.service, postgresql@14-main.service, hasplmd.service, apache2.service, rassrv1cv8@default.service                  | bare-metal                 |
+| playbooks/adduser.yml        | adduser           | -                                             | -               | bare-metal                 |
+| playbooks/check_system.yml   | check_system      | -                                             | -               | bare-metal                 |
+| playbooks/grafana.yml        | grafana           | Grafana                                       | grafana-server.service               | bare-metal                 |
+| playbooks/install_apps.yml   | install_apps      | {{ installapps_apps_list }}                   | -                  | bare-metal                 |
+| playbooks/jenkins.yml        | jenkins           | Jenkins                                       | jenkins.service                  | bare-metal                 |
+| playbooks/prometheus.yml     | prometheus        | Prometheus, node_exporter                     |  prometheus.service, node_exporter.service                    | bare-metal                 |
 
 ## Контуры
 
@@ -90,10 +90,10 @@
 
 ## Список сервисов, развёрнутых по адресу/доменному имени и порту
 
-| Название сервиса/подсервиса     | Полный адрес сервера с портом                    | Учётные данные                          |
-|---------------------------------|--------------------------------------------------|------------------------------------------|
-| Prometheus                      | http://hostname_ip:9090                          | -                                        |
-| node_exporter                   | http://hostname_ip:9100/metrics                  | -                                        |
+| Название сервиса/подсервиса     | Полный адрес сервера с портом                     | Учётные данные                           |
+|---------------------------------|---------------------------------------------------|------------------------------------------|
+| Prometheus                      | https://hostname_ip:9090                          | -                                        |
+| node_exporter                   | https://hostname_ip:9100/metrics                  | -                                        |
 | Grafana                         | http://{{ prometheus_grafana_host_address }}:3000                          | login/pass: admin/admin                  |
 | Grafana API                     | http://{{ prometheus_grafana_host_address }}:3000/api/prom/push | -                                        |
 | Jenkins                         | http://hostname_ip:8080                          | login/pass: admin/admin                  |

@@ -1,92 +1,172 @@
-Role Name
-=========
-
-A brief description of the role goes here.
-
-Requirements
+# Роль 1с
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Данная роль позволяет установить мониториг prometheus, node_exporter.
 
-Role Variables
+## Требования
+------------
+
+## Переменные Роли
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Описание настраиваемых переменных для этой роли должно находиться здесь, включая любые переменные, которые находятся в defaults/main.yml, vars/main.yml, и любые переменные, которые могут/должны быть установлены через параметры роли. Любые переменные, которые читаются из других ролей и/или глобальной области (например, hostvars, group vars и т.д.) также следует упомянуть здесь.
 
-***prometheus_version***  
-***prometheus_download_url***  
-***prometheus_archive***  
-***prometheus_bin_file***  
-***prometheus_conf_file***  
+### prometheus
+- prometheus_version  
+  Переменная объявлена в defaults/main.yml, содержит  
+- prometheus_download_url  
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_archive  
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_system_dir  
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_conf_dir  
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_service_bin_dir  
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_bin_dir  
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_lib_dir  
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_bin_file  
+  Переменная объявлена в defaults/main.yml, содержит
+    - prometheus  
+      Переменная объявлена в defaults/main.yml, содержит
+    - promtool  
+      Переменная объявлена в defaults/main.yml, содержит
+- prometheus_conf_file  
+  Переменная объявлена в defaults/main.yml, содержит
+    - consoles   
+      Переменная объявлена в defaults/main.yml, содержит
+    - console_libraries   
+      Переменная объявлена в defaults/main.yml, содержит
+- prometheus_service_conf_file  
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_service_name   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_template_service_systemd   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_template_prometheus_yml    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_check_service_status   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_port   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_user   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_group    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_python_interpreter   
+  Переменная объявлена в defaults/main.yml, содержит
 
-***prometheus_service_conf_file***  
-***prometheus_service_name***  
+- prometheus_host_machine   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_grafana_host_address   
+  Переменная объявлена в defaults/main.yml, содержит
 
-***prometheus_template_service_systemd***  
-***prometheus_template_prometheus_yml***  
-***prometheus_template_service_initd***  
+- prometheus_prometheusconf   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_scinterval   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_scrape_interval    
+  Переменная объявлена в defaults/main.yml, содержит
 
-***prometheus_user***  
-***prometheus_group***  
-***prometheus_python_interpreter***  
+- prometheus_name   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_ssl_crt    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_ssl_key    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_ssl_dir    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_ssl_network_conf   
+  Переменная объявлена в defaults/main.yml, содержит
 
-#node_exporter
-***prometheus_node_exporter_download_url***  
-***prometheus_node_exporter_archive***  
+### node_exporter
+- prometheus_node_exporter_name   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_node_exporter_ssl_crt    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_node_exporter_ssl_key    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_node_exporter_ssl_dir    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_node_exporter_ssl_network_conf   
+  Переменная объявлена в defaults/main.yml, содержит
 
-***prometheus_node_exporter_service_name***  
+- prometheus_node_exporter_port   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_node_exporter_version    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_node_exporter_download_url   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_node_exporter_archive    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_node_exporter_system_dir   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_node_exporter_service_name   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_node_exporter_check_service_status   
+  Переменная объявлена в defaults/main.yml, содержит
 
-***prometheus_template_service_systemd_node***  
-***prometheus_template_service_initd_node***  
-***prometheus_template_default_options_node***  
+- prometheus_template_service_systemd_node    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_template_default_options_node    
+  Переменная объявлена в defaults/main.yml, содержит
 
-***prometheus_node_exporter_addres***  
- 
-***prometheus_grafana_token_pass***  
+### victoriametrics
+- prometheus_victoriametrics_user   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_victoriametrics_group    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_victoriametrics_var_dir    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_victoriametrics_run_dir    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_victoriametrics_bin_dir    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_victoriametrics_status   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_victoriametrics_service_name   
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_template_victoriametrics_service_systemd_node    
+  Переменная объявлена в defaults/main.yml, содержит
+- prometheus_vm_remote_write  
+  Переменная объявлена в defaults/main.yml, содержит
+    - url   
+      Переменная объявлена в defaults/main.yml, содержит
+    - username    
+      Переменная объявлена в defaults/main.yml, содержит
+    - password    
+      Переменная объявлена в defaults/main.yml, содержит
 
-***prometheus_host_machine***  
-***prometheus_grafana_host_address***  
+- prometheus_hosts    
+  Переменная объявлена в defaults/main.yml, содержит
 
-***prometheus_prometheusconf***  
-***prometheus_scinterval***  
-***prometheus_vm_remote_write***  
+Зависимости
+-----------
 
-***prometheus_pr_remote_write***  
-  
-***prometheus_scrape_interval***  
+Здесь должен быть указан список других ролей, размещённых на Galaxy, а также любые детали, касающиеся параметров, которые могут быть установлены для других ролей, или переменные, используемые из других ролей.
 
-***prometheus_victoriametrics_user***  
-***prometheus_victoriametrics_group***  
-***prometheus_victoriametrics_var_dir***  
-***prometheus_victoriametrics_run_dir***  
-***prometheus_victoriametrics_bin_dir***  
-***prometheus_victoriametrics_status***  
-***prometheus_victoriametrics_service_name***  
-***prometheus_template_victoriametrics_service_systemd_node***  
+Пример Playbook
+---------------
 
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
-
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Пример использования роли (например, с переменными, передаваемыми в качестве параметров):
 
     - hosts: servers
       roles:
          - { role: username.rolename, x: 42 }
 
-***Start role***
-ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/prometheus.yml
+## Запуск роли
 
-License
--------
+    ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/prometheus.yml
+
+Лицензия
+--------
 
 BSD
 
-Author Information
-------------------
+Информация об авторе
+--------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Опциональный раздел для указания контактной информации автора роли или сайта (HTML не допускается).
