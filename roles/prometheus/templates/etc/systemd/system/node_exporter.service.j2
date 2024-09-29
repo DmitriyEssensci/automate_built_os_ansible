@@ -7,8 +7,10 @@ After=network-online.target
 
 [Service]
 User=root
-EnvironmentFile=/etc/default/node_exporter
-ExecStart=/opt/node_exporter-1.8.2.linux-amd64/node_exporter $OPTIONS
+EnvironmentFile=/{{ prometheus_template_default_options_node }}
+ExecStart={{ prometheus_node_exporter_system_dir }}/node_exporter \
+     --web.config.file={{ prometheus_node_exporter_ssl_dir }}/{{ prometheus_node_exporter_ssl_network_conf }} \
+     --web.listen-address=":{{ prometheus_node_exporter_port }}"
 Restart=on-failure
 RestartSec=5
 

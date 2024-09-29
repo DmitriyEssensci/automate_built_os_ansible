@@ -13,6 +13,7 @@
     src: "{{ item }}"
     dest: /opt/
     remote_src: yes
+  ignore_errors: yes
   with_items: "{{ prometheus_node_exporter_archive }}"
   become: true
 
@@ -28,7 +29,46 @@
   when: prometheus_file.stat.exists
   become: true
 
-- name: 2.5 Copy prometheus.service
+- name: 2.5 Create ssl cert
+  block: 
+    - name: 2.5.1 Create SSL directory
+      file:
+        path: "{{ prometheus_node_exporter_ssl_dir }}"
+        state: directory
+        owner: "{{ prometheus_user }}"
+        group: "{{ prometheus_group }}"
+        mode: '0744'
+
+    - name: 2.5.2 Check if SSL certificate for Node Exporter exists
+      ansible.builtin.stat:
+        path: "{{ prometheus_node_exporter_ssl_dir }}/{{ prometheus_node_exporter_ssl_crt }}"
+      register: ssl_cert_stat
+
+    - name: 2.5.3 Generate SSL certificate and key for Node Exporter
+      ansible.builtin.shell: >
+        openssl req -new -newkey rsa:4096 -days 365 -nodes -x509
+        -keyout "{{ prometheus_node_exporter_ssl_dir }}/{{ prometheus_node_exporter_ssl_key }}"
+        -out "{{ prometheus_node_exporter_ssl_dir }}/{{ prometheus_node_exporter_ssl_crt }}"
+        -subj "/C=RU/ST=Moskovskaya oblast/L=Moscow/O={{ prometheus_node_exporter_name }}/CN={{ ansible_hostname }}"
+        -addext "subjectAltName=DNS:localhost,DNS:{{ ansible_hostname }}"
+      args:
+        chdir: "{{ prometheus_node_exporter_ssl_dir }}"
+
+    - name: 2.5.4 Copy node_exporter ssl options file
+      template:
+        src: "templates/etc/default/{{ prometheus_node_exporter_ssl_network_conf }}.j2"
+        dest: "/{{ prometheus_node_exporter_ssl_dir }}/{{ prometheus_node_exporter_ssl_network_conf }}"
+        mode: '0744'
+
+    - name: "2.5.5 Change file permissions in {{ prometheus_ssl_dir }}"
+      file:
+        path: "{{ prometheus_ssl_dir }}"
+        mode: '0744'
+        recurse: yes
+      become: yes  # Используйте для повышения привилегий, если требуется
+  become: true
+
+- name: "2.6 Copy etc/default/node_exporter and {{ prometheus_node_exporter_service_name }}"
   template:
     src: "templates/{{ item }}.j2"
     dest: "/{{ item }}"
@@ -38,14 +78,25 @@
     - "{{ prometheus_template_default_options_node }}"
   become: true
 
-- name: 2.6 Reload systemd manager configuration
+- name: 2.7 Reload systemd manager configuration
   ansible.builtin.systemd:
     daemon_reload: yes
   become: true
 
-- name: 2.7 Enable and start node_exporter service
+- name: 2.8 Enable and start node_exporter service
   ansible.builtin.systemd:
     name: "{{ prometheus_node_exporter_service_name }}"
     state: started
     enabled: yes
   become: true
+
+- name: 2.9 Check node_exporter service 
+  shell: "{{ prometheus_node_exporter_check_service_status }}"
+  register: node_exporter_status
+
+- name: 2.10 Debug node_exporter
+  debug:
+    msg:
+      - "Node_exporter service status: {{ node_exporter_status.stdout }}"
+      - "Node_exporter will opened on: https://{{ ansible_hostname }}:{{ prometheus_node_exporter_port }}/metrics"
+      #- "Node_exporter will opened on: https://{{ ansible_default_ipv4.address }}:{{ prometheus_node_exporter_port }}/metrics"

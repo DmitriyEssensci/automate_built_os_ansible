@@ -61,7 +61,7 @@
 - [master_node]
 - [slave_node]
 - [newmachine]
-- [new_machine:children]
+- [new_machine:children]   
    slave_node
    master_node
 
@@ -70,7 +70,7 @@
 - [master_node]
 - [slave_node]
 - [mainserver]
-- [main_server:children]
+- [main_server:children]   
    slave_node
    master_node
 

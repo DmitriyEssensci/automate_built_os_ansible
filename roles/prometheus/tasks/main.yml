@@ -1,8 +1,8 @@
 ---
 # main file for prometheus
-- name: 1.0 Install and setting prometheus
-  include_tasks: prometheus.yml
-  when: "'slave_node' not in group_names"
+# - name: 1.0 Install and setting prometheus
+#   include_tasks: prometheus.yml
+#   when: "'slave_node' not in group_names"
 
 - name: 2.0 Install and setting node_exporter
   include_tasks: node_exporter.yml
@@ -10,3 +10,6 @@
 # - name: 3.0 Install and setting Victoria Metrics
 #   include_tasks: victoriametrics.yml
 #   when: inventory_hostname == prometheus_host_machine
+
+# /etc/prometheus/ssl/node_exporter.crt
+# /etc/prometheus/ssl/node_exporter.crt
