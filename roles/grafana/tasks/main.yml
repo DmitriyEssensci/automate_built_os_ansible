@@ -116,30 +116,27 @@
     cmd: "{{ grafana_check_version }}"
   register: grafana_version
 
-- name: 1.9 Debug check grafana version
-  debug:
-    msg: "{{ grafana_version }}"
-
-- name: 1.10 Enable grafana systemd and ensure what grafana started
+- name: 1.9 Enable grafana systemd and ensure what grafana started
   block:
-    - name: 1.10.1 Reload systemd manager configuration
+    - name: 1.9.1 Reload systemd manager configuration
       ansible.builtin.systemd:
         daemon_reload: yes
 
-    - name: 1.10.2 Enable and start grafana service
+    - name: 1.9.2 Enable and start grafana service
       ansible.builtin.systemd:
-        name: "{{ grafana_service_name }}"
+        name: "{{ grafana_service_name }}.service"
         state: started
         enabled: yes
   become: true
 
-- name: 1.11 Check grafana service 
+- name: 1.10 Check grafana service 
   shell: "{{ grafana_check_service_status }}"
   register: grafana_status
 
-- name: 1.12 Debug grafana
+- name: 1.11 Debug grafana
   debug:
     msg:
+      - "Grafana version: {{ grafana_version.stdout }}"
       - "Grafana service status: {{ grafana_status.stdout }}"
       - "Grafana will opened on: https://{{ ansible_hostname }}:{{ grafana_config_port }}"
       #- "Prometheus will opened on: https://{{ ansible_default_ipv4.address }}:{{ prometheus_port }}"

@@ -8,7 +8,7 @@ grafana_convert_gpg: "gpg --dearmor -o {{ grafana_ensure_keyrings }}/grafana.gpg
 grafana_service_name: grafana-server
 
 grafana_check_version: grafana-server -v | grep Version
-grafana_check_service_status: systemctl status {{ grafana_srvice_name }}.service | grep Active
+grafana_check_service_status: systemctl status {{ grafana_service_name }}.service | grep Active
 
 grafana_user: grafana
 grafana_group: grafana
