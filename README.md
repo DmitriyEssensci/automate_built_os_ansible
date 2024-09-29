@@ -35,15 +35,15 @@
 
 В данном репозитории предоставлены следующие роли, которые доступны для раскатки. Каждая роль и плейбук соответствует сервису по названию.
 
-| Плейбук                     | Название роли      | Название пакета                               | Название сервиса  | Тип системы для установки       |
-|-----------------------------|--------------------|-----------------------------------------------|-------------------|---------------------------------|
-| playbooks/1c.yml             | 1c                | 1С, PostgreSQL, HASP, Apache, RAC, Pgadmin4   | srv1cv8-8.3.23.2236@default.service, postgresql@14-main.service, hasplmd.service, apache2.service, rassrv1cv8@default.service                  | bare-metal                       |
-| playbooks/adduser.yml        | adduser           | -                                             | -               | bare-metal                       |
-| playbooks/check_system.yml   | check_system      | -                                             | -               | bare-metal                       |
-| playbooks/grafana.yml        | grafana           | Grafana                                       | grafana-server.service               | bare-metal                       |
-| playbooks/install_apps.yml   | install_apps      | {{ installapps_apps_list }}                   | -                  | bare-metal                       |
-| playbooks/jenkins.yml        | jenkins           | Jenkins                                       | jenkins.service                  | bare-metal                       |
-| playbooks/prometheus.yml     | prometheus        | Prometheus, node_exporter                     |  prometheus.service, node_exporter.service                    | bare-metal                       |
+| Плейбук                     | Название роли      | Название пакета                               | Название сервиса                                | Тип системы для установки        |
+|-----------------------------|--------------------|-----------------------------------------------|-------------------------------------------------|----------------------------------|
+| playbooks/1c.yml             | 1c                | 1С, PostgreSQL, HASP, Apache, RAC, Pgadmin4   | srv1cv8-8.3.23.2236@default.service, postgresql@14-main.service, hasplmd.service, apache2.service, rassrv1cv8@default.service     | bare-metal                       |
+| playbooks/adduser.yml        | adduser           | -                                             | -                                               | bare-metal                       |
+| playbooks/check_system.yml   | check_system      | -                                             | -                                               | bare-metal                       |
+| playbooks/grafana.yml        | grafana           | Grafana                                       | grafana-server.service                          | bare-metal                       |
+| playbooks/install_apps.yml   | install_apps      | {{ installapps_apps_list }}                   | -                                               | bare-metal                       |
+| playbooks/jenkins.yml        | jenkins           | Jenkins                                       | jenkins.service                                 | bare-metal                       |
+| playbooks/prometheus.yml     | prometheus        | Prometheus, node_exporter                     | prometheus.service, node_exporter.service       | bare-metal                       |
 
 ## Контуры
 
