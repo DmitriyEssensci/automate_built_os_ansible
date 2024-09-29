@@ -4,69 +4,59 @@
 prometheus_version: 2.43.0
 prometheus_download_url: https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz
 prometheus_archive: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
+prometheus_system_dir: "/opt/prometheus-{{ prometheus_version }}.linux-amd64"
+prometheus_conf_dir: /etc/prometheus
+prometheus_service_bin_dir: /usr/local/bin
+prometheus_bin_dir: /etc/prometheus
+prometheus_lib_dir: /var/lib/prometheus
 prometheus_bin_file:
   - prometheus
   - promtool
 prometheus_conf_file:
   - consoles 
   - console_libraries 
-
 prometheus_service_conf_file: prometheus.yml
 prometheus_service_name: prometheus.service
-
 prometheus_template_service_systemd: "etc/systemd/system/{{ prometheus_service_name }}"
 prometheus_template_prometheus_yml: "etc/prometheus/{{ prometheus_service_conf_file }}"
-prometheus_template_service_initd: "etc/init.d/{{ prometheus_service_name }}" # Не применимо на ubuntu
-
+prometheus_check_service_status: "systemctl status {{ prometheus_service_name }} | grep Active"
+prometheus_port: 9090
 prometheus_user: prometheus
 prometheus_group: prometheus
 prometheus_python_interpreter: /usr/bin/python3
 
-#node_exporter
-prometheus_node_exporter_download_url: https://github.com/prometheus/node_exporter/releases/download/v1.8.2/node_exporter-1.8.2.linux-amd64.tar.gz
-prometheus_node_exporter_archive: /tmp/node_exporter-1.8.2.linux-amd64.tar.gz
-
-prometheus_node_exporter_service_name: node_exporter.service
-
-prometheus_template_service_systemd_node: "etc/systemd/system/{{ prometheus_node_exporter_service_name }}"
-prometheus_template_service_initd_node: "etc/init.d/{{ prometheus_node_exporter_service_name }}" # Не применимо на ubuntu
-prometheus_template_default_options_node: etc/default/node_exporter
-
-prometheus_node_exporter_addres: "{{ ansible_default_ipv4.address }}"
-
-prometheus_grafana_token_pass: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          66666239623130326536303635623665646565643037623931343361356365336164323234363963
-          6663303236316165396133613530313364396532363762650a323232383337306136383137346562
-          65636430333439646130386532313835663539633435383864353032343963343631646431303838
-          3533613336393665610a383261386634366265633161306637303437383461333861303039356230
-          33353765666337336665316532366131363935633964633233303166393434383361623535643565
-          63353732353666366466656238346538343933346161316261386332363863633935613037666666
-          34363931663464313332316531346332346264623933343361666436666230336361613461313662
-          62393663383631396335373731653632633265656563623362626533363465373838316538336564
-          33613831396138666131306335636431626533376439663564336230366439623231373961333533
-          38613032323834633932303134613831386338333531626138643062323562363632386339623035
-          38303964653839333632303062666138613833633033616335383965626162336261313237363066
-          62626239383436326633656138663138616235346634366335636163353339663161393234646131
-          6162
-
 prometheus_host_machine: "{{ inventory_hostname }}"
-prometheus_grafana_host_address: ansible_default_ipv4.address
+prometheus_grafana_host_address: "{{ ansible_default_ipv4.address }}"
 
 prometheus_prometheusconf: etc/prometheus/prometheus.yml
 prometheus_scinterval: 15s
-prometheus_vm_remote_write: 
-  url: "http://{{ prometheus_grafana_host_address }}:8428/api/v1/write"
-  username: admin
-  password: admin
-
-prometheus_pr_remote_write: 
-  url: "http://{{ prometheus_grafana_host_address }}:9090/api/v1/write"
-  username: admin
-  password: admin
-  
 prometheus_scrape_interval: 15s
 
+prometheus_name: prometheus
+prometheus_ssl_crt: prometheus.crt
+prometheus_ssl_key: prometheus.key
+prometheus_ssl_dir: /etc/prometheus/ssl
+prometheus_ssl_network_conf: web_prom.yml
+
+#node_exporter
+prometheus_node_exporter_name: node_exporter
+prometheus_node_exporter_ssl_crt: node_exporter.crt
+prometheus_node_exporter_ssl_key: node_exporter.key
+prometheus_node_exporter_ssl_dir: /etc/prometheus/ssl
+prometheus_node_exporter_ssl_network_conf: web_node.yml
+
+prometheus_node_exporter_port: 9100
+prometheus_node_exporter_version: 1.8.2
+prometheus_node_exporter_download_url: https://github.com/prometheus/node_exporter/releases/download/v1.8.2/node_exporter-1.8.2.linux-amd64.tar.gz
+prometheus_node_exporter_archive: /tmp/node_exporter-{{ prometheus_node_exporter_version }}.linux-amd64.tar.gz
+prometheus_node_exporter_system_dir: "/opt/node_exporter-{{ prometheus_node_exporter_version }}.linux-amd64"
+prometheus_node_exporter_service_name: node_exporter.service
+prometheus_node_exporter_check_service_status: "systemctl status {{ prometheus_node_exporter_service_name }} | grep Active"
+
+prometheus_template_service_systemd_node: "etc/systemd/system/{{ prometheus_node_exporter_service_name }}"
+prometheus_template_default_options_node: etc/default/node_exporter
+
+#victoriametrics
 prometheus_victoriametrics_user: victoriametrics
 prometheus_victoriametrics_group: victoriametrics
 prometheus_victoriametrics_var_dir: /var/lib/victoriametrics
@@ -75,3 +65,7 @@ prometheus_victoriametrics_bin_dir: /usr/local/bin
 prometheus_victoriametrics_status: systemctl status victoriametrics
 prometheus_victoriametrics_service_name: victoriametrics.service
 prometheus_template_victoriametrics_service_systemd_node: "etc/systemd/system/{{ prometheus_victoriametrics_service_name }}"
+prometheus_vm_remote_write: 
+  url: "http://{{ prometheus_grafana_host_address }}:8428/api/v1/write"
+  username: admin
+  password: admin

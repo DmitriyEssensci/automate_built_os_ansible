@@ -1,16 +1,16 @@
 ---
-#
-- name: 2.0 Open 8428 port fo vistoria metrics
+#victoriametrics file for prometheus
+- name: 3.1 Open 8428 port fo vistoria metrics
   shell: iptables -I INPUT -p tcp --dport 8428 -j ACCEPT
   become: true
 
-- name: 2.1 Save network result
+- name: 3.2 Save network result
   shell: "{{ item }}"
   loop:
     # - apt install iptables-persistent -y сделать обработчик для согласия 
     - netfilter-persistent save
 
-- name: 2.2 Download file from artifactory
+- name: 3.3 Download file from artifactory
   ansible.builtin.get_url:
     url: "{{ item }}"
     dest: /tmp/
@@ -18,19 +18,19 @@
   with_items: https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v1.102.1/victoria-metrics-linux-amd64-v1.102.1.tar.gz
   become: true
 
-- name: 2.3 Create victoriametrics group
+- name: 3.4 Create victoriametrics group
   ansible.builtin.group:
     name: victoriametrics
     system: yes
 
-- name: 2.4 Create victoriametrics user
+- name: 3.5 Create victoriametrics user
   ansible.builtin.user:
     name: victoriametrics
     system: yes
     shell: /sbin/nologin
     group: prometheus
   
-- name: 2.5 Create var_dir and run_dir directory
+- name: 3.6 Create var_dir and run_dir directory
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -41,7 +41,7 @@
     - "{{ prometheus_victoriametrics_var_dir }}"
     - "{{ prometheus_victoriametrics_run_dir }}"
 
-- name: Рекурсивно установить владельца и группу для папки {{ prometheus_victoriametrics_var_dir }}
+- name: 3.7 Рекурсивно установить владельца и группу для папки {{ prometheus_victoriametrics_var_dir }}
   file:
     path: "{{ prometheus_victoriametrics_var_dir }}"
     owner: victoriametrics
@@ -49,14 +49,14 @@
     mode: '0755'
     recurse: yes
 
-- name: Рекурсивно установить владельца и группу для файла  {{ prometheus_victoriametrics_bin_dir }}/victoria-metrics-prod
+- name: 3.8 Рекурсивно установить владельца и группу для файла  {{ prometheus_victoriametrics_bin_dir }}/victoria-metrics-prod
   file:
     path: "{{ prometheus_victoriametrics_bin_dir }}/victoria-metrics-prod"
     owner: victoriametrics
     group: victoriametrics
     mode: '0755'
 
-- name: 2.6 Extract the binare nifi files 
+- name: 3.9 Extract the binare nifi files 
   ansible.builtin.unarchive:
     src: "{{ item }}"
     dest: "{{ prometheus_victoriametrics_bin_dir }}"
@@ -64,7 +64,7 @@
   with_items: /tmp/victoria-metrics-linux-amd64-v1.102.1.tar.gz
   become: true
 
-- name: 2.7 Copy victoriametrics.service
+- name: 3.10 Copy victoriametrics.service
   template:
     src: "templates/{{ item }}.j2"
     dest: "/{{ item }}"
@@ -73,22 +73,22 @@
     - "{{ prometheus_template_victoriametrics_service_systemd_node }}"
   become: true
 
-- name: 2.8 Daemon reload
+- name: 3.11 Daemon reload
   ansible.builtin.systemd:
     daemon_reload: yes
   become: true
 
-- name: 2.9 Enable and start victoriametrics service
+- name: 3.12 Enable and start victoriametrics service
   ansible.builtin.systemd:
     name: victoriametrics
     state: started
     enabled: yes
   become: true
 
-- name: 2.10 Check victoriametrics service start
+- name: 3.13 Check victoriametrics service start
   shell: "{{ prometheus_victoriametrics_status }}"
   register: victoriametrics_status
 
-- name: 2.11 Debug check victoriametrics service start
+- name: 3.14 Debug check victoriametrics service start
   debug:
     msg: "{{ victoriametrics_status }}"

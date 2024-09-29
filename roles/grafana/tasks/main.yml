@@ -1,65 +1,97 @@
 ---
 # tasks file for grafana
-- name: Choose source for downloading Grafana
-  block:
-    - name: 1.6.1 Check connection to Artifactory server
-      ansible.builtin.uri:
-        url: "https://dl.grafana.com/enterprise/release/grafana-enterprise_11.2.0_amd64.deb"
-        method: HEAD
-        return_content: no
-        timeout: 10
-      register: artifactory_connection
-      ignore_errors: yes
+# - name: Choose source for downloading Grafana
+#   block:
+#     - name: 1.6.1 Check connection to Artifactory server
+#       ansible.builtin.uri:
+#         url: "https://dl.grafana.com/enterprise/release/grafana-enterprise_11.2.0_amd64.deb"
+#         method: HEAD
+#         return_content: no
+#         timeout: 10
+#       register: artifactory_connection
+#       ignore_errors: yes
 
-    - block:
-        - name: 1.0 Ensure /etc/apt/keyrings directory exists
-          ansible.builtin.file:
-            path: "{{ grafana_ensure_keyrings }}"
-            state: directory
-            mode: '0755'
-          become: true
+#     - block:
+#         - name: 1.0 Ensure /etc/apt/keyrings directory exists
+#           ansible.builtin.file:
+#             path: "{{ grafana_ensure_keyrings }}"
+#             state: directory
+#             mode: '0755'
+#           become: true
 
-        - name: 1.1 Download and dearmor Grafana GPG key
-          ansible.builtin.get_url:
-            url: "{{ grafana_download_pgp }}"
-            dest: "{{ grafana_dest_gpg }}"
-            mode: '0644'
-          become: true
+#         - name: 1.1 Download and dearmor Grafana GPG key
+#           ansible.builtin.get_url:
+#             url: "{{ grafana_download_pgp }}"
+#             dest: "{{ grafana_dest_gpg }}"
+#             mode: '0644'
+#           become: true
 
-        - name: 1.2 Convert Grafana GPG key to binary format
-          ansible.builtin.command:
-            cmd: "{{ grafana_convert_gpg }}"
-          args:
-            creates: "{{ grafana_ensure_keyrings }}/grafana.gpg"
-          become: true
+#         - name: 1.2 Convert Grafana GPG key to binary format
+#           ansible.builtin.command:
+#             cmd: "{{ grafana_convert_gpg }}"
+#           args:
+#             creates: "{{ grafana_ensure_keyrings }}/grafana.gpg"
+#           become: true
 
-        - name: 1.3 Add Grafana APT repository
-          ansible.builtin.apt_repository:
-            repo: "{{ grafana_repo }}"
-            state: present
-            filename: grafana
-          become: true
+#         - name: 1.3 Add Grafana APT repository
+#           ansible.builtin.apt_repository:
+#             repo: "{{ grafana_repo }}"
+#             state: present
+#             filename: grafana
+#           become: true
 
-        - name: 1.4 Install Grafana
-          ansible.builtin.apt:
-            name: grafana
-            state: present
-            update_cache: yes
-          become: true
-      when: artifactory_connection.status == 200
+#         - name: 1.4 Install Grafana
+#           ansible.builtin.apt:
+#             name: grafana
+#             state: present
+#             update_cache: yes
+#           become: true
+#       when: artifactory_connection.status == 200
 
-    - name: Install Grafana Enterprise package from .deb file
-      ansible.builtin.apt:
-        deb: /tmp/grafana-enterprise_11.2.0_amd64.deb
-        state: present
-      become: true
-      when: artifactory_connection.status is not defined or artifactory_connection.status != 200
+#     - name: Install Grafana Enterprise package from .deb file
+#       ansible.builtin.apt:
+#         deb: /tmp/grafana-enterprise_11.2.0_amd64.deb
+#         state: present
+#       become: true
+#       when: artifactory_connection.status is not defined or artifactory_connection.status != 200
 
 - name: 1.5 Create var/lib/grafana/dashboard directory
   ansible.builtin.file:
     path: "{{ grafana_dashboard_path }}"
     state: directory
     mode: '0755'
+  become: true
+
+- name: 1.6 Move the Configuration Files & Set Owner
+  block: 
+    - name: 1.6.1 Create SSL directory
+      file:
+        path: "{{ grafana_ssl_dir }}"
+        state: directory
+        owner: "{{ grafana_user }}"
+        group: "{{ grafana_group }}"
+        mode: '0744'
+
+    - name: 1.6.2 Check if SSL certificate for grafana exists
+      ansible.builtin.stat:
+        path: "{{ grafana_ssl_dir }}/{{ grafana_ssl_crt }}"
+      register: ssl_cert_stat
+
+    - name: 1.6.3 Generate SSL certificate and key for grafana
+      ansible.builtin.shell: >
+        openssl req -new -newkey rsa:4096 -days 365 -nodes -x509
+        -keyout "{{ grafana_ssl_dir }}/{{ grafana_ssl_key }}"
+        -out "{{ grafana_ssl_dir }}/{{ grafana_ssl_crt }}"
+        -subj "/C=RU/ST=Moskovskaya oblast/L=Moscow/O={{ grafana_name }}/CN={{ ansible_hostname }}"
+        -addext "subjectAltName=DNS:localhost,DNS:{{ ansible_hostname }}"
+      args:
+        chdir: "{{ grafana_ssl_dir }}"
+
+    - name: "1.6.4 Change file permissions in {{ grafana_ssl_dir }}"
+      file:
+        path: "{{ grafana_ssl_dir }}"
+        mode: '0744'
+        recurse: yes
   become: true
 
 - name: 1.6 Copy grafana config file and move dashboard in dir
@@ -94,9 +126,9 @@
       ansible.builtin.systemd:
         daemon_reload: yes
 
-    - name: 1.9.2 Enable and start Prometheus service
+    - name: 1.9.2 Enable and start grafana service
       ansible.builtin.systemd:
-        name: grafana-server
+        name: "{{ grafana_srvice_name }}"
         state: started
         enabled: yes
 

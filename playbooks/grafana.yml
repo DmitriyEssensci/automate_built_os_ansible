@@ -1,4 +1,4 @@
 ---
-- hosts: '{{ grafana_hosts | default("newmachine") }}'
+- hosts: '{{ grafana_hosts | default("new_machine") }}'
   roles:
     - role: grafana

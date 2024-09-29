@@ -21,6 +21,10 @@
 3. Протестируйте работу ansible и окружения запустив роль check_system.
 4. Раскатывайте роли.
 
+- Примечание 1: Для установки Grafana требуется VPN-подключение, либо .deb пакет Grafana, который должен находиться по пути /tmp/grafana-enterprise_11.2.0_amd64.deb.
+- Примечание 2: При установке сервисов мониторинга на клиентские виртуальные или bare-metal машины необходимо установить значение переменных с {{ prometheus_host_machine }} и {{ prometheus_grafana_host_address }} на {{ hostname хоста для Prometheus }} и {{ его IPv4 адрес }}.
+- Примечание 3: При установке 1с смотрите документацию по роли.
+
 ## Создание роли
 
 Пример команды для создания новой роли с заданной структурой, которая является стандартом написания роли:
@@ -31,15 +35,15 @@
 
 В данном репозитории предоставлены следующие роли, которые доступны для раскатки. Каждая роль и плейбук соответствует сервису по названию.
 
-| Плейбук                     | Название роли      | Название сервиса/пакета                            | Тип системы для установки |
-|-----------------------------|-------------------|---------------------------------------------------|---------------------------|
-| playbooks/1c.yml             | 1c                | 1С, PostgreSQL, HASP, Apache, RAC, Pgadmin4                  | bare-metal                 |
-| playbooks/adduser.yml        | adduser           | -                                                 | bare-metal                 |
-| playbooks/check_system.yml   | check_system      | -                                                 | bare-metal                 |
-| playbooks/grafana.yml        | grafana           | Grafana                                           | bare-metal                 |
-| playbooks/install_apps.yml   | install_apps      | {{ installapps_apps_list }}                       | bare-metal                 |
-| playbooks/jenkins.yml        | jenkins           | Jenkins                                           | bare-metal                 |
-| playbooks/prometheus.yml     | prometheus        | Prometheus, node_exporter                         | bare-metal                 |
+| Плейбук                     | Название роли      | Название пакета                               | Название сервиса  | Тип системы для установки |
+|-----------------------------|--------------------|-----------------------------------------------|-------------------|---------------------------|
+| playbooks/1c.yml             | 1c                | 1С, PostgreSQL, HASP, Apache, RAC, Pgadmin4   | srv1cv8-8.3.23.2236@default.service, postgresql@14-main.service, hasplmd.service, apache2.service, rassrv1cv8@default.service                  | bare-metal                 |
+| playbooks/adduser.yml        | adduser           | -                                             | -               | bare-metal                 |
+| playbooks/check_system.yml   | check_system      | -                                             | -               | bare-metal                 |
+| playbooks/grafana.yml        | grafana           | Grafana                                       | grafana-server.service               | bare-metal                 |
+| playbooks/install_apps.yml   | install_apps      | {{ installapps_apps_list }}                   | -                  | bare-metal                 |
+| playbooks/jenkins.yml        | jenkins           | Jenkins                                       | jenkins.service                  | bare-metal                 |
+| playbooks/prometheus.yml     | prometheus        | Prometheus, node_exporter                     |  prometheus.service, node_exporter.service                    | bare-metal                 |
 
 ## Контуры
 
@@ -50,15 +54,25 @@
 
 ## Группы inventory файла
 
-Группы inventory файла разделены по контурам:
+Группы inventory файла разделены по контурам, в каждом контуре свои группы:
 
 ### Контур integration:
-- all
-- newmachines -> new_machines:children
+- [all]
+- [master_node]
+- [slave_node]
+- [newmachine]
+- [new_machine:children]   
+   slave_node
+   master_node
 
 ### Контур production:
-- all
-- mainserver -> main_server:children
+- [all]
+- [master_node]
+- [slave_node]
+- [mainserver]
+- [main_server:children]   
+   slave_node
+   master_node
 
 ## Последовательность запуска ролей
 
@@ -69,19 +83,17 @@
 | check_system    | ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/check_system.yml |
 | install_apps    | ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/install_apps.yml |
 | jenkins         | ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/jenkins.yml |
-| prometheus      | ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/prometheus.yml |
+| prometheus master     | ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/prometheus.yml |
+| prometheus slave      | ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/prometheus.yml -e "prometheus_hosts=slave_node"
 | grafana         | ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/grafana.yml |
 | 1c              | ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/1c.yml |
 
-- Примечание 1: Для установки Grafana требуется VPN-подключение, либо .deb пакет Grafana, который должен находиться по пути /tmp/grafana-enterprise_11.2.0_amd64.deb.
-- Примечание 2: При установке сервисов мониторинга на клиентские виртуальные или bare-metal машины необходимо установить значение переменных с {{ prometheus_host_machine }} и {{ prometheus_grafana_host_address }} на {{ hostname хоста для Prometheus }} и {{ его IPv4 адрес }}.
-
 ## Список сервисов, развёрнутых по адресу/доменному имени и порту
 
-| Название сервиса/подсервиса     | Полный адрес сервера с портом                    | Учётные данные                          |
-|---------------------------------|--------------------------------------------------|------------------------------------------|
-| Prometheus                      | http://hostname_ip:9090                          | -                                        |
-| node_exporter                   | http://hostname_ip:9100/metrics                  | -                                        |
+| Название сервиса/подсервиса     | Полный адрес сервера с портом                     | Учётные данные                           |
+|---------------------------------|---------------------------------------------------|------------------------------------------|
+| Prometheus                      | https://hostname_ip:9090                          | -                                        |
+| node_exporter                   | https://hostname_ip:9100/metrics                  | -                                        |
 | Grafana                         | http://{{ prometheus_grafana_host_address }}:3000                          | login/pass: admin/admin                  |
 | Grafana API                     | http://{{ prometheus_grafana_host_address }}:3000/api/prom/push | -                                        |
 | Jenkins                         | http://hostname_ip:8080                          | login/pass: admin/admin                  |

@@ -30,7 +30,7 @@
 #################################### Server ####################################
 [server]
 # Protocol (http, https, h2, socket)
-protocol = http
+protocol = {{ grafana_config_protocol }}
 
 # This is the minimum TLS version allowed. By default, this value is empty. Accepted values are: TLS1.2, TLS1.3. If nothing is set TLS1.2 would be taken
 ;min_tls_version = ""
@@ -39,10 +39,10 @@ protocol = http
 ;http_addr =
 
 # The http port  to use
-http_port = 3000
+http_port = {{ grafana_config_port }}
 
 # The public facing domain name used to access grafana from a browser
-domain = {{ grafana_host_address }}
+domain = {{ grafana_config_host_address }}
 
 # Redirect to correct domain if host header does not match domain
 # Prevents DNS rebinding attacks
@@ -50,7 +50,7 @@ domain = {{ grafana_host_address }}
 
 # The full public facing url you use in browser, used for redirects and emails
 # If you use reverse proxy and sub path specify full url (with sub path)
-;root_url = %(protocol)s://%(domain)s:%(http_port)s/
+root_url = %(protocol)s://%(domain)s:%(http_port)s/
 
 # Serve Grafana from subpath specified in `root_url` setting. By default it is set to `false` for compatibility reasons.
 ;serve_from_sub_path = false
@@ -65,8 +65,8 @@ domain = {{ grafana_host_address }}
 ;enable_gzip = false
 
 # https certs & key file
-;cert_file =
-;cert_key =
+cert_file = {{ grafana_ssl_dir }}/{{ grafana_ssl_crt }}
+cert_key = {{ grafana_ssl_dir }}/{{ grafana_ssl_key }}
 
 # Certificates file watch interval
 ;certs_watch_interval =
@@ -435,7 +435,7 @@ admin_password = admin
 ;min_refresh_interval = 5s
 
 # Path to the default home dashboard. If this value is empty, then Grafana uses StaticRootPath + "dashboards/home.json"
-default_home_dashboard_path = {{ grafana_dashboard_path }}
+;default_home_dashboard_path = {{ grafana_dashboard_path }}
 
 #################################### Users ###############################
 [users]
