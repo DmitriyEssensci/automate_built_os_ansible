@@ -38,6 +38,65 @@
 | {{ srvr1c_postgresql_addr_subnet }}          | 192.168.80.0/24                     | Маска подсети с адресом для доступа к БД                  |
 | {{ srvr1c_apache_webservice_addr }}          | {{ ansible_default_ipv4.address }} | Адрес всех сервисов Apache, на которых разворачиваются сервисы |
 
+## Команды RAC
+--------------
+
+- Вывод пользователей кластера:
+	rac profile list --cluster=96f390a2-63f7-11ef-5794-000c296fd51b 
+	rac profile list --cluster=36e16260-4e52-43c7-8644-3ef4c2b92888
+	
+- Вывод всех информационных баз:
+	rac infobase summary list  --cluster=96f390a2-63f7-11ef-5794-000c296fd51b --cluster-user=admin --cluster-pwd=admin
+	rac infobase summary list  --cluster=36e16260-4e52-43c7-8644-3ef4c2b92888 --cluster-user=admin --cluster-pwd=admin
+	
+- Создание информационной базы:
+	rac infobase create \
+	  --cluster=96f390a2-63f7-11ef-5794-000c296fd51b \
+	  --cluster-user=admin \
+	  --cluster-pwd=admin \
+	  --create-database \
+	  --name=my_db \
+	  --descr=test_descr \
+	  --dbms=PostgreSQL \
+	  --db-server=192.168.80.129 \
+	  --db-name=my_db \
+	  --locale=ru \
+	  --db-user=postgres \
+	  --db-pwd=postgresql \
+	  --license-distribution=allow \
+	  --scheduled-jobs-deny=on
+	rac infobase create \
+	  --cluster=36e16260-4e52-43c7-8644-3ef4c2b92888 \
+	  --cluster-user=admin \
+	  --cluster-pwd=admin \
+	  --create-database \
+	  --name=my_db \
+	  --descr=test_descr \
+	  --dbms=PostgreSQL \
+	  --db-server=192.168.80.136 \
+	  --db-name=my_db \
+	  --locale=ru \
+	  --db-user=postgres \
+	  --db-pwd=postgresql \
+	  --license-distribution=allow \
+	  --scheduled-jobs-deny=on
+	  
+- Удаление бд:
+	rac infobase drop --cluster=96f390a2-63f7-11ef-5794-000c296fd51b --infobase=c649c154-3557-4103-8364-f84fe9fe6bca --infobase-user=postgres --infobase-pwd=postgresql  --cluster-user=admin --cluster-pwd=admin --drop-database
+	rac infobase drop --cluster=36e16260-4e52-43c7-8644-3ef4c2b92888 --infobase=1d30885c-73b0-4c6d-82e4-a8b54f9a41eb --infobase-user=postgres --infobase-pwd=postgresql  --cluster-user=admin --cluster-pwd=admin --drop-database
+	
+- Вывод информации об админах:
+	rac cluster admin list --cluster=96f390a2-63f7-11ef-5794-000c296fd51b --cluster-user=admin --cluster-pwd=admin
+	rac cluster admin list --cluster=36e16260-4e52-43c7-8644-3ef4c2b92888 --cluster-user=admin --cluster-pwd=admin
+	
+- Регистрация админа:
+	rac cluster admin --cluster=96f390a2-63f7-11ef-5794-000c296fd51b register --name=admin --pwd=admin --descr=my-admin  --auth=pwd
+	rac cluster admin --cluster=36e16260-4e52-43c7-8644-3ef4c2b92888 register --name=admin --pwd=admin --descr=my-admin  --auth=pwd
+	
+- Удаление админа:
+	rac cluster admin remove --cluster=96f390a2-63f7-11ef-5794-000c296fd51b --name=admin  --cluster-user=admin --cluster-pwd=admin
+	rac cluster admin remove --cluster=36e16260-4e52-43c7-8644-3ef4c2b92888 --name=admin  --cluster-user=admin --cluster-pwd=admin
+
 ## Переменные Роли
 --------------
 
