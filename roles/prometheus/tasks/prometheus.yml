@@ -165,7 +165,6 @@
         path: "{{ prometheus_ssl_dir }}"
         mode: '0744'
         recurse: yes
-      become: yes  # Используйте для повышения привилегий, если требуется
   become: true
 
 - name: 1.11 Reload systemd manager configuration

@@ -1,65 +1,93 @@
-Role Name
-=========
-
-A brief description of the role goes here.
-
-Requirements
+# Роль grafana
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Данная роль позволяет установить сервис grafana, а так же настроить его.
 
-Role Variables
+Краткое описание роли здесь.
+
+## Требования
+------------
+
+## Переменные Роли
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Описание настраиваемых переменных для этой роли должно находиться здесь, включая любые переменные, которые находятся в defaults/main.yml, vars/main.yml, и любые переменные, которые могут/должны быть установлены через параметры роли. Любые переменные, которые читаются из других ролей и/или глобальной области (например, hostvars, group vars и т.д.) также следует упомянуть здесь.
 
-***grafana_ensure_keyrings***  
+- grafana_ensure_keyrings   
+  Переменная объявлена в default/main.yml, содержит в себе директорию для pgp ключей, используется в tasks/main.yml
+- grafana_download_pgp    
+  Переменная объявлена в default/main.yml, содержит в себе ссылку на pgp ключ сервиса, используется в tasks/main.yml
+- grafana_repo    
+  Переменная объявлена в default/main.yml, содержит в себе данные о репозитории, используется в tasks/main.yml
+- grafana_dest_gpg    
+  Переменная объявлена в default/main.yml, содержит название файла с pgp ключом, используется в tasks/main.yml
+- grafana_convert_gpg   
+  Переменная объявлена в default/main.yml, содержит команду для конвертации pgp ключа, используется в tasks/main.yml
+- grafana_service_name    
+  Переменная объявлена в default/main.yml, содержит краткое название сервиса, используется в tasks/main.yml
 
-***grafana_download_pgp***  
+- grafana_check_version   
+  Переменная объявлена в default/main.yml, содержит команду, которая проверяет версию grafana, используется в tasks/main.yml
+- grafana_check_service_status    
+  Переменная объявлена в default/main.yml, содержит команду, которая проверяет статус службы grafana, используется в tasks/main.yml
 
-***grafana_repo***   
+- grafana_user    
+  Переменная объявлена в default/main.yml, содержит наименование юзера grafana, используется в tasks/main.yml
+- grafana_group   
+  Переменная объявлена в default/main.yml, содержит наименование группы grafana, используется в tasks/main.yml
 
-***grafana_convert_gpg***  
+- grafana_name    
+  Переменная объявлена в default/main.yml, содержит наименование пакета, используется в tasks/main.yml
+- grafana_ssl_crt   
+  Переменная объявлена в default/main.yml, содержит наименование файла сертификата, используется в tasks/main.yml
+- grafana_ssl_key   
+  Переменная объявлена в default/main.yml, содержит наименование файла ключа для сертификата, используется в tasks/main.yml
+- grafana_ssl_dir   
+  Переменная объявлена в default/main.yml, содержит директорию отведённую для ssl сертификатов, используется в tasks/main.yml
 
-***grafana_dest_gpg***  
+- grafana_config_host_address   
+  Переменная объявлена в default/main.yml, содержит адрес сервиса, используется в templates/etc/grafana/grafana.ini.j2, tasks/main.yml
+- grafana_config_file   
+  Переменная объявлена в default/main.yml, содержит директорию и файл сервиса grafana, используется в templates/etc/grafana/grafana.ini.j2, tasks/main.yml
+- grafana_config_protocol   
+  Переменная объявлена в default/main.yml, содержит наименование протокола на котором разворачивается сервис, используется в templates/etc/grafana/grafana.ini.j2, tasks/main.yml
+- grafana_config_port   
+  Переменная объявлена в default/main.yml, содержит номер порта на котором разворачивается сервис, используется в templates/etc/grafana/grafana.ini.j2, tasks/main.yml
 
-***grafana_check_version***  
+- grafana_dashboard_path    
+  Переменная объявлена в default/main.yml, содержит директорий с дашбордом, используется в tasks/main.yml
+- grafana_dashboard_main_dashboard_name   
+  Переменная объявлена в default/main.yml, содержит файл дашборда, используется в tasks/main.yml
+- grafana_dashboard_main_dashboard_dir    
+  Переменная объявлена в default/main.yml, содержит директорию с файлом дашборда, используется в templates/etc/grafana/grafana.ini.j2, tasks/main.yml
 
-***grafana_service_status***  
+- grafana_host_address    
+  Переменная объявлена в playbooks/grafana.yml, содержит название хост группы.
 
-***grafana_config_file***  
+Зависимости
+-----------
 
-***grafana_dashboard_path***  
+Здесь должен быть указан список других ролей, размещённых на Galaxy, а также любые детали, касающиеся параметров, которые могут быть установлены для других ролей, или переменные, используемые из других ролей.
 
-***grafana_dashboard_main_dashboard_name*** 
+Пример Playbook
+---------------
 
-***grafana_dashboard_main_dashboard_dir***  
-
-***grafana_host_address***  
-
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
-
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Пример использования роли (например, с переменными, передаваемыми в качестве параметров):
 
     - hosts: servers
       roles:
          - { role: username.rolename, x: 42 }
 
-***Start role***
-ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/install_apps.yml
+## Запуск роли
 
-License
--------
+    - ansible-playbook --ask-vault-pass --inventory-file inventory/integration/hosts playbooks/install_apps.yml
+
+Лицензия
+--------
 
 BSD
 
-Author Information
-------------------
+Информация об авторе
+--------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Опциональный раздел для указания контактной информации автора роли или сайта (HTML не допускается).

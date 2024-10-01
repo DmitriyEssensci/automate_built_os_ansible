@@ -38,6 +38,32 @@ prometheus_ssl_key: prometheus.key
 prometheus_ssl_dir: /etc/prometheus/ssl
 prometheus_ssl_network_conf: web_prom.yml
 
+prometheus_alert_version: 0.26.0
+prometheus_alert_download_url: https://github.com/prometheus/alertmanager/releases/download/v{{ prometheus_alert_version }}/alertmanager-{{ prometheus_alert_version }}.linux-amd64.tar.gz
+prometheus_alert_archive: "/tmp/alertmanager-{{ prometheus_alert_version }}.linux-amd64.tar.gz"
+prometheus_alert_system_dir: "/opt/alertmanager-{{ prometheus_alert_version }}.linux-amd64"
+prometheus_alert_conf_dir: /etc/alertmanager
+prometheus_alert_data_dir: /etc/alertmanager/data
+prometheus_alert_template_conf_dir: /etc/alertmanager/template
+prometheus_alert_template_tg_file: telegram.tmpl
+prometheus_alert_config_file: alertmanager.yml
+prometheus_alert_user: alertmanager
+prometheus_alert_group: alertmanager
+prometheus_alert_service_file: alertmanager
+prometheus_alert_login: admin
+prometheus_alert_pass: admin
+prometheus_alert_service_name: alertmanager.service
+prometheus_alert_check_service_status: "systemctl status {{ prometheus_alert_service_name }} | grep Active"
+prometheus_alert_port: 9093
+prometheus_alert_template_service_systemd: "/etc/systemd/system/{{ prometheus_alert_service_name }}"
+prometheus_alert_template_prometheus_yml: "{{ prometheus_alert_conf_dir }}/{{ prometheus_alert_config_file }}"
+prometheus_alert_template_tg_config: "{{ prometheus_alert_template_conf_dir }}/{{ prometheus_alert_template_tg_file }}"
+prometheus_alert_template_rule_file: alert.rules.yml
+prometheus_alert_template_rule_config: "{{ prometheus_conf_dir }}/{{ prometheus_alert_template_rule_file }}"
+prometheus_alert_conf_tg_token: 7647947229:AAFvP3gjEeHwrtPAcIHGjmx57nZmyqARj5g
+prometheus_alert_conf_chat_id: 224110953
+
+
 #node_exporter
 prometheus_node_exporter_name: node_exporter
 prometheus_node_exporter_ssl_crt: node_exporter.crt

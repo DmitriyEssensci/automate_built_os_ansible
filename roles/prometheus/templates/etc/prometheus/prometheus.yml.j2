@@ -11,7 +11,10 @@ alerting:
   alertmanagers:
     - static_configs:
         - targets:
-          # - alertmanager:9093
+           - alertmanager:{{ prometheus_alert_port }}
+
+rule_files:
+  - '{{ prometheus_conf_dir }}/alert.rules.yml'  # Убедитесь, что этот файл существует и содержит правила алертинга
 
 scrape_configs:
   - job_name: 'cluster_node_exporters'  # Имя задания для мониторинга node_exporter

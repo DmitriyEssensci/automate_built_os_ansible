@@ -1,0 +1,124 @@
+---
+# alert_manager file for prometheus
+- name: .1 Create alertmanager user and group
+  block:
+    - name: .2 Create alertmanager group
+      ansible.builtin.group:
+        name: "{{ prometheus_alert_group }}"
+        system: yes
+
+    - name: .3 Create alertmanager user
+      ansible.builtin.user:
+        name: "{{ prometheus_alert_user }}"
+        system: yes
+        shell: /sbin/nologin
+        group: "{{ prometheus_alert_group }}"
+  become: true
+
+- name: ".4 Create alertmanager system directory"
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ prometheus_alert_user }}"
+    group: "{{ prometheus_alert_group }}"
+    mode: '0755'
+  loop:
+    - "{{ prometheus_alert_template_conf_dir }}"
+    - "{{ prometheus_alert_conf_dir }}"
+    - "{{ prometheus_alert_data_dir }}"
+
+- name: ".5 Create {{ prometheus_alert_template_conf_dir }} directory"
+  file:
+    path: "{{ prometheus_alert_template_conf_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: .6 Download alertmanager
+  get_url:
+    url: "{{ item }}"
+    dest: "{{ prometheus_alert_archive }}"
+  ignore_errors: yes
+  with_items: "{{ prometheus_alert_download_url }}"
+  become: true
+
+- name: .7 Extract the binare alertmanager files 
+  unarchive:
+    src: "{{ item }}"
+    dest: /opt/
+    remote_src: yes
+  ignore_errors: yes
+  with_items: "{{ prometheus_alert_archive }}"
+  become: true
+
+- name: .8 Check exist temp file
+  ansible.builtin.stat:
+    path: "{{ prometheus_alert_archive }}"
+  register: alertmanager_file
+
+- name: .9 Remove temp file
+  ansible.builtin.file:
+    path: "{{ prometheus_alert_archive }}"
+    state: absent
+  when: alertmanager_file.stat.exists
+
+- name: ".10 Change ownership of {{ prometheus_alert_conf_dir }}"
+  ansible.builtin.file:
+    path: "{{ prometheus_alert_conf_dir }}"
+    owner: "{{ prometheus_alert_user }}"
+    group: "{{ prometheus_alert_group }}"
+  #recurse: yes
+
+- name: ".11 Copy {{ prometheus_alert_service_name }}"
+  template:
+    src: "templates{{ item }}.j2"
+    dest: "{{ item }}"
+    owner: "{{ prometheus_alert_user }}"
+    group: "{{ prometheus_alert_group }}"
+    mode: '0744'
+  with_items: 
+    - "{{ prometheus_alert_template_service_systemd }}"
+    - "{{ prometheus_alert_template_prometheus_yml }}"
+    - "{{ prometheus_alert_template_tg_config }}"
+    - "{{ prometheus_alert_template_rule_config }}"
+      
+- name: ".12 Change ownership of alertmanager {{ prometheus_alert_conf_dir }}/{{ prometheus_alert_config_file }}"
+  ansible.builtin.file:
+    path: "{{ prometheus_alert_conf_dir }}/{{ item }}"
+    owner: "{{ prometheus_alert_user }}"
+    group: "{{ prometheus_alert_group }}"
+  with_items: "{{ prometheus_alert_config_file }}"
+
+- name: .13 Reload systemd manager configuration
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  become: true
+
+- name: .14 Enable and start alertmanager service
+  ansible.builtin.systemd:
+    name: "{{ prometheus_alert_service_name }}"
+    state: started
+    enabled: yes
+  become: true
+
+- name: .15 Open 9093 in firewall
+  ansible.builtin.command:
+    cmd: ufw allow 9093/tcp
+  become: true
+
+- name: .16 Check prometheus service 
+  shell: "{{ prometheus_alert_check_service_status }}"
+  register: alertmanager_status
+
+- name: .17 Debug prometheus seccuseful
+  debug:
+    msg:
+      - "Alertmanager service status: {{ alertmanager_status.stdout }}"
+      - "Alertmanager will opened on: https://{{ ansible_hostname }}:{{ prometheus_alert_port }}"
+      - "Alertmanager will opened on: https://{{ ansible_default_ipv4.address }}:{{ prometheus_alert_port }}"
+  when: "'active' in alertmanager_status.stdout"
+
+- name: .18 Debug prometheus failed
+  debug:
+    msg:
+      - "Alertmanager service status: {{ alertmanager_status.stdout }}"
+  when: "'failed' in alertmanager_status.stdout"

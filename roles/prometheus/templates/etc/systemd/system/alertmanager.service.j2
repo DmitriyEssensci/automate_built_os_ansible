@@ -1,0 +1,16 @@
+#{{ ansible_managed }}
+[Unit]
+Description=Prometheus Alertmanager
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=alertmanager
+Group={{ prometheus_group }}
+ExecStart={{ prometheus_alert_system_dir }}/{{ prometheus_alert_service_file }} \
+    --config.file={{ prometheus_alert_conf_dir }}/{{ prometheus_alert_config_file }} \
+    --storage.path={{ prometheus_alert_data_dir }}/
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
