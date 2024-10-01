@@ -80,53 +80,53 @@
   Переменная объявлена в defaults/main.yml, содержит
 
 ### alert_manager
-- prometheus_alert_version
+- prometheus_alert_version    
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_download_url
+- prometheus_alert_download_url   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_archive
+- prometheus_alert_archive    
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_system_dir
+- prometheus_alert_system_dir   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_conf_dir
+- prometheus_alert_conf_dir   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_data_dir
+- prometheus_alert_data_dir   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_template_conf_dir
+- prometheus_alert_template_conf_dir    
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_template_tg_file
+- prometheus_alert_template_tg_file   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_config_file
+- prometheus_alert_config_file    
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_user
+- prometheus_alert_user   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_group
+- prometheus_alert_group    
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_service_file
+- prometheus_alert_service_file   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_login
+- prometheus_alert_login    
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_pass
+- prometheus_alert_pass   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_service_name
+- prometheus_alert_service_name   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_check_service_status
+- prometheus_alert_check_service_status   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_port
+- prometheus_alert_port   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_template_service_systemd
+- prometheus_alert_template_service_systemd   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_template_prometheus_yml
+- prometheus_alert_template_prometheus_yml    
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_template_tg_config
+- prometheus_alert_template_tg_config   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_template_rule_file
+- prometheus_alert_template_rule_file   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_template_rule_config
+- prometheus_alert_template_rule_config   
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_conf_tg_token
+- prometheus_alert_conf_tg_token    
   Переменная объявлена в defaults/main.yml, содержит
-- prometheus_alert_conf_chat_id
+- prometheus_alert_conf_chat_id   
   Переменная объявлена в defaults/main.yml, содержит
 
 ### node_exporter
