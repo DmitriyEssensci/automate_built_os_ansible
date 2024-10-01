@@ -1,0 +1,13 @@
+{{ '{{' }} define "telegram.default.message" }}
+🔥 Alert: {{ '{{' }} .CommonLabels.alertname {{ '}}' }} 🔥
+Severity: {{ '{{' }} .CommonLabels.severity {{ '}}' }}
+Instance: {{ '{{' }} .CommonLabels.instance {{ '}}' }}
+
+{{ '{{' }} range .Alerts {{ '}}' }}
+Description: {{ '{{' }} .Annotations.description {{ '}}' }}
+Summary: {{ '{{' }} .Annotations.summary {{ '}}' }}
+Status: {{ '{{' }} .Status {{ '}}' }}
+Starts At: {{ '{{' }} .StartsAt {{ '}}' }}
+{{ '{{' }} if .EndsAt {{ '}}' }} Ends At: {{ '{{' }} .EndsAt {{ '}}' }} {{ '{{' }} end {{ '}}' }}
+{{ '{{' }} end {{ '}}' }}
+{{ '{{' }} end {{ '}}' }}

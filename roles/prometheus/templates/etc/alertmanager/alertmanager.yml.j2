@@ -1,0 +1,23 @@
+---
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: 'telegram'
+  group_wait: 10s
+  group_interval: 5m
+  repeat_interval: 3h
+
+receivers:
+  - name: 'telegram'
+    webhook_configs:
+      - url: "https://api.telegram.org/bot{{ prometheus_alert_conf_tg_token }}/sendMessage"
+        send_resolved: true
+        body: |
+          {
+            "chat_id": "{{ prometheus_alert_conf_chat_id }}",
+            "text": "{{ '{{' }} template 'telegram.default.message' . {{ '}}' }}"
+          }
+
+templates:
+  - '/etc/alertmanager/template/telegram.tmpl'
