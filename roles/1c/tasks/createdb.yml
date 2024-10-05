@@ -21,6 +21,7 @@
       command: "{{ srvr1c_shell_rac_add_admin }}"
       args:
         chdir: "{{ srvr1c_destination }}"
+      ignore_errors: yes
 
     - name: 5.1.5 Get cluster admin info
       command: "{{ srvr1c_shell_rac_get_admin_info }}"
@@ -55,6 +56,7 @@
       command: "{{ srvr1c_shell_rac_create_db }}"
       args:
         chdir: "{{ srvr1c_destination }}"
+      ignore_errors: yes
 
     - name: 5.1.9 Check database summary
       command: "{{ srvr1c_shell_rac_check_db_list }}"
@@ -73,5 +75,6 @@
         msg: 
           - "General cluster info:\n{{ cluster_info.stdout_lines | join('\n') }}"
           - "Active admin in system:\n{{ admins_info.stdout_lines | join('\n') }}"
+          - "Admin info:\n login: {{ srvr1c_cluster_admin_login }}\n password: {{ srvr1c_cluster_admin_pass }}"
           - "DB was created:\n{{ db_summary.stdout_lines | join('\n') }}"
   become: true

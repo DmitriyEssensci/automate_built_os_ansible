@@ -53,6 +53,7 @@
   ansible.builtin.command: >
     curl -o /dev/null -s -w "%{http_code}" http://{{ srvr1c_apache_webservice_addr }}/{{ srvr1c_apache_webservice_name }}
   register: curl_result
+  ignore_errors: true
 
 - name: 4.11 Print HTTP status code
   debug:

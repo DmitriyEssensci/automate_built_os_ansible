@@ -1,6 +1,7 @@
 ---
 # defaults file for prometheus
 #prometheus
+prometheus_dns_name: radialserver.ddns.net
 prometheus_version: 2.43.0
 prometheus_download_url: https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz
 prometheus_archive: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
@@ -23,10 +24,10 @@ prometheus_check_service_status: "systemctl status {{ prometheus_service_name }}
 prometheus_port: 9090
 prometheus_user: prometheus
 prometheus_group: prometheus
-prometheus_python_interpreter: /usr/bin/python3
+prometheus_python_interpreter: /usr/bin/pytansible_hostnamehon3
 
 prometheus_host_machine: "{{ inventory_hostname }}"
-prometheus_grafana_host_address: "{{ ansible_default_ipv4.address }}"
+prometheus_grafana_host_address: "{{ aprometheus_dns_name }}"
 
 prometheus_prometheusconf: etc/prometheus/prometheus.yml
 prometheus_scinterval: 15s

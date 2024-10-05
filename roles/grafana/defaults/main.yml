@@ -1,5 +1,6 @@
 ---
 # defaults file for grafana
+grafana_dns_name: radialserver.ddns.net
 grafana_ensure_keyrings: /etc/apt/keyrings
 grafana_download_pgp: https://apt.grafana.com/gpg.key
 grafana_repo: "deb [signed-by={{ grafana_ensure_keyrings }}/grafana.gpg] https://apt.grafana.com stable main"
@@ -18,7 +19,7 @@ grafana_ssl_crt: grafana.crt
 grafana_ssl_key: grafana.key
 grafana_ssl_dir: /etc/grafana/ssl
 
-grafana_config_host_address: "{{ ansible_hostname }}"
+grafana_config_host_address: "{{ grafana_dns_name }}"
 grafana_config_file: etc/grafana/grafana.ini
 grafana_config_protocol: https
 grafana_config_port: 3000

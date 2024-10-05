@@ -113,7 +113,7 @@
   debug:
     msg:
       - "Alertmanager service status: {{ alertmanager_status.stdout }}"
-      - "Alertmanager will opened on: https://{{ ansible_hostname }}:{{ prometheus_alert_port }}"
+      - "Alertmanager will opened on: https://{{ prometheus_dns_name }}:{{ prometheus_alert_port }}"
       - "Alertmanager will opened on: https://{{ ansible_default_ipv4.address }}:{{ prometheus_alert_port }}"
   when: "'active' in alertmanager_status.stdout"
 

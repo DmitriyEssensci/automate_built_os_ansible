@@ -100,8 +100,8 @@
         openssl req -new -newkey rsa:4096 -days 365 -nodes -x509
         -keyout "{{ prometheus_ssl_dir }}/{{ prometheus_ssl_key }}"
         -out "{{ prometheus_ssl_dir }}/{{ prometheus_ssl_crt }}"
-        -subj "/C=RU/ST=Moskovskaya oblast/L=Moscow/O={{ prometheus_name }}/CN={{ ansible_hostname }}"
-        -addext "subjectAltName=DNS:localhost,DNS:{{ ansible_hostname }}"
+        -subj "/C=RU/ST=Moskovskaya oblast/L=Moscow/O={{ prometheus_name }}/CN={{ prometheus_dns_name }}"
+        -addext "subjectAltName=DNS:localhost,DNS:{{ prometheus_dns_name }},DNS:{{ ansible_hostname }}"
       args:
         chdir: "{{ prometheus_ssl_dir }}"
 
@@ -192,5 +192,5 @@
   debug:
     msg:
       - "Prometheus service status: {{ prometheus_status.stdout }}"
-      - "Prometheus will opened on: https://{{ ansible_hostname }}:{{ prometheus_port }}"
+      - "Prometheus will opened on: https://{{ prometheus_dns_name }}:{{ prometheus_port }}"
       #- "Prometheus will opened on: https://{{ ansible_default_ipv4.address }}:{{ prometheus_port }}"

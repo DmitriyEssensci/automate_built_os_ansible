@@ -4,7 +4,7 @@ global:
   scrape_interval: {{ prometheus_scinterval }} # Set the scrape interval to every 15 seconds. Default is every 1 minute.
   evaluation_interval: {{ prometheus_scinterval }} # Evaluate rules every 15 seconds. The default is every 1 minute.
   external_labels:
-    server_name: {{ ansible_hostname }}
+    server_name: {{ prometheus_dns_name }}
 
 # Alertmanager configuration
 alerting:

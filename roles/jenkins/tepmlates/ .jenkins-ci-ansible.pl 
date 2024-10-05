@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+    parameters {
+        booleanParam(name: 'CHECK_SYSTEM', defaultValue: false, description: 'Запустить check_system.yml')
+        booleanParam(name: 'INSTALL_APPS', defaultValue: false, description: 'Запустить install_apps.yml')
+        booleanParam(name: 'JENKINS', defaultValue: false, description: 'Запустить jenkins.yml')
+        booleanParam(name: 'PROMETHEUS', defaultValue: false, description: 'Запустить prometheus.yml')
+        booleanParam(name: 'GRAFANA', defaultValue: false, description: 'Запустить grafana.yml')
+        booleanParam(name: 'SRVR1C', defaultValue: false, description: 'Запустить 1c.yml')
+    }
+    stages {
+        stage('Run Ansible Playbooks') {
+            steps {
+                dir('/home/tarasovds/automate_built_os_ansible') {
+                    script {
+                        if (params.CHECK_SYSTEM) {
+                            sh 'sudo ansible-playbook --vault-password-file vps.txt --inventory-file inventory/integration/hosts playbooks/check_system.yml -e "check_system_hosts=${INVENTORY_GROUP}"'
+                        }
+                        if (params.INSTALL_APPS) {
+                            sh 'sudo ansible-playbook --vault-password-file vps.txt  --inventory-file inventory/integration/hosts playbooks/install_apps.yml -e "check_system_hosts=${INVENTORY_GROUP}"'
+                        }
+                        if (params.JENKINS) {
+                            sh 'sudo ansible-playbook --vault-password-file vps.txt  --inventory-file inventory/integration/hosts playbooks/jenkins.yml -e "check_system_hosts=${INVENTORY_GROUP}"'
+                        }
+                        if (params.PROMETHEUS) {
+                            sh 'sudo ansible-playbook --vault-password-file vps.txt  --inventory-file inventory/integration/hosts playbooks/prometheus.yml -e "check_system_hosts=${INVENTORY_GROUP}"'
+                        }
+                        if (params.GRAFANA) {
+                            sh 'sudo ansible-playbook --vault-password-file vps.txt  --inventory-file inventory/integration/hosts playbooks/grafana.yml -e "check_system_hosts=${INVENTORY_GROUP}"'
+                        }
+                        if (params.SRVR1C) {
+                            sh 'sudo ansible-playbook --vault-password-file vps.txt  --inventory-file inventory/integration/hosts playbooks/1c.yml -e "check_system_hosts=${INVENTORY_GROUP}"'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

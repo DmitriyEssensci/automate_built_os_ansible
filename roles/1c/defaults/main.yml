@@ -1,5 +1,7 @@
 ---
 # defaults file for 1с
+srvr1c_dns_name: "{{ ansible_hostname }}" # radialserver.ddns.net
+
 srvr1c_traning_use: ''
 
 srvr1c_service_name: srv1cv8-{{ srvr1c_version }}@.service
@@ -45,6 +47,7 @@ srvr1c_shell_rac_add_admin: >
   register 
   --name={{ srvr1c_cluster_admin_login }} 
   --pwd={{ srvr1c_cluster_admin_pass }} 
+  --descr={{ srvr1c_cluster_admin_descr }}
   --auth=pwd 
   --cluster-user={{ srvr1c_cluster_admin_login }} 
   --cluster-pwd={{ srvr1c_cluster_admin_pass }} 
@@ -101,8 +104,8 @@ srvr1c_shell_fix_broken_package: apt-get install -f
 srvr1c_shell_set_timezone: timedatectl set-timezone Europe/Moscow
 srvr1c_shell_create_server_simlink: systemctl link {{ srvr1c_services_destionation }}/{{ srvr1c_service_name }}
 srvr1c_shell_create_ras_simlink: systemctl link {{ srvr1c_services_destionation }}/{{ srvr1c_ras_service_name }}
-
 srvr1c_shell_postgresql_conf_postgresql_path: sudo -u postgres psql -c "show config_file;"
+srvr1c_shell_create_server_grafana_dns_name: radialserver.ddns.net
 srvr1c_shell_postgresql_conf_pg_hba_path: sudo -u postgres psql -c "show hba_file;"
 srvr1c_shell_check_postgresql_status: "systemctl status {{ srvr1c_postgresql_service }}  | grep Active"
 
@@ -119,23 +122,24 @@ srvr1c_templates_ras_service:
   - 'templates{{ srvr1c_services_destionation }}/{{ srvr1c_ras_service_name }}.j2'
   - '{{ srvr1c_services_destionation }}/{{ srvr1c_ras_service_name }}'
 
-srvr1c_cluster_admin_login: admin
-srvr1c_cluster_admin_pass: admin
+srvr1c_cluster_admin_login: radialadmin
+srvr1c_cluster_admin_pass: RadialSA1111
+srvr1c_cluster_admin_descr: radial-admin
 srvr1c_cluster_database_type: PostgreSQL
 
-srvr1c_pgadmin_email: test@gmail.com
-srvr1c_pgadmin_pass: TestAdmin1234 
+srvr1c_pgadmin_email: 'qz.kobets@gmail.com'
+srvr1c_pgadmin_pass: 'RadialSA1111'
 
 srvr1c_postgresql_locale: ru
 srvr1c_postgresql_license_distribution: allow
 srvr1c_postgresql_scheduled_jobs: 'on'
-srvr1c_postgresql_db_descr: Decription_BP_db
-srvr1c_postgresql_db_name: my_db
+srvr1c_postgresql_db_descr: 'Test_db_for_radial'
+srvr1c_postgresql_db_name: radial_db_test
 srvr1c_postgresql_user: postgres
 srvr1c_postgresql_group: postgres
 srvr1c_postgresql_psql_pass: postgresql
 srvr1c_postgresql_package_name: postgrespro-1c-14
-srvr1c_postgresql_addr: "{{ ansible_default_ipv4.address }}"
+srvr1c_postgresql_addr: "{{ srvr1c_dns_name }}" # "{{ ansible_default_ipv4.address }}"
 srvr1c_postgresql_port: 5432
 srvr1c_postgresql_service: postgrespro-1c-14.service 
 srvr1c_postgresql_conf_dir: var/lib/pgpro/1c-14/data
@@ -145,12 +149,12 @@ srvr1c_postgresql_repo_dest: /tmp/pgpro-repo-add.sh
 srvr1c_templates_postgresql_conf_file:
   - 'templates/{{ srvr1c_postgresql_conf_dir }}/{{ srvr1c_postgresql_conf_file }}.j2'
   - '/{{ srvr1c_postgresql_conf_dir }}/{{ srvr1c_postgresql_conf_file }}'
-srvr1c_postgresql_addr_subnet: 192.168.80.0/24
+srvr1c_postgresql_addr_subnet: 192.168.12.0/24
 srvr1c_postgresql_subnet: "host         all         all         {{ srvr1c_postgresql_addr_subnet }}         md5"
 
 srvr1c_apache_service: apache2
 srvr1c_apache_webservice_name: my_server
-srvr1c_apache_webservice_addr: "{{ ansible_default_ipv4.address }}"
+srvr1c_apache_webservice_addr: "{{ srvr1c_dns_name }}" # "{{ ansible_default_ipv4.address }}"
 srvr1c_apache_vrd_dir: "/var/www/1c/{{ srvr1c_apache_webservice_name }}"
 srvr1c_apache_conf_file: "/etc/apache2/conf-available/{{ srvr1c_apache_webservice_name }}.conf"
 srvr1c_apache_publish_webinst: "./webinst -apache24 -wsdir {{ srvr1c_apache_webservice_name }} -dir '{{ srvr1c_apache_vrd_dir }}' -connstr 'Srvr=\"localhost\";Ref=\"{{ srvr1c_apache_webservice_name }}\";' -confPath {{ srvr1c_apache_conf_file }}"

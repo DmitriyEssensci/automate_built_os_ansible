@@ -1,5 +1,20 @@
 ---
 # node_exporter file for prometheus
+- name: 2.0 Create Prometheus user and group
+  block:
+    - name: 2.0.1 Create Prometheus group
+      ansible.builtin.group:
+        name: "{{ prometheus_group }}"
+        system: yes
+
+    - name: 2.0.2 Create Prometheus user
+      ansible.builtin.user:
+        name: "{{ prometheus_user }}"
+        system: yes
+        shell: /sbin/nologin
+        group: prometheus
+  become: true
+
 - name: 2.1 Download node_exporter
   ansible.builtin.get_url:
     url: "{{ item }}"
@@ -49,8 +64,8 @@
         openssl req -new -newkey rsa:4096 -days 365 -nodes -x509
         -keyout "{{ prometheus_node_exporter_ssl_dir }}/{{ prometheus_node_exporter_ssl_key }}"
         -out "{{ prometheus_node_exporter_ssl_dir }}/{{ prometheus_node_exporter_ssl_crt }}"
-        -subj "/C=RU/ST=Moskovskaya oblast/L=Moscow/O={{ prometheus_node_exporter_name }}/CN={{ ansible_hostname }}"
-        -addext "subjectAltName=DNS:localhost,DNS:{{ ansible_hostname }}"
+        -subj "/C=RU/ST=Moskovskaya oblast/L=Moscow/O={{ prometheus_node_exporter_name }}/CN={{ prometheus_dns_name }}"
+        -addext "subjectAltName=DNS:localhost,DNS:{{ prometheus_dns_name }},DNS:{{ ansible_hostname }}"
       args:
         chdir: "{{ prometheus_node_exporter_ssl_dir }}"
 
@@ -98,5 +113,5 @@
   debug:
     msg:
       - "Node_exporter service status: {{ node_exporter_status.stdout }}"
-      - "Node_exporter will opened on: https://{{ ansible_hostname }}:{{ prometheus_node_exporter_port }}/metrics"
+      - "Node_exporter will opened on: https://{{ prometheus_dns_name }}:{{ prometheus_node_exporter_port }}/metrics"
       #- "Node_exporter will opened on: https://{{ ansible_default_ipv4.address }}:{{ prometheus_node_exporter_port }}/metrics"
