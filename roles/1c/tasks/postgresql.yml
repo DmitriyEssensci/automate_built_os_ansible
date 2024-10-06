@@ -155,13 +155,10 @@
 
         - name: "13.19.5. Set recursive ownership of /var/log/pgadmin to user and group"
           file:
-            path: "{{ item }}"
+            path: /var/log/pgadmin
             owner: www-data        
             group: www-data         
-            recurse: yes        
-          loop:
-            - /var/log/pgadmin
-            - /var/lib/pgadmin
+            recurse: yes           
           become: true
 
         - name: 3.19.5.3 Create configuration database
