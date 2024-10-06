@@ -173,12 +173,12 @@
             state: present
           loop:
             - apache2
-            - libapache2-mod-wsgi-py3  # Если необходимо, добавьте другие зависимости
+            - libapache2-mod-wsgi-py3
 
         - name: 3.19.5.5 Enable Apache WSGI module
           command: a2enmod wsgi
           register: a2enmod_output
-          when: pgadmin_setup.stat.exists == false  # Запускаем, если pgAdmin еще не был установлен
+          when: pgadmin_setup.stat.exists == false
           failed_when: a2enmod_output.rc != 0
 
         - name: 3.19.5.6 Enable pgAdmin4 Apache configuration

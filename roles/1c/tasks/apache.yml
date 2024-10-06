@@ -66,5 +66,6 @@
 - name: 4.13 Debug apache2 info
   debug:
     msg: 
+      - "Apache server will open on: http://{{ srvr1c_apache_webservice_addr }}/{{ srvr1c_apache_webservice_name }}"
       - "Apache2 status: {{ status_apache2_service.stdout }}"
   when: srvr1c_debug_status  == true

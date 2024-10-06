@@ -1,6 +1,37 @@
 ---
 # defaults file for 1с
-srvr1c_dns_name: "{{ ansible_hostname }}" # radialserver.ddns.net
+#####################################
+####VARS FOR CHANGE OF PRODUCTION####
+srvr1c_dns_name: 
+srvr1c_artifactory_directory: 1c_install_2v
+
+srvr1c_cluster_admin_login: 
+srvr1c_cluster_admin_pass: 
+srvr1c_cluster_admin_descr: 
+srvr1c_cluster_database_type: PostgreSQL
+
+srvr1c_pgadmin_email: 
+srvr1c_pgadmin_pass: 
+
+srvr1c_postgresql_db_descr: 
+srvr1c_postgresql_db_name: 
+srvr1c_postgresql_user: postgres
+srvr1c_postgresql_group: postgres
+srvr1c_postgresql_psql_pass: postgresql
+
+srvr1c_postgresql_addr: "{{ srvr1c_dns_name }}"
+
+srvr1c_apache_service: apache2
+srvr1c_apache_webservice_name: "{{ srvr1c_postgresql_db_name }}" # Название бд, которая будет опубликована на апач
+srvr1c_apache_vrd_dir: "/var/www/1c/{{ srvr1c_apache_webservice_name }}"
+srvr1c_apache_conf_file: "/etc/apache2/conf-available/{{ srvr1c_apache_webservice_name }}.conf"
+srvr1c_apache_webservice_addr: "{{ srvr1c_dns_name }}"
+srvr1c_apache_publish_webinst: "./webinst -apache24 -wsdir {{ srvr1c_apache_webservice_name }} -dir '{{ srvr1c_apache_vrd_dir }}' -connstr 'Srvr=\"localhost\";Ref=\"{{ srvr1c_apache_webservice_name }}\";' -confPath {{ srvr1c_apache_conf_file }}"
+
+srvr1c_postgresql_addr_subnet: 
+srvr1c_postgresql_subnet: "host         all         all         {{ srvr1c_postgresql_addr_subnet }}         md5"
+####VARS FOR CHANGE OF PRODUCTION####
+#####################################
 
 srvr1c_traning_use: ''
 
@@ -13,7 +44,7 @@ srvr1c_version: "8.3.23.2236"
 srvr1c_sys_dest: /opt/1cv8
 srvr1c_destination: "/opt/1cv8/x86_64/{{ srvr1c_version }}"
 srvr1c_services_destionation: /etc/systemd/system
-srvr1c_artifactory_directory: 1c_install_2v
+
 srvr1c_run_files: server64_8_3_23_2236.tar.gz
 srvr1c_setup_run_file: setup-full-{{ srvr1c_version }}-x86_64.run
 
@@ -49,8 +80,8 @@ srvr1c_shell_rac_add_admin: >
   --pwd={{ srvr1c_cluster_admin_pass }} 
   --descr={{ srvr1c_cluster_admin_descr }}
   --auth=pwd 
-  --cluster-user={{ srvr1c_cluster_admin_login }} 
-  --cluster-pwd={{ srvr1c_cluster_admin_pass }} 
+# --cluster-user={{ srvr1c_cluster_admin_login }} 
+# --cluster-pwd={{ srvr1c_cluster_admin_pass }} 
 srvr1c_shell_rac_get_admin_info: >
   ./rac cluster admin list 
   --cluster={{ cluster_uuid }}  
@@ -122,24 +153,11 @@ srvr1c_templates_ras_service:
   - 'templates{{ srvr1c_services_destionation }}/{{ srvr1c_ras_service_name }}.j2'
   - '{{ srvr1c_services_destionation }}/{{ srvr1c_ras_service_name }}'
 
-srvr1c_cluster_admin_login: radialadmin
-srvr1c_cluster_admin_pass: RadialSA1111
-srvr1c_cluster_admin_descr: radial-admin
-srvr1c_cluster_database_type: PostgreSQL
-
-srvr1c_pgadmin_email: 'qz.kobets@gmail.com'
-srvr1c_pgadmin_pass: 'RadialSA1111'
-
 srvr1c_postgresql_locale: ru
 srvr1c_postgresql_license_distribution: allow
 srvr1c_postgresql_scheduled_jobs: 'on'
-srvr1c_postgresql_db_descr: 'Test_db_for_radial'
-srvr1c_postgresql_db_name: radial_db_test
-srvr1c_postgresql_user: postgres
-srvr1c_postgresql_group: postgres
-srvr1c_postgresql_psql_pass: postgresql
 srvr1c_postgresql_package_name: postgrespro-1c-14
-srvr1c_postgresql_addr: "{{ srvr1c_dns_name }}" # "{{ ansible_default_ipv4.address }}"
+
 srvr1c_postgresql_port: 5432
 srvr1c_postgresql_service: postgrespro-1c-14.service 
 srvr1c_postgresql_conf_dir: var/lib/pgpro/1c-14/data
@@ -149,19 +167,10 @@ srvr1c_postgresql_repo_dest: /tmp/pgpro-repo-add.sh
 srvr1c_templates_postgresql_conf_file:
   - 'templates/{{ srvr1c_postgresql_conf_dir }}/{{ srvr1c_postgresql_conf_file }}.j2'
   - '/{{ srvr1c_postgresql_conf_dir }}/{{ srvr1c_postgresql_conf_file }}'
-srvr1c_postgresql_addr_subnet: 192.168.12.0/24
-srvr1c_postgresql_subnet: "host         all         all         {{ srvr1c_postgresql_addr_subnet }}         md5"
-
-srvr1c_apache_service: apache2
-srvr1c_apache_webservice_name: my_server
-srvr1c_apache_webservice_addr: "{{ srvr1c_dns_name }}" # "{{ ansible_default_ipv4.address }}"
-srvr1c_apache_vrd_dir: "/var/www/1c/{{ srvr1c_apache_webservice_name }}"
-srvr1c_apache_conf_file: "/etc/apache2/conf-available/{{ srvr1c_apache_webservice_name }}.conf"
-srvr1c_apache_publish_webinst: "./webinst -apache24 -wsdir {{ srvr1c_apache_webservice_name }} -dir '{{ srvr1c_apache_vrd_dir }}' -connstr 'Srvr=\"localhost\";Ref=\"{{ srvr1c_apache_webservice_name }}\";' -confPath {{ srvr1c_apache_conf_file }}"
 
 srvr1c_debug_status: true
 
-############# TEST #############
+############# TEST ##srvr1c_apache_webservice_name###########
 srvr1c_test_version: "8.3.25.1257"
 srvr1c_test_destination: "/opt/1cv8t/x86_64/{{ srvr1c_test_version }}"
 srvr1c_test_run_files: training_8_3_25_1257_LinuxRun.tar.gz
