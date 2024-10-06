@@ -106,12 +106,12 @@
     recurse: yes
   become: true
 
-# - name: 1.10 Create simlink on 1c
-#   shell: "{{ item }}"
-#   loop:
-#     - "{{ srvr1c_shell_create_ras_simlink }}"
-#     - "{{ srvr1c_shell_create_server_simlink }}"
-#   become: true
+- name: Add hostname and IP to /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ ansible_default_ipv4.address }} {{ srvr1c_dns_name }}"
+    state: present
+    validate: 'cat %s' 
 
 - name: 1.14 Reload systemd manager configuration
   ansible.builtin.systemd:
@@ -130,19 +130,27 @@
 
 - name: 1.16 Add rac to PATH in .bashrc
   block:
-    - name: Write rac dir to PATH
-      ansible.builtin.lineinfile:
-        path: "{{ ansible_env.HOME }}/.bashrc"
-        line: 'export PATH=$PATH:{{ srvr1c_destination }}'
-        insertafter: EOF
-        state: present
+    - name: Ensure the rac binary is executable
+      file:
+        path: "{{ srvr1c_destination }}/rac"
+        mode: '0755'
     
-    - name: Apply changes by sourcing .bashrc
-      ansible.builtin.shell: |
-        source ~/.bashrc
+    - name: Create a symbolic link for rac in /usr/local/bin
+      file:
+        src: "{{ srvr1c_destination }}/rac"
+        dest: /usr/local/bin/rac
+        state: link
+
+    - name: Set up environment variables for rac
+      lineinfile:
+        path: /etc/profile.d/rac.sh
+        line: 'export PATH=$PATH:{{ srvr1c_destination }}'
+        create: yes
+
+    - name: Reload shell configuration
+      shell: source /etc/profile.d/rac.sh
       args:
         executable: /bin/bash
-  become: true
 
 - name: "1.17 Check status {{ srvr1c_full_service_name }}"
   shell:  "{{ srvr1c_shell_check_service_status }}"
